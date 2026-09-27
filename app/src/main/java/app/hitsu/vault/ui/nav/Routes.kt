@@ -17,6 +17,7 @@ object Routes {
     const val SETTINGS = "settings"
     const val SETTINGS_AUTO_LOCK = "settings/autolock"
     const val SETTINGS_YTDLP = "settings/ytdlp"
+    const val SETTINGS_BACKUP = "settings/backup"
     const val SETTINGS_ABOUT = "settings/about"
 
     fun photo(id: String, filter: MediaFilter): String = "photo/$id?filter=${filter.name}"

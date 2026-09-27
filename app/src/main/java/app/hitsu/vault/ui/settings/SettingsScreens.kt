@@ -50,6 +50,7 @@ fun SettingsRoute(
     onBack: () -> Unit,
     onOpenAutoLock: () -> Unit,
     onOpenYtDlp: () -> Unit,
+    onOpenBackup: () -> Unit,
     onOpenAbout: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
@@ -59,6 +60,7 @@ fun SettingsRoute(
         onBack = onBack,
         onOpenAutoLock = onOpenAutoLock,
         onOpenYtDlp = onOpenYtDlp,
+        onOpenBackup = onOpenBackup,
         onOpenAbout = onOpenAbout,
     )
 }
@@ -69,6 +71,7 @@ fun SettingsScreen(
     onBack: () -> Unit,
     onOpenAutoLock: () -> Unit,
     onOpenYtDlp: () -> Unit,
+    onOpenBackup: () -> Unit,
     onOpenAbout: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -100,6 +103,7 @@ fun SettingsScreen(
             value = state.ytDlpVersion,
             onClick = onOpenYtDlp,
         )
+        SettingsRow(title = stringResource(R.string.settings_backup), onClick = onOpenBackup)
         SettingsRow(title = stringResource(R.string.settings_about), onClick = onOpenAbout)
         SettingsDivider()
     }
@@ -333,6 +337,7 @@ private fun SettingsPreview() = HitsuTheme {
         onBack = {},
         onOpenAutoLock = {},
         onOpenYtDlp = {},
+        onOpenBackup = {},
         onOpenAbout = {},
     )
 }

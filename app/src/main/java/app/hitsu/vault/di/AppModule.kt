@@ -13,6 +13,7 @@ import app.hitsu.vault.data.VaultSessionCleaner
 import app.hitsu.vault.data.db.HitsuDatabase
 import app.hitsu.vault.data.db.MediaDao
 import app.hitsu.vault.data.media.ContentImportSources
+import app.hitsu.vault.data.backup.BackupStore
 import app.hitsu.vault.data.media.ExifSanitizer
 import app.hitsu.vault.data.media.MediaExporter
 import app.hitsu.vault.data.media.MediaImporter
@@ -169,12 +170,22 @@ object AppModule {
         dao: MediaDao,
         importer: MediaImporter,
         files: VaultFiles,
+        clock: Clock,
         playback: PlaybackCache,
         intake: SharedIntake,
         vault: VaultGateway,
         @ApplicationScope scope: CoroutineScope,
         @IoDispatcher ioDispatcher: CoroutineDispatcher,
     ): MediaRepository = MediaRepository(
+        resolver = context.contentResolver,
+        backups = BackupStore(
+            dao = dao,
+            files = files,
+            vault = vault,
+            clock = clock,
+            stagingDir = File(context.cacheDir, STAGING_DIR),
+            ioDispatcher = ioDispatcher,
+        ),
         dao = dao,
         importer = importer,
         exporter = MediaExporter(

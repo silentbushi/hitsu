@@ -8,6 +8,9 @@ import android.database.sqlite.SQLiteConstraintException
 import app.hitsu.vault.data.media.ImportOutcome
 import app.hitsu.vault.data.media.ImportSource
 import app.hitsu.vault.data.media.ImportSources
+import app.hitsu.vault.data.backup.BackupFormatException
+import app.hitsu.vault.data.backup.BackupPassphraseException
+import app.hitsu.vault.data.backup.BackupStore
 import app.hitsu.vault.data.media.MediaExporter
 import app.hitsu.vault.data.media.MediaImporter
 import app.hitsu.vault.data.media.PlaybackCache
@@ -42,6 +45,25 @@ data class ImportStatus(
     val duplicates: Int = 0,
 )
 
+/** What a backup is doing, and how it ended. */
+data class BackupStatus(
+    val running: Boolean = false,
+    val restoring: Boolean = false,
+    val done: Int = 0,
+    val total: Int = 0,
+    val duplicates: Int = 0,
+    val finished: Boolean = false,
+    val error: BackupError? = null,
+)
+
+enum class BackupError {
+    /** The passphrase did not open it — or the file is damaged; GCM cannot tell the two apart. */
+    Passphrase,
+    Damaged,
+    Locked,
+    Io,
+}
+
 data class ExportStatus(
     val running: Boolean = false,
     val done: Int = 0,
@@ -50,6 +72,8 @@ data class ExportStatus(
 )
 
 class MediaRepository(
+    private val resolver: android.content.ContentResolver,
+    private val backups: BackupStore,
     private val dao: MediaDao,
     private val importer: MediaImporter,
     private val exporter: MediaExporter,
@@ -68,8 +92,12 @@ class MediaRepository(
     private val _exportStatus = MutableStateFlow(ExportStatus())
     val exportStatus: StateFlow<ExportStatus> = _exportStatus.asStateFlow()
 
+    private val _backupStatus = MutableStateFlow(BackupStatus())
+    val backupStatus: StateFlow<BackupStatus> = _backupStatus.asStateFlow()
+
     private var importJob: Job? = null
     private var exportJob: Job? = null
+    private var backupJob: Job? = null
 
     fun media(filter: MediaFilter): Flow<List<MediaItem>> {
         val rows = when (filter) {
@@ -260,6 +288,119 @@ class MediaRepository(
             }
         }
     }
+
+    /**
+     * Spec §7.10: the whole vault into one file the user picked, sealed with their passphrase. The
+     * passphrase is wiped as soon as the key is derived from it, whatever happens.
+     */
+    fun createBackup(target: Uri, passphrase: CharArray): Job? {
+        if (backupJob?.isActive == true) return null
+        val job = appScope.launch {
+            _backupStatus.value = BackupStatus(running = true)
+            try {
+                @Suppress("Recycle") // Closed by use below; lint loses it across withContext.
+                val sink = withContext(ioDispatcher) { resolver.openOutputStream(target) }
+                    ?: throw IOException("Cannot write there")
+                val count = sink.use {
+                    backups.create(it, passphrase) { done, total ->
+                        _backupStatus.value = BackupStatus(running = true, done = done, total = total)
+                    }
+                }
+                _backupStatus.value = BackupStatus(done = count, total = count, finished = true)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                // A half-written backup is worse than none: it would look like a copy that exists.
+                withContext(ioDispatcher) { runCatching { resolver.delete(target, null, null) } }
+                _backupStatus.value = BackupStatus(finished = true, error = e.asBackupError())
+            } finally {
+                passphrase.fill('\u0000')
+            }
+        }
+        backupJob = job
+        return job
+    }
+
+    /**
+     * The other direction. Every file comes back in through the ordinary import path, so it is sealed
+     * with this phone's DEK and gets its own thumbnail and row, and the fingerprint keeps a restore
+     * over a vault that already holds these photos from duplicating them.
+     */
+    fun restoreBackup(source: Uri, passphrase: CharArray): Job? {
+        if (backupJob?.isActive == true) return null
+        val job = appScope.launch {
+            _backupStatus.value = BackupStatus(running = true, restoring = true)
+            var duplicates = 0
+            try {
+                val cipher = vault.cipher ?: throw IllegalStateException("The vault is closed")
+                @Suppress("Recycle") // Closed by use below; lint loses it across withContext.
+                val stream = withContext(ioDispatcher) { resolver.openInputStream(source) }
+                    ?: throw IOException("Cannot read that")
+                var done = 0
+                stream.use { input ->
+                    backups.restore(
+                        source = input,
+                        passphrase = passphrase,
+                        onProgress = { finished, total ->
+                            done = finished
+                            _backupStatus.value = BackupStatus(
+                                running = true,
+                                restoring = true,
+                                done = finished,
+                                total = total,
+                                duplicates = duplicates,
+                            )
+                        },
+                    ) { file, item ->
+                        val outcome = withContext(ioDispatcher) {
+                            importer.import(item.asImportSource(file), cipher)
+                        }
+                        if (outcome is ImportOutcome.Duplicate) duplicates++
+                    }
+                }
+                _backupStatus.value = BackupStatus(
+                    restoring = true,
+                    done = done,
+                    total = done + duplicates,
+                    duplicates = duplicates,
+                    finished = true,
+                )
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                _backupStatus.value = BackupStatus(
+                    restoring = true,
+                    duplicates = duplicates,
+                    finished = true,
+                    error = e.asBackupError(),
+                )
+            } finally {
+                passphrase.fill('\u0000')
+            }
+        }
+        backupJob = job
+        return job
+    }
+
+    fun clearBackupStatus() {
+        _backupStatus.value = BackupStatus()
+    }
+
+    private fun Exception.asBackupError(): BackupError = when (this) {
+        is BackupPassphraseException -> BackupError.Passphrase
+        is BackupFormatException -> BackupError.Damaged
+        is IllegalStateException -> BackupError.Locked
+        is java.security.GeneralSecurityException -> BackupError.Damaged
+        else -> BackupError.Io
+    }
+
+    private fun app.hitsu.vault.data.backup.BackupItem.asImportSource(file: File) = ImportSource(
+        displayName = originalName ?: id,
+        mime = mime,
+        sizeBytes = file.length(),
+        open = { file.inputStream() },
+        openDescriptor = { ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY) },
+    )
 
     /** Bytes the vault occupies: encrypted objects plus their thumbnails. */
     suspend fun vaultSizeBytes(): Long = withContext(ioDispatcher) {

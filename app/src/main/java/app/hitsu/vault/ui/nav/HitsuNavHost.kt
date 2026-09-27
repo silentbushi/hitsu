@@ -24,6 +24,7 @@ import app.hitsu.vault.ui.player.VideoPlayerViewModel
 import app.hitsu.vault.ui.download.DownloadRoute
 import app.hitsu.vault.ui.download.DownloadViewModel
 import app.hitsu.vault.ui.settings.AboutScreen
+import app.hitsu.vault.ui.settings.BackupRoute
 import app.hitsu.vault.ui.settings.AutoLockRoute
 import app.hitsu.vault.ui.settings.SettingsRoute
 import app.hitsu.vault.ui.settings.YtDlpRoute
@@ -88,6 +89,7 @@ fun HitsuNavHost(vaultState: VaultState, pendingLink: String?, onLinkHandled: ()
                 onBack = { navController.popBackStack() },
                 onOpenAutoLock = { navController.navigate(Routes.SETTINGS_AUTO_LOCK) },
                 onOpenYtDlp = { navController.navigate(Routes.SETTINGS_YTDLP) },
+                onOpenBackup = { navController.navigate(Routes.SETTINGS_BACKUP) },
                 onOpenAbout = { navController.navigate(Routes.SETTINGS_ABOUT) },
             )
         }
@@ -98,6 +100,9 @@ fun HitsuNavHost(vaultState: VaultState, pendingLink: String?, onLinkHandled: ()
             YtDlpRoute(
                 onBack = { navController.popBackStack() },
             )
+        }
+        composable(Routes.SETTINGS_BACKUP) {
+            BackupRoute(onBack = { navController.popBackStack() })
         }
         composable(Routes.SETTINGS_ABOUT) {
             AboutScreen(onBack = { navController.popBackStack() })

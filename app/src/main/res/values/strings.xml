@@ -185,9 +185,40 @@
         <item quantity="other">%1$d archivos guardados en el cofre</item>
     </plurals>
     <string name="ytdlp_last_check">Última comprobación: %1$s</string>
+    <string name="settings_backup">Respaldo</string>
+    <string name="backup_note">Un solo archivo cifrado con todo lo que hay en el cofre, para llevártelo a otro teléfono o guardarlo aparte.</string>
+    <string name="backup_section_create">Crear</string>
+    <string name="backup_create">Crear respaldo</string>
+    <string name="backup_create_note">Se cifra con una contraseña que eliges ahora, no con tu PIN. Elige dónde guardarlo; Hitsu no lo sube a ningún sitio.</string>
+    <string name="backup_section_restore">Restaurar</string>
+    <string name="backup_restore">Restaurar respaldo</string>
+    <string name="backup_restore_note">Lo que ya esté en el cofre no se duplica. El respaldo abre aunque este teléfono tenga otro PIN.</string>
+    <string name="backup_pass_title">Contraseña del respaldo</string>
+    <string name="backup_pass_body">El archivo sale del teléfono, así que no lo protege tu PIN sino esta contraseña. Si la pierdes, el respaldo no se abre: no hay otra forma de entrar.</string>
+    <string name="backup_pass_restore_body">Escribe la contraseña con la que se creó este respaldo.</string>
+    <string name="backup_pass_hint">Contraseña</string>
+    <string name="backup_pass_repeat">Repítela</string>
+    <plurals name="backup_pass_short">
+        <item quantity="one">Al menos %d carácter</item>
+        <item quantity="other">Al menos %d caracteres</item>
+    </plurals>
+    <string name="backup_pass_mismatch">No coinciden</string>
+    <string name="backup_working">Guardando %1$d de %2$d</string>
+    <string name="backup_restoring">Restaurando %1$d de %2$d</string>
+    <plurals name="backup_created">
+        <item quantity="one">%d archivo en el respaldo</item>
+        <item quantity="other">%d archivos en el respaldo</item>
+    </plurals>
+    <plurals name="backup_restored">
+        <item quantity="one">%d archivo restaurado</item>
+        <item quantity="other">%d archivos restaurados</item>
+    </plurals>
+    <string name="backup_error_passphrase">La contraseña no abre el archivo, o está dañado. No se restauró nada.</string>
+    <string name="backup_error_damaged">Ese archivo no es un respaldo de Hitsu, o está incompleto.</string>
+    <string name="backup_error_locked">El cofre está cerrado.</string>
+    <string name="backup_error_io">No se pudo leer o escribir el archivo.</string>
     <string name="cookies_section">Cookies</string>
     <string name="cookies_create">Crear cookies</string>
-    <string name="cookies_save">Guardar cookies de este sitio</string>
     <string name="cookies_empty">No hay cookies guardadas</string>
     <string name="cookies_url_title">Crear cookies</string>
     <string name="cookies_url_body">Escribe la dirección del sitio donde vas a iniciar sesión. Al terminar, toca Listo y se guardan sus cookies.</string>
