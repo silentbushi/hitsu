@@ -18,6 +18,9 @@ interface MediaDao {
     )
     fun observeByType(type: MediaType): Flow<List<MediaEntity>>
 
+    @Query("SELECT * FROM media ORDER BY COALESCE(takenAt, importedAt) DESC, id DESC")
+    suspend fun all(): List<MediaEntity>
+
     @Query("SELECT * FROM media WHERE id = :id")
     suspend fun byId(id: String): MediaEntity?
 

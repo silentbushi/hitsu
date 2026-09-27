@@ -107,6 +107,119 @@ class VaultCipher internal constructor(private val dek: ByteArray) {
         }
     }
 
+    /**
+     * The same chunked format as [encryptTo], for callers that produce their own bytes instead of
+     * copying a stream — the backup writes a whole archive through here (§7.10). Sealing a chunk only
+     * happens once more data has arrived, so the chunk that closes the stream is the one marked last,
+     * and closing is what finishes the file: a sink that is never closed produces no last chunk, which
+     * is exactly the truncation the format is meant to catch.
+     */
+    fun encryptingSink(sink: OutputStream): OutputStream = ChunkSink(sink)
+
+    /** The reading half of [encryptingSink]. */
+    fun decryptingSource(source: InputStream): InputStream = ChunkSource(source)
+
+    private inner class ChunkSink(private val sink: OutputStream) : OutputStream() {
+        private val buffer = ByteArray(CHUNK_BYTES)
+        private var filled = 0
+        private var index = 0L
+        private var closed = false
+
+        init {
+            sink.write(MAGIC)
+        }
+
+        override fun write(b: Int) {
+            if (filled == buffer.size) seal(last = false)
+            buffer[filled++] = b.toByte()
+        }
+
+        override fun write(b: ByteArray, off: Int, len: Int) {
+            var written = 0
+            while (written < len) {
+                if (filled == buffer.size) seal(last = false)
+                val step = minOf(len - written, buffer.size - filled)
+                b.copyInto(buffer, filled, off + written, off + written + step)
+                filled += step
+                written += step
+            }
+        }
+
+        override fun close() {
+            if (closed) return
+            closed = true
+            seal(last = true)
+            sink.flush()
+        }
+
+        private fun seal(last: Boolean) {
+            val cipher = newCipher(Cipher.ENCRYPT_MODE, iv = null, index = index, last = last)
+            sink.write(if (last) LAST_CHUNK else MORE_CHUNKS)
+            sink.write(cipher.iv)
+            sink.write(cipher.doFinal(buffer, 0, filled))
+            buffer.fill(0, 0, filled)
+            filled = 0
+            index++
+        }
+    }
+
+    private inner class ChunkSource(private val source: InputStream) : InputStream() {
+        private val frame = ByteArray(1 + AesGcm.IV_BYTES)
+        private val sealed = ByteArray(CHUNK_BYTES + TAG_BYTES)
+        private var plain = ByteArray(0)
+        private var offset = 0
+        private var index = 0L
+        private var lastSeen = false
+        private var started = false
+
+        override fun read(): Int {
+            val one = ByteArray(1)
+            return if (read(one, 0, 1) < 0) -1 else one[0].toInt() and 0xFF
+        }
+
+        override fun read(b: ByteArray, off: Int, len: Int): Int {
+            if (len == 0) return 0
+            if (!fill()) return -1
+            val step = minOf(len, plain.size - offset)
+            plain.copyInto(b, off, offset, offset + step)
+            offset += step
+            return step
+        }
+
+        private fun fill(): Boolean {
+            if (offset < plain.size) return true
+            if (!started) {
+                val header = ByteArray(MAGIC.size)
+                if (source.readFully(header) != MAGIC.size || !header.contentEquals(MAGIC)) {
+                    throw EOFException("Not a chunked stream")
+                }
+                started = true
+            }
+            while (!lastSeen) {
+                readChunk()
+                if (offset < plain.size) return true
+            }
+            return false
+        }
+
+        private fun readChunk() {
+            if (source.readFully(frame) != frame.size) throw EOFException("Truncated file")
+            val last = frame[0] == LAST_CHUNK[0]
+            val read = source.readFully(sealed)
+            if (read < TAG_BYTES) throw EOFException("Truncated chunk")
+            val cipher = newCipher(
+                mode = Cipher.DECRYPT_MODE,
+                iv = frame.copyOfRange(1, frame.size),
+                index = index,
+                last = last,
+            )
+            plain = cipher.doFinal(sealed, 0, read)
+            offset = 0
+            index++
+            lastSeen = last
+        }
+    }
+
     private fun newCipher(mode: Int, iv: ByteArray?, index: Long, last: Boolean): Cipher =
         Cipher.getInstance(AesGcm.TRANSFORMATION).apply {
             val key = SecretKeySpec(dek, "AES")
