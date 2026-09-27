@@ -41,7 +41,7 @@ class AlbumFlowTest {
     @After
     fun tearDown() = database.close()
 
-    private suspend fun media(id: String): MediaEntity {
+    private suspend fun media(id: String, takenAt: Long = NOW): MediaEntity {
         val row = MediaEntity(
             id = id,
             type = MediaType.Photo,
@@ -52,7 +52,7 @@ class AlbumFlowTest {
             height = 100,
             durationMs = null,
             sizeBytes = 1_000,
-            takenAt = NOW,
+            takenAt = takenAt,
             importedAt = NOW,
             originalName = "$id.jpg",
             contentFingerprint = id,
@@ -102,10 +102,8 @@ class AlbumFlowTest {
 
     @Test
     fun theCoverIsTheNewestThingInTheAlbum() = runBlocking {
-        val older = media("old")
-        val newer = media("new")
-        database.mediaDao().insert(older.copy(takenAt = NOW - 10_000))
-        database.mediaDao().insert(newer.copy(takenAt = NOW))
+        val older = media("old", takenAt = NOW - 10_000)
+        val newer = media("new", takenAt = NOW)
         val album = albums.create("Capturas") as AlbumCreation.Created
         albums.add(album.id, listOf(older.id, newer.id))
 
