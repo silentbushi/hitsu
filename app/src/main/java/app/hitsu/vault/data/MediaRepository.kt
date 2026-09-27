@@ -71,8 +71,13 @@ data class ExportStatus(
     val failed: Int = 0,
 )
 
+/** Where newly imported items land, which depends on how they arrived (spec §9). */
+enum class ImportDestination { ImportAlbum, DownloadAlbum, None }
+
 class MediaRepository(
     private val resolver: android.content.ContentResolver,
+    private val albums: AlbumRepository,
+    private val albumPreferences: AlbumPreferences,
     private val backups: BackupStore,
     private val dao: MediaDao,
     private val importer: MediaImporter,
@@ -133,6 +138,7 @@ class MediaRepository(
     private fun startImport(
         open: suspend () -> List<ImportSource>,
         cleanUp: () -> Unit = {},
+        destination: ImportDestination = ImportDestination.ImportAlbum,
     ): Job {
         val job = appScope.launch {
             val items = open()
@@ -140,6 +146,7 @@ class MediaRepository(
             var done = 0
             var duplicates = 0
             var failed: String? = null
+            val imported = mutableListOf<String>()
 
             for (source in items) {
                 _importStatus.value = ImportStatus(
@@ -154,8 +161,11 @@ class MediaRepository(
                     break
                 }
                 try {
-                    when (withContext(ioDispatcher) { importer.import(source, cipher) }) {
-                        is ImportOutcome.Imported -> done++
+                    when (val outcome = withContext(ioDispatcher) { importer.import(source, cipher) }) {
+                        is ImportOutcome.Imported -> {
+                            imported += outcome.entity.id
+                            done++
+                        }
                         is ImportOutcome.Duplicate -> duplicates++
                     }
                 } catch (e: CancellationException) {
@@ -164,6 +174,8 @@ class MediaRepository(
                     failed = source.displayName
                 }
             }
+
+            fileInAlbum(destination, imported)
 
             _importStatus.value = ImportStatus(
                 done = done,
@@ -175,6 +187,26 @@ class MediaRepository(
         }
         importJob = job
         return job
+    }
+
+    /**
+     * Spec §9: what the downloader brings lands in its own album by default, so it stays together
+     * until the user files it. A destination that was never chosen means «Descargas», made the first
+     * time something needs it; one chosen and then cleared means no album at all.
+     */
+    private suspend fun fileInAlbum(destination: ImportDestination, mediaIds: List<String>) {
+        if (mediaIds.isEmpty()) return
+        val albumId = when (destination) {
+            ImportDestination.None -> null
+            ImportDestination.ImportAlbum -> albumPreferences.importAlbumId
+            ImportDestination.DownloadAlbum -> if (albumPreferences.downloadAlbumUnset) {
+                albums.destination(AlbumPreferences.DEFAULT_DOWNLOAD_ALBUM)
+                    ?.also { albumPreferences.downloadAlbumId = it }
+            } else {
+                albumPreferences.downloadAlbumId
+            }
+        } ?: return
+        albums.add(albumId, mediaIds)
     }
 
     val sharing: StateFlow<Boolean> get() = intake.staging
@@ -196,6 +228,7 @@ class MediaRepository(
         return startImport(
             open = { files.map { it.asImportSource() } },
             cleanUp = { files.forEach { it.delete() } },
+            destination = ImportDestination.DownloadAlbum,
         )
     }
 

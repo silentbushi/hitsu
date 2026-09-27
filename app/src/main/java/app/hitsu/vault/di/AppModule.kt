@@ -10,9 +10,12 @@ import app.hitsu.vault.crypto.KeystoreKeyWrapper
 import app.hitsu.vault.crypto.VaultCrypto
 import androidx.room.Room
 import app.hitsu.vault.data.CryptoVaultGateway
+import app.hitsu.vault.data.AlbumPreferences
+import app.hitsu.vault.data.AlbumRepository
 import app.hitsu.vault.data.MediaRepository
 import app.hitsu.vault.data.VaultSessionCleaner
 import app.hitsu.vault.data.db.HitsuDatabase
+import app.hitsu.vault.data.db.AlbumDao
 import app.hitsu.vault.data.db.MediaDao
 import app.hitsu.vault.data.media.ContentImportSources
 import app.hitsu.vault.data.backup.BackupStore
@@ -47,6 +50,7 @@ import kotlinx.coroutines.SupervisorJob
 import java.io.File
 import javax.inject.Singleton
 
+private const val ALBUM_PREFS = "hitsu.albums"
 private const val KEYSTORE_ALIAS = "hitsu.vault.dek.wrap"
 private const val BIOMETRIC_ALIAS = "hitsu.vault.dek.biometric"
 private const val META_FILE = "vault/meta.json"
@@ -118,11 +122,14 @@ object AppModule {
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): HitsuDatabase =
         Room.databaseBuilder(context, HitsuDatabase::class.java, DATABASE)
-            .addMigrations(HitsuDatabase.MIGRATION_1_2)
+            .addMigrations(HitsuDatabase.MIGRATION_1_2, HitsuDatabase.MIGRATION_2_3)
             .build()
 
     @Provides
     fun provideMediaDao(database: HitsuDatabase): MediaDao = database.mediaDao()
+
+    @Provides
+    fun provideAlbumDao(database: HitsuDatabase): AlbumDao = database.albumDao()
 
     @Provides
     @Singleton
@@ -173,8 +180,23 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideAlbumRepository(
+        albumDao: AlbumDao,
+        clock: Clock,
+        @IoDispatcher ioDispatcher: CoroutineDispatcher,
+    ): AlbumRepository = AlbumRepository(albumDao, clock, ioDispatcher)
+
+    @Provides
+    @Singleton
+    fun provideAlbumPreferences(@ApplicationContext context: Context): AlbumPreferences =
+        AlbumPreferences(context.getSharedPreferences(ALBUM_PREFS, Context.MODE_PRIVATE))
+
+    @Provides
+    @Singleton
     fun provideMediaRepository(
         @ApplicationContext context: Context,
+        albums: AlbumRepository,
+        albumPreferences: AlbumPreferences,
         dao: MediaDao,
         importer: MediaImporter,
         files: VaultFiles,
@@ -186,6 +208,8 @@ object AppModule {
         @IoDispatcher ioDispatcher: CoroutineDispatcher,
     ): MediaRepository = MediaRepository(
         resolver = context.contentResolver,
+        albums = albums,
+        albumPreferences = albumPreferences,
         backups = BackupStore(
             dao = dao,
             files = files,
