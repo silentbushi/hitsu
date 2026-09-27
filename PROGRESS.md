@@ -9,7 +9,7 @@ está en qué punto de ese plan estamos.
 _Actualizado: 27 sep 2026._
 
 Hay una app funcionando en el teléfono (Galaxy SM-S948B, Android 16), instalada por `installDebug` y
-probada a mano. 97 pruebas unitarias en verde y lint sin errores.
+probada a mano. 97 pruebas unitarias y 31 instrumentadas en verde, y lint sin errores.
 
 **Los catorce pasos de §16 están hechos.** Lo que queda son remates y lo que vaya saliendo al usarla.
 
@@ -41,24 +41,33 @@ Sin hacer: **11** (álbumes) y **12** (pulido de movimiento e icono).
 
 ## En progreso
 
-Nada a medio hacer, y nada pendiente de confirmar: los catorce pasos están probados en el teléfono.
+Nada. Los catorce pasos de §16 están hechos y probados en el teléfono, y los remates que quedaban
+apuntados también:
 
-Con el respaldo funcionando, **ya es seguro correr los tests instrumentados**
-(`:app:connectedDebugAndroidTest`), que desinstalan la app: basta hacer un respaldo antes y
-restaurarlo después. Conviene avisar igualmente antes de lanzarlos.
+- El diálogo de sin espacio lleva a **Liberar espacio**, que abre el gestor del sistema y reintenta
+  solo al volver.
+- Los tests instrumentados pasan (31), incluidos los nuevos de álbumes y del respaldo. Llevaban sin
+  compilarse desde el paso 9, así que hubo que ponerlos al día primero.
+- El respaldo se probó de la forma que importa: respaldo → desinstalación por los tests → PIN nuevo →
+  restaurar. Volvió todo, álbumes incluidos. Las cookies de los sitios no van en el respaldo y hay que
+  rehacerlas.
 
 ## Próximos pasos
 
-Ya no hay pasos pendientes en §16. Lo que queda apuntado:
+No hay nada pendiente. Lo que venga saldrá de usar la app.
 
-1. **Sueltos**: el botón «Liberar espacio» del diálogo de sin espacio (hoy dice «Reintentar»), y el
-   texto al revés en los campos del login de TikTok (solo ahí; se rodea pegando el usuario).
-2. **Pruebas instrumentadas**: pasarlas ahora que hay respaldo, y mirar si merece la pena añadir
-   alguna sobre álbumes y exportación, que hoy solo se prueban a mano.
-3. **Lo que pida el uso diario.** La app está terminada según el spec; de aquí en adelante manda lo
-   que aparezca usándola.
+Una cosa conocida y **decidida como aceptable** (27 sep 2026): en el login de TikTok los campos
+escriben al revés, medido y acotado a esa página. Se rodea pegando el texto, y como la app es de uso
+personal el usuario prefiere dejarlo así en vez de interceptar la composición del teclado.
 
 ## Decisiones y notas
+
+- **27 sep 2026 — Los tests instrumentados se pasan con respaldo delante.** Desinstalan la app y se
+  llevan el cofre, así que el orden es: crear respaldo, correrlos, reinstalar, restaurar. Se hizo así
+  y funcionó; de paso es la única prueba real de que restaurar sirve.
+- **27 sep 2026 — Dejar de compilar los tests instrumentados sale caro.** Entre el paso 9 y el 14 se
+  quedaron atrás con los cambios del gateway y del repositorio, y hubo que arreglarlos antes de poder
+  correrlos. Conviene compilarlos (`:app:compileDebugAndroidTestKotlin`) aunque no se ejecuten.
 
 - **27 sep 2026 — El icono es el kanji de verdad, no un dibujo aproximado.** El trazo de 櫃 sale de
   Noto Sans JP (licencia SIL OFL, así que se puede empotrar) en vez de dibujarse a mano: dieciocho
