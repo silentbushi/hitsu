@@ -355,7 +355,20 @@ No usar `VideoView`. No skin tipo botones 2014. Controles finos, tipografía de 
 - Todos
 - Fotos
 - Vídeos
-- Usuario puede crear álbum y mover (relación N:N en Room). Sin nested.
+- **Álbumes**: una pestaña más, con la lista de los que haya. Tocar uno abre `album/{id}`, que es el
+  mismo grid filtrado.
+- Un item puede estar en varios álbumes (relación N:N en Room) y estar en uno no lo saca de Todos.
+  Sin álbumes dentro de álbumes.
+- Sacar algo de un álbum **no lo borra del cofre**; borrar un álbum tampoco borra lo que contenía.
+  Borrar del cofre sí lo quita de sus álbumes.
+- Desde el modo selección, **Álbum** añade lo seleccionado a uno existente o a uno nuevo.
+- Ajustes → Álbumes (mockup `docs/design/settings/05-albumes.png`): renombrar y borrar álbumes, ver
+  cuántos elementos tiene cada uno, ordenar la lista, y dos destinos automáticos:
+  - **Álbum al importar**: dónde cae lo que entra por el selector de fotos o por compartir. Ninguno
+    por defecto.
+  - **Álbum de descargas**: dónde cae lo que trae yt-dlp, que por defecto es un álbum propio
+    llamado «Descargas», creado la primera vez que hace falta. Así lo descargado queda junto y se
+    reparte después, sin mezclarse con lo que se importa a mano.
 
 Orden: `takenAt` desc, fallback `importedAt`.
 
@@ -434,6 +447,7 @@ Nada de “¡Listo, tus recuerdos están a salvo! 🎉”.
 | `lock` | PIN / bio |
 | `home` | grid + tabs Todos/Fotos/Vídeos + álbumes + FAB |
 | `album/{id}` | grid filtrado |
+| `settings/albums` | renombrar, borrar y contar álbumes; destinos automáticos |
 | `photo/{id}` | visor |
 | `video/{id}` | player |
 | `settings` | auto-lock, bio on/off, cambiar PIN, espacio usado, export all (si hay), about |
@@ -490,8 +504,8 @@ MediaEntity(
   favorite: Boolean
 )
 
-AlbumEntity(id, name, createdAt)
-AlbumMediaCrossRef(albumId, mediaId, addedAt)
+AlbumEntity(id, name, createdAt)          // name único, sin distinguir mayúsculas
+AlbumMediaCrossRef(albumId, mediaId, addedAt)  // borrar media o álbum se lleva la fila (CASCADE)
 VaultMeta(wrappedDek, kdfSalt, kdfParams, pinKind, bioEnabled, failedUnlocks, lockTimeout)
 ```
 
@@ -512,6 +526,9 @@ Nada de plaintext paths fuera de filesDir.
 - [ ] El respaldo se crea con su propia contraseña y se restaura en otro teléfono con otro PIN.
 - [ ] Una contraseña equivocada no importa nada y lo dice.
 - [ ] Restaurar sobre un cofre que ya tiene ese contenido no lo duplica.
+- [ ] Un item puede estar en varios álbumes y sigue apareciendo en Todos.
+- [ ] Sacar de un álbum no borra nada del cofre; borrar un álbum tampoco.
+- [ ] Lo que descarga yt-dlp aparece en el álbum de descargas sin tener que moverlo.
 - [ ] Visor: swipe entre fotos, zoom.
 - [ ] Player: seek, volumen gesto, brillo gesto, ±10s, PiP.
 - [ ] PiP se cierra si corre auto-lock.
@@ -542,7 +559,7 @@ No empieces por animaciones ni álbumes.
 8. Share intent + staging.
 9. Selección múltiple, borrar del vault, exportar a la galería (§7.7 y §7.8).
 10. Auto-lock, FLAG_SECURE, bio, settings.
-11. Álbumes.
+11. Álbumes: pestaña, pantalla de álbum, añadir desde selección, ajustes y destinos automáticos (§9).
 12. Pulido motion e icono.
 13. Descargador: yt-dlp empotrado, enlace compartido, notificación y descarga rápida, actualización desde Ajustes y cookies mediante la ventana de login de §7.9.
 14. Respaldo del cofre: crear y restaurar el archivo cifrado de §7.10.
