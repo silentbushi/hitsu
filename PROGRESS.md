@@ -9,9 +9,9 @@ está en qué punto de ese plan estamos.
 _Actualizado: 27 sep 2026._
 
 Hay una app funcionando en el teléfono (Galaxy SM-S948B, Android 16), instalada por `installDebug` y
-probada a mano. 74 pruebas unitarias en verde y lint sin errores.
+probada a mano. 79 pruebas unitarias en verde y lint sin errores.
 
-Completado del orden de §16: **pasos 1 a 9 y el 13**.
+Completado del orden de §16: **pasos 1 a 9, el 13 y el 14**.
 
 - **1–2. Cofre.** Setup de PIN, bloqueo, DEK envuelta por PIN + Keystore, cifrado en streaming por
   bloques de 1 MiB.
@@ -25,33 +25,32 @@ Completado del orden de §16: **pasos 1 a 9 y el 13**.
 - **13. Descargador.** yt-dlp empotrado con actualización por antigüedad, enlace compartido,
   descarga rápida desde la hoja de compartir, notificación al terminar, y cookies creadas desde una
   ventana de login propia y guardadas cifradas.
+- **14. Respaldo (§7.10).** Ajustes → Respaldo crea un archivo `.hitsubak` con todo el cofre, cifrado
+  con una contraseña propia, y lo restaura. **Escrito y verificado en JVM, pendiente de probar en el
+  teléfono.**
 - **10 a medias.** Auto-bloqueo configurable y FLAG_SECURE están; faltan biometría y cambio de PIN.
 
 Sin hacer: **10** (lo que falta), **11** (álbumes) y **12** (pulido de movimiento e icono).
 
 ## En progreso
 
-Nada a medio escribir en el árbol de trabajo. Lo siguiente es el **respaldo cifrado del cofre**, que
-el usuario pidió como segunda forma de exportar, y está **esperando una decisión suya** antes de
-escribir código:
+El respaldo está implementado y no queda nada a medio escribir, pero **falta la prueba en el
+teléfono**, que es lo primero que hay que hacer al retomar:
 
-- ¿Con qué se cifra el archivo de respaldo, con una **contraseña aparte** o con el **mismo PIN**? Un
-  PIN de 6 dígitos protege bien dentro del teléfono porque el Keystore limita los intentos, pero un
-  archivo que sale del dispositivo no tiene esa protección.
-- Secundario, y lo decide quien lo implemente si no hay preferencia: si el respaldo lleva las
-  miniaturas dentro o se regeneran al importarlo.
+1. Ajustes → Respaldo → Crear respaldo, contraseña, elegir dónde guardarlo.
+2. Restaurarlo sobre el mismo cofre: no debe duplicar nada y debe decir cuántos ya estaban.
+3. Probar una contraseña equivocada: debe decirlo y no importar nada.
 
-La forma pensada: un único archivo, elegido por SAF (`CREATE_DOCUMENT`), con cabecera propia y sal del
-KDF, donde el contenido del cofre se descifra con la DEK y se vuelve a cifrar con la clave del respaldo
-sobre la marcha, sin que nada en claro toque el disco. Al importarlo se descifra con la contraseña y se
-vuelve a cifrar con la DEK local, de modo que el respaldo sirve en otro teléfono. La deduplicación por
-huella evita que reimportar duplique. Hay que añadirlo antes al spec: lo que no está ahí, no se
-implementa.
+Lo que hay escrito: `data/backup/BackupArchive.kt` (formato por entradas y bloques),
+`BackupCrypto.kt` (cabecera en claro con sal e iteraciones, clave derivada de la contraseña),
+`BackupStore.kt` (crear y restaurar en streaming), `VaultCipher.encryptingSink`/`decryptingSource`
+(los bloques cifrados sin pasar por memoria), `MediaRepository.createBackup`/`restoreBackup`, y la
+pantalla `ui/settings/BackupScreen.kt`. Las pruebas de formato están en `BackupFormatTest`.
 
 ## Próximos pasos
 
-1. **Respaldo cifrado** exportar/importar, en cuanto esté decidida la contraseña. Añadirlo a
-   `docs/HITSU_SPEC.md` (§7.8 o sección nueva) antes de implementarlo.
+1. **Probar el respaldo en el teléfono** (lo de arriba). Si algo falla, ahí es donde continúa el
+   trabajo.
 2. **Resto del paso 10**: biometría y cambio de PIN; sus filas en Ajustes están ocultas hasta que
    funcionen.
 3. **Paso 11**: álbumes, incluida la pestaña de la pantalla principal y el botón "Álbum" de la barra de
@@ -61,6 +60,17 @@ implementa.
    texto al revés en los campos del login de TikTok (solo ahí; se rodea pegando el usuario).
 
 ## Decisiones y notas
+
+- **27 sep 2026 — El respaldo lleva contraseña propia, no el PIN.** Dentro del teléfono el PIN aguanta
+  porque el Keystore envuelve la DEK con una clave no exportable y limita los intentos; un archivo que
+  sale del dispositivo no tiene esa red, así que seis dígitos se prueban enteros sin que nadie lo
+  impida. Se pide dos veces al crearlo y, si se pierde, no hay forma de abrirlo.
+- **27 sep 2026 — Las entradas del respaldo van por bloques, sin tamaño por delante.** Ni SAF deja
+  volver atrás a rellenar un tamaño ya escrito, ni el índice sabe lo que pesa una foto guardada (se le
+  quitó el GPS al importarla). Cada entrada es una sucesión de bloques y un cero que la cierra.
+- **27 sep 2026 — Restaurar pasa por el importador normal.** Así lo restaurado queda cifrado con la DEK
+  de *este* teléfono, con su miniatura y su fila, y la huella evita duplicados. Es lo que hace que un
+  respaldo abra en otro dispositivo con otro PIN.
 
 - **27 sep 2026 — Exportar sin ubicación.** Al exportar, el MP4/MOV se reempaqueta copiando las pistas
   sin recodificar, el HEIC sale como JPEG de calidad 95 (enderezado antes, porque su orientación vivía
