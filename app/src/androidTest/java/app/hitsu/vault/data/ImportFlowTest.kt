@@ -40,6 +40,9 @@ import org.junit.runner.RunWith
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
+import android.content.Context
+import app.hitsu.vault.data.backup.BackupStore
+import app.hitsu.vault.data.media.MediaExporter
 
 /** Importing copies into the vault and never touches the gallery; the same file lands only once. */
 @RunWith(AndroidJUnit4::class)
@@ -51,6 +54,8 @@ class ImportFlowTest {
     private lateinit var root: File
     private lateinit var files: VaultFiles
     private lateinit var repository: MediaRepository
+    private lateinit var albums: AlbumRepository
+    private lateinit var albumPreferences: AlbumPreferences
     private val cipher = VaultCipher(AesGcm.newKey())
 
     private inner class UnlockedVault : VaultGateway {
@@ -63,6 +68,13 @@ class ImportFlowTest {
         override suspend fun create(pin: CharArray, biometricRequested: Boolean) = Unit
         override suspend fun unlock(pin: CharArray): UnlockResult = UnlockResult.Success
         override suspend fun setLockTimeout(millis: Long) = Unit
+        override suspend fun changePin(currentPin: CharArray, newPin: CharArray) = false
+        override val biometricEnabled = false
+        override fun biometricEnrollCipher(): javax.crypto.Cipher? = null
+        override fun biometricUnlockCipher(): javax.crypto.Cipher? = null
+        override suspend fun enableBiometric(cipher: javax.crypto.Cipher) = false
+        override suspend fun unlockWithBiometric(cipher: javax.crypto.Cipher) = false
+        override suspend fun forgetBiometric() = Unit
         override fun lock() = Unit
     }
 
@@ -85,7 +97,28 @@ class ImportFlowTest {
         database = Room.inMemoryDatabaseBuilder(context, HitsuDatabase::class.java).build()
         root = File(context.cacheDir, "import-test-${System.nanoTime()}")
         files = VaultFiles(root)
+        albumPreferences = AlbumPreferences(
+            context.getSharedPreferences("albums-test-${System.nanoTime()}", Context.MODE_PRIVATE),
+        )
+        albums = AlbumRepository(database.albumDao(), Clock { 0L }, Dispatchers.IO)
         repository = MediaRepository(
+            resolver = context.contentResolver,
+            albums = albums,
+            albumPreferences = albumPreferences,
+            backups = BackupStore(
+                dao = database.mediaDao(),
+                albums = albums,
+                files = files,
+                vault = UnlockedVault(),
+                clock = Clock { 0L },
+                stagingDir = File(context.cacheDir, "backup-test"),
+                ioDispatcher = Dispatchers.IO,
+            ),
+            exporter = MediaExporter(
+                resolver = context.contentResolver,
+                stagingDir = File(context.cacheDir, "export-test"),
+                sanitizer = ExifSanitizer(File(context.cacheDir, "staging-export")),
+            ),
             dao = database.mediaDao(),
             importer = MediaImporter(
                 files = files,
