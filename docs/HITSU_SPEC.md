@@ -237,6 +237,50 @@ grande para memoria) y se sobrescribe y se borra antes de terminar.
 
 ---
 
+### 7.10 Respaldo del cofre
+
+Exportar (§7.8) saca copias sueltas a la galería. El respaldo es la otra mitad: **un solo archivo
+cifrado con todo el contenido del cofre**, para llevárselo a otro teléfono o guardarlo aparte. Vive en
+Ajustes → Respaldo, con dos acciones: **Crear respaldo** y **Restaurar respaldo**.
+
+**Contraseña aparte, no el PIN.** Dentro del teléfono, el PIN de 6 dígitos aguanta porque el Keystore
+envuelve la DEK con una clave no exportable y limita los intentos (§5.1). Un archivo que sale del
+dispositivo no tiene esa red: quien lo tenga puede probar el millón de combinaciones sin que nadie se
+lo impida. Por eso el respaldo se cifra con una contraseña que se pide al crearlo — escrita dos veces
+para no guardar una errata — y se vuelve a pedir al restaurarlo. Si se pierde, el respaldo no se abre:
+no hay otra forma de entrar, y la pantalla lo dice antes de crearlo.
+
+**Formato** (`.hitsubak`), en dos capas:
+
+```
+HTSUBAK | versión (1) | sal (16) | iteraciones (4)     ← en claro, es lo que hace falta para derivar
+<el resto va cifrado con la clave derivada de la contraseña,
+ en el mismo formato por bloques de 1 MiB de §5.3>
+   HTSUARC | versión (1)
+   entrada: nombre (longitud + utf8) | tamaño (8) | bytes
+   ...
+   fin: longitud 0
+```
+
+La primera entrada es `manifest.json` (versión, fecha y la lista de items con su nombre original,
+mime, tipo y fechas); después va una entrada por objeto, `media/<id>`, con el archivo **en claro
+dentro de la capa cifrada**. La clave sale de PBKDF2-HmacSHA256 con 310 000 iteraciones y sal nueva
+por respaldo, y cifra con AES-256-GCM igual que todo lo demás.
+
+**Nada en claro toca el disco.** El cofre se descifra con la DEK y se vuelve a cifrar con la clave del
+respaldo sobre la marcha, de bloque en bloque; el archivo lo elige el usuario con `CREATE_DOCUMENT` y
+se escribe en streaming, así que un vídeo de gigabytes no pasa por memoria ni deja copias.
+
+**Restaurar** pide la contraseña, abre el archivo con `OPEN_DOCUMENT` y mete cada entrada por el mismo
+camino que cualquier import: se cifra con la DEK **de este** teléfono, se le genera miniatura y se
+indexa. Por eso el respaldo sirve en otro dispositivo y con otro PIN. La deduplicación por huella
+(§5.3.8) hace que restaurar sobre un cofre que ya tiene esas fotos no las duplique; se informa de
+cuántas se omitieron. Una contraseña equivocada se nota al primer bloque, porque GCM no entrega nada
+sin comprobar su tag, y no se importa nada.
+
+**El respaldo no es el cofre.** Es un archivo que el usuario guarda donde quiera y del que Hitsu no
+sabe nada más; la app no lo sube a ningún sitio ni lo vigila.
+
 ### 7.9 Cookies de sitios
 
 Hay posts que un sitio no entrega sin sesión iniciada. Para eso, Ajustes → yt-dlp → **Crear cookies** pide
@@ -465,6 +509,9 @@ Nada de plaintext paths fuera de filesDir.
 - [ ] Selección: long-press abre el modo, Todo selecciona lo visible, atrás y ✕ salen.
 - [ ] Borrar pide confirmación y se lleva objeto, thumb y fila.
 - [ ] Lo exportado aparece en la galería y no lleva ubicación dentro.
+- [ ] El respaldo se crea con su propia contraseña y se restaura en otro teléfono con otro PIN.
+- [ ] Una contraseña equivocada no importa nada y lo dice.
+- [ ] Restaurar sobre un cofre que ya tiene ese contenido no lo duplica.
 - [ ] Visor: swipe entre fotos, zoom.
 - [ ] Player: seek, volumen gesto, brillo gesto, ±10s, PiP.
 - [ ] PiP se cierra si corre auto-lock.
@@ -498,6 +545,7 @@ No empieces por animaciones ni álbumes.
 11. Álbumes.
 12. Pulido motion e icono.
 13. Descargador: yt-dlp empotrado, enlace compartido, notificación y descarga rápida, actualización desde Ajustes y cookies mediante la ventana de login de §7.9.
+14. Respaldo del cofre: crear y restaurar el archivo cifrado de §7.10.
 
 Cada paso debe compilar y poder ejecutarse.
 
