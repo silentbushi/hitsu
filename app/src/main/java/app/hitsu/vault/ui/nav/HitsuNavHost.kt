@@ -16,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import app.hitsu.vault.domain.VaultState
 import app.hitsu.vault.domain.MediaFilter
+import app.hitsu.vault.domain.MediaType
 import app.hitsu.vault.ui.home.HomeRoute
 import app.hitsu.vault.ui.lock.LockRoute
 import app.hitsu.vault.ui.setup.SetupRoute
@@ -23,7 +24,10 @@ import app.hitsu.vault.ui.player.VideoPlayerRoute
 import app.hitsu.vault.ui.player.VideoPlayerViewModel
 import app.hitsu.vault.ui.download.DownloadRoute
 import app.hitsu.vault.ui.download.DownloadViewModel
+import app.hitsu.vault.ui.albums.AlbumRoute
+import app.hitsu.vault.ui.albums.AlbumViewModel
 import app.hitsu.vault.ui.settings.AboutScreen
+import app.hitsu.vault.ui.settings.AlbumsSettingsRoute
 import app.hitsu.vault.ui.settings.BackupRoute
 import app.hitsu.vault.ui.settings.ChangePinRoute
 import app.hitsu.vault.ui.settings.AutoLockRoute
@@ -65,6 +69,7 @@ fun HitsuNavHost(vaultState: VaultState, pendingLink: String?, onLinkHandled: ()
                 onOpenPhoto = { id, filter -> navController.navigate(Routes.photo(id, filter)) },
                 onOpenVideo = { id -> navController.navigate(Routes.video(id)) },
                 onOpenSettings = { navController.navigate(Routes.SETTINGS) },
+                onOpenAlbum = { navController.navigate(Routes.album(it)) },
             )
         }
         composable(
@@ -90,6 +95,7 @@ fun HitsuNavHost(vaultState: VaultState, pendingLink: String?, onLinkHandled: ()
                 onBack = { navController.popBackStack() },
                 onOpenAutoLock = { navController.navigate(Routes.SETTINGS_AUTO_LOCK) },
                 onOpenYtDlp = { navController.navigate(Routes.SETTINGS_YTDLP) },
+                onOpenAlbums = { navController.navigate(Routes.SETTINGS_ALBUMS) },
                 onOpenChangePin = { navController.navigate(Routes.SETTINGS_CHANGE_PIN) },
                 onOpenBackup = { navController.navigate(Routes.SETTINGS_BACKUP) },
                 onOpenAbout = { navController.navigate(Routes.SETTINGS_ABOUT) },
@@ -103,6 +109,9 @@ fun HitsuNavHost(vaultState: VaultState, pendingLink: String?, onLinkHandled: ()
                 onBack = { navController.popBackStack() },
             )
         }
+        composable(Routes.SETTINGS_ALBUMS) {
+            AlbumsSettingsRoute(onBack = { navController.popBackStack() })
+        }
         composable(Routes.SETTINGS_CHANGE_PIN) {
             ChangePinRoute(onBack = { navController.popBackStack() })
         }
@@ -111,6 +120,21 @@ fun HitsuNavHost(vaultState: VaultState, pendingLink: String?, onLinkHandled: ()
         }
         composable(Routes.SETTINGS_ABOUT) {
             AboutScreen(onBack = { navController.popBackStack() })
+        }
+        composable(
+            route = Routes.ALBUM,
+            arguments = listOf(navArgument(AlbumViewModel.ARG_ID) { type = NavType.StringType }),
+        ) {
+            AlbumRoute(
+                onOpen = { item ->
+                    if (item.type == MediaType.Video) {
+                        navController.navigate(Routes.video(item.id))
+                    } else {
+                        navController.navigate(Routes.photo(item.id, MediaFilter.All))
+                    }
+                },
+                onBack = { navController.popBackStack() },
+            )
         }
         composable(
             route = Routes.VIDEO,

@@ -13,10 +13,12 @@ object Routes {
     const val PHOTO = "photo/{id}?filter={filter}"
 
     const val VIDEO = "video/{id}"
+    const val ALBUM = "album/{id}"
     const val DOWNLOAD = "download/{url}"
     const val SETTINGS = "settings"
     const val SETTINGS_AUTO_LOCK = "settings/autolock"
     const val SETTINGS_YTDLP = "settings/ytdlp"
+    const val SETTINGS_ALBUMS = "settings/albums"
     const val SETTINGS_CHANGE_PIN = "settings/pin"
     const val SETTINGS_BACKUP = "settings/backup"
     const val SETTINGS_ABOUT = "settings/about"
@@ -24,6 +26,8 @@ object Routes {
     fun photo(id: String, filter: MediaFilter): String = "photo/$id?filter=${filter.name}"
 
     fun video(id: String): String = "video/$id"
+
+    fun album(id: String): String = "album/$id"
 
     fun download(url: String): String =
         "download/" + java.net.URLEncoder.encode(url, Charsets.UTF_8.name())

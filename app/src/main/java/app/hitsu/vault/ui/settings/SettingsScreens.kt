@@ -54,6 +54,7 @@ fun SettingsRoute(
     onBack: () -> Unit,
     onOpenAutoLock: () -> Unit,
     onOpenYtDlp: () -> Unit,
+    onOpenAlbums: () -> Unit,
     onOpenChangePin: () -> Unit,
     onOpenBackup: () -> Unit,
     onOpenAbout: () -> Unit,
@@ -69,6 +70,7 @@ fun SettingsRoute(
         onBack = onBack,
         onOpenAutoLock = onOpenAutoLock,
         onOpenYtDlp = onOpenYtDlp,
+        onOpenAlbums = onOpenAlbums,
         onOpenChangePin = onOpenChangePin,
         onOpenBackup = onOpenBackup,
         onOpenAbout = onOpenAbout,
@@ -100,6 +102,7 @@ fun SettingsScreen(
     onBack: () -> Unit,
     onOpenAutoLock: () -> Unit,
     onOpenYtDlp: () -> Unit,
+    onOpenAlbums: () -> Unit = {},
     onOpenChangePin: () -> Unit = {},
     onOpenBackup: () -> Unit,
     onOpenAbout: () -> Unit,
@@ -148,6 +151,10 @@ fun SettingsScreen(
         )
 
         SettingsSection(stringResource(R.string.settings_tools))
+        SettingsRow(
+            title = stringResource(R.string.settings_albums),
+            onClick = onOpenAlbums,
+        )
         SettingsRow(
             title = stringResource(R.string.settings_ytdlp),
             value = state.ytDlpVersion,

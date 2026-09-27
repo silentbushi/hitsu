@@ -117,6 +117,35 @@
     <string name="settings_about">Acerca de</string>
     <string name="action_cancel">Cancelar</string>
     <string name="action_all">Todo</string>
+    <string name="action_album">Álbum</string>
+    <string name="action_remove_from_album">Quitar</string>
+    <string name="home_tab_albums">Álbumes</string>
+    <string name="settings_albums">Álbumes</string>
+    <string name="albums_import_destination">Álbum al importar</string>
+    <string name="albums_download_destination">Álbum de descargas</string>
+    <string name="albums_destination_none">Ninguno</string>
+    <string name="albums_destination_title">¿Dónde cae lo nuevo?</string>
+    <string name="albums_destination_body">Se añade al álbum además de aparecer en Todos, como cualquier otra cosa del cofre.</string>
+    <string name="albums_show_counts">Mostrar número de elementos</string>
+    <string name="albums_order">Orden de álbumes</string>
+    <string name="albums_order_alphabetical">Alfabético</string>
+    <string name="albums_order_newest">Recientes</string>
+    <string name="albums_yours">Tus álbumes</string>
+    <string name="albums_none_yet">Todavía no has creado ninguno.</string>
+    <string name="albums_rename">Cambiar el nombre</string>
+    <string name="albums_rename_body">Solo cambia cómo se llama; lo que contiene se queda igual.</string>
+    <string name="albums_delete_title">¿Borrar «%1$s»?</string>
+    <plurals name="albums_delete_body">
+        <item quantity="one">Su elemento sigue en el cofre; solo desaparece el álbum.</item>
+        <item quantity="other">Sus %d elementos siguen en el cofre; solo desaparece el álbum.</item>
+    </plurals>
+    <string name="albums_delete_note">Borrar un álbum no borra nada del cofre.</string>
+    <string name="albums_none">Todavía no hay álbumes. Selecciona fotos y toca Álbum para crear el primero.</string>
+    <string name="albums_empty">Este álbum está vacío.</string>
+    <string name="albums_add_title">Añadir a un álbum</string>
+    <string name="albums_add_body" tools:ignore="PluralsCandidate">Se añaden %1$d sin salir de donde están: un item puede estar en varios álbumes.</string>
+    <string name="albums_new_hint">Nombre del álbum nuevo</string>
+    <string name="albums_create">Crear y añadir</string>
     <string name="action_export">Exportar</string>
     <string name="action_delete">Borrar</string>
     <plurals name="home_selected">

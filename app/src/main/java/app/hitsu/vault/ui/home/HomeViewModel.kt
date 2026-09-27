@@ -3,6 +3,9 @@ package app.hitsu.vault.ui.home
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.hitsu.vault.data.AlbumCreation
+import app.hitsu.vault.data.AlbumPreferences
+import app.hitsu.vault.data.AlbumRepository
 import app.hitsu.vault.data.MediaRepository
 import app.hitsu.vault.domain.AutoLock
 import app.hitsu.vault.domain.MediaFilter
@@ -14,17 +17,22 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val repository: MediaRepository,
+    private val albums: AlbumRepository,
+    private val preferences: AlbumPreferences,
     private val autoLock: AutoLock,
 ) : ViewModel() {
 
+    private val tab = MutableStateFlow(HomeTab.All)
     private val filter = MutableStateFlow(MediaFilter.All)
     private val selection = MutableStateFlow(emptySet<String>())
+    private val picking = MutableStateFlow(false)
 
     init {
         repository.ensureFingerprints()
@@ -32,21 +40,32 @@ class HomeViewModel @Inject constructor(
         repository.importShared()
     }
 
-    /** Grouped in two because combine only goes up to five flows. */
+    /** Grouped because combine only goes up to five flows. */
     private val work = combine(
         repository.importStatus,
         repository.sharing,
         repository.exportStatus,
     ) { importStatus, sharing, exportStatus -> Triple(importStatus, sharing, exportStatus) }
 
+    private val albumState = combine(
+        tab,
+        albums.albums(preferences.order),
+        picking,
+    ) { current, list, pickingAlbum -> Triple(current, list, pickingAlbum) }
+
     val state: StateFlow<HomeUiState> = combine(
         filter,
         filter.flatMapLatest { repository.media(it) },
         selection,
         work,
-    ) { selected, items, chosen, (importStatus, sharing, exportStatus) ->
+        albumState,
+    ) { selected, items, chosen, (importStatus, sharing, exportStatus), (current, list, pickingAlbum) ->
         val days = groupByDay(items)
         HomeUiState(
+            tab = current,
+            albums = list,
+            showAlbumCounts = preferences.showCounts,
+            pickingAlbum = pickingAlbum,
             filter = selected,
             days = days,
             loaded = true,
@@ -58,8 +77,16 @@ class HomeViewModel @Inject constructor(
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), HomeUiState())
 
-    fun onFilterSelected(selected: MediaFilter) {
-        filter.value = selected
+    fun onTabSelected(selected: HomeTab) {
+        tab.value = selected
+        // Albums are a list, not a filter: the grid keeps whatever it was showing underneath.
+        when (selected) {
+            HomeTab.All -> filter.value = MediaFilter.All
+            HomeTab.Photos -> filter.value = MediaFilter.Photos
+            HomeTab.Videos -> filter.value = MediaFilter.Videos
+            HomeTab.Albums -> Unit
+        }
+        if (selected == HomeTab.Albums) selection.value = emptySet()
     }
 
     /** The picker backgrounds the app; without this the vault would lock before it returns. */
@@ -90,6 +117,37 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onExportStatusSeen() = repository.clearExportStatus()
+
+    fun onOpenPicker() {
+        picking.value = true
+    }
+
+    fun onDismissPicker() {
+        picking.value = false
+    }
+
+    fun onAddToAlbum(albumId: String) {
+        val chosen = selection.value.toList()
+        picking.value = false
+        viewModelScope.launch {
+            albums.add(albumId, chosen)
+            selection.value = emptySet()
+        }
+    }
+
+    fun onCreateAlbum(name: String) {
+        val chosen = selection.value.toList()
+        picking.value = false
+        viewModelScope.launch {
+            val target = when (val created = albums.create(name)) {
+                is AlbumCreation.Created -> created.id
+                is AlbumCreation.NameTaken -> created.id
+                AlbumCreation.Invalid -> return@launch
+            }
+            albums.add(target, chosen)
+            selection.value = emptySet()
+        }
+    }
 
     private companion object {
         const val STOP_TIMEOUT_MS = 5_000L

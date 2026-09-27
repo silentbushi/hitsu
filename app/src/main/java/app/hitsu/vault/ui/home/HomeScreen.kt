@@ -69,11 +69,15 @@ import app.hitsu.vault.ui.theme.HitsuType
 import coil3.compose.AsyncImage
 import kotlinx.coroutines.delay
 import java.time.LocalDate
+import androidx.compose.foundation.layout.RowScope
+import app.hitsu.vault.data.db.AlbumWithCount
+import app.hitsu.vault.ui.albums.AlbumPickerDialog
 
 private val TABS = listOf(
-    MediaFilter.All to R.string.home_tab_all,
-    MediaFilter.Photos to R.string.home_tab_photos,
-    MediaFilter.Videos to R.string.home_tab_videos,
+    HomeTab.All to R.string.home_tab_all,
+    HomeTab.Photos to R.string.home_tab_photos,
+    HomeTab.Videos to R.string.home_tab_videos,
+    HomeTab.Albums to R.string.home_tab_albums,
 )
 
 @Composable
@@ -81,6 +85,7 @@ fun HomeRoute(
     onOpenPhoto: (String, MediaFilter) -> Unit,
     onOpenVideo: (String) -> Unit,
     onOpenSettings: () -> Unit,
+    onOpenAlbum: (String) -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -90,7 +95,12 @@ fun HomeRoute(
 
     HomeScreen(
         state = state,
-        onFilterSelected = viewModel::onFilterSelected,
+        onFilterSelected = viewModel::onTabSelected,
+        onOpenAlbum = onOpenAlbum,
+        onOpenPicker = viewModel::onOpenPicker,
+        onDismissPicker = viewModel::onDismissPicker,
+        onAddToAlbum = viewModel::onAddToAlbum,
+        onCreateAlbum = viewModel::onCreateAlbum,
         onToggleSelected = viewModel::onToggleSelected,
         onSelectAll = viewModel::onSelectAll,
         onClearSelection = viewModel::onClearSelection,
@@ -113,7 +123,7 @@ fun HomeRoute(
 @Composable
 fun HomeScreen(
     state: HomeUiState,
-    onFilterSelected: (MediaFilter) -> Unit,
+    onFilterSelected: (HomeTab) -> Unit,
     onImport: () -> Unit,
     onOpenSettings: () -> Unit = {},
     onOpen: (MediaItem) -> Unit = {},
@@ -123,6 +133,11 @@ fun HomeScreen(
     onExportSelected: () -> Unit = {},
     onDeleteSelected: () -> Unit = {},
     onExportStatusSeen: () -> Unit = {},
+    onOpenAlbum: (String) -> Unit = {},
+    onOpenPicker: () -> Unit = {},
+    onDismissPicker: () -> Unit = {},
+    onAddToAlbum: (String) -> Unit = {},
+    onCreateAlbum: (String) -> Unit = {},
 ) {
     var confirming by remember { mutableStateOf<Confirmation?>(null) }
     BackHandler(enabled = state.selecting) { onClearSelection() }
@@ -162,7 +177,7 @@ fun HomeScreen(
                     )
                 }
             }
-            FilterTabs(selected = state.filter, onSelected = onFilterSelected)
+            FilterTabs(selected = state.tab, onSelected = onFilterSelected)
             StatusStrip(
                 importStatus = state.importStatus,
                 exportStatus = state.exportStatus,
@@ -171,10 +186,14 @@ fun HomeScreen(
             )
 
             Box(Modifier.fillMaxSize()) {
-                if (state.showEmptyState) {
-                    EmptyVault(onImport = onImport)
-                } else {
-                    MediaGrid(
+                when {
+                    state.tab == HomeTab.Albums -> AlbumList(
+                        albums = state.albums,
+                        showCounts = state.showAlbumCounts,
+                        onOpenAlbum = onOpenAlbum,
+                    )
+                    state.showEmptyState -> EmptyVault(onImport = onImport)
+                    else -> MediaGrid(
                         days = state.days,
                         selection = state.selection,
                         selecting = state.selecting,
@@ -183,12 +202,27 @@ fun HomeScreen(
                     )
                 }
                 if (state.selecting) {
-                    SelectionActions(
-                        onExport = { confirming = Confirmation.Export(state.selection.size) },
-                        onDelete = { confirming = Confirmation.Delete(state.selection.size) },
-                        modifier = Modifier.align(Alignment.BottomCenter),
-                    )
-                } else {
+                    SelectionActionBar(modifier = Modifier.align(Alignment.BottomCenter)) {
+                        SelectionAction(
+                            icon = HitsuIcons.Export,
+                            label = stringResource(R.string.action_export),
+                            tint = HitsuColors.TextPrimary,
+                            onClick = { confirming = Confirmation.Export(state.selection.size) },
+                        )
+                        SelectionAction(
+                            icon = HitsuIcons.Plus,
+                            label = stringResource(R.string.action_album),
+                            tint = HitsuColors.TextPrimary,
+                            onClick = onOpenPicker,
+                        )
+                        SelectionAction(
+                            icon = HitsuIcons.Delete,
+                            label = stringResource(R.string.action_delete),
+                            tint = HitsuColors.Danger,
+                            onClick = { confirming = Confirmation.Delete(state.selection.size) },
+                        )
+                    }
+                } else if (state.tab != HomeTab.Albums) {
                     HitsuFab(
                         onClick = onImport,
                         contentDescription = stringResource(R.string.cd_import),
@@ -198,6 +232,16 @@ fun HomeScreen(
                     )
                 }
             }
+        }
+
+        if (state.pickingAlbum) {
+            AlbumPickerDialog(
+                albums = state.albums,
+                count = state.selection.size,
+                onCancel = onDismissPicker,
+                onPick = onAddToAlbum,
+                onCreate = onCreateAlbum,
+            )
         }
 
         when (val pending = confirming) {
@@ -256,7 +300,55 @@ private sealed interface Confirmation {
 }
 
 @Composable
-private fun SelectionBar(count: Int, onLeave: () -> Unit, onSelectAll: () -> Unit) {
+private fun AlbumList(
+    albums: List<AlbumWithCount>,
+    showCounts: Boolean,
+    onOpenAlbum: (String) -> Unit,
+) {
+    if (albums.isEmpty()) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text(
+                text = stringResource(R.string.albums_none),
+                style = HitsuType.Body,
+                color = HitsuColors.TextMuted,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(horizontal = 32.dp),
+            )
+        }
+        return
+    }
+    LazyColumn(Modifier.fillMaxSize()) {
+        items(albums, key = { it.id }) { album ->
+            Column {
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(HitsuColors.Stroke),
+                )
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .clickable(role = Role.Button) { onOpenAlbum(album.id) }
+                        .padding(horizontal = 16.dp, vertical = 18.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(album.name, style = HitsuType.Body, modifier = Modifier.weight(1f))
+                    if (showCounts) {
+                        Text(
+                            text = album.itemCount.toString(),
+                            style = HitsuType.Meta,
+                            color = HitsuColors.TextMuted,
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun SelectionBar(count: Int, onLeave: () -> Unit, onSelectAll: () -> Unit) {
     Row(
         Modifier
             .fillMaxWidth()
@@ -290,12 +382,9 @@ private fun SelectionBar(count: Int, onLeave: () -> Unit, onSelectAll: () -> Uni
  * Album is in the mockup too, but it waits for step 11 of the spec: a button that does nothing is
  * worse than one that is not there yet.
  */
+/** The bar the mockup puts under a selection; what goes in it depends on the screen. */
 @Composable
-private fun SelectionActions(
-    onExport: () -> Unit,
-    onDelete: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun SelectionActionBar(modifier: Modifier = Modifier, actions: @Composable RowScope.() -> Unit) {
     Row(
         modifier
             .fillMaxWidth()
@@ -310,24 +399,12 @@ private fun SelectionActions(
             }
             .padding(vertical = 14.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
-    ) {
-        SelectionAction(
-            icon = HitsuIcons.Export,
-            label = stringResource(R.string.action_export),
-            tint = HitsuColors.TextPrimary,
-            onClick = onExport,
-        )
-        SelectionAction(
-            icon = HitsuIcons.Delete,
-            label = stringResource(R.string.action_delete),
-            tint = HitsuColors.Danger,
-            onClick = onDelete,
-        )
-    }
+        content = actions,
+    )
 }
 
 @Composable
-private fun SelectionAction(icon: ImageVector, label: String, tint: Color, onClick: () -> Unit) {
+fun SelectionAction(icon: ImageVector, label: String, tint: Color, onClick: () -> Unit) {
     Column(
         Modifier
             .clickable(role = Role.Button, onClick = onClick)
@@ -346,7 +423,7 @@ private fun SelectionAction(icon: ImageVector, label: String, tint: Color, onCli
 }
 
 @Composable
-private fun FilterTabs(selected: MediaFilter, onSelected: (MediaFilter) -> Unit) {
+private fun FilterTabs(selected: HomeTab, onSelected: (HomeTab) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -361,8 +438,8 @@ private fun FilterTabs(selected: MediaFilter, onSelected: (MediaFilter) -> Unit)
             .padding(start = 16.dp, end = 16.dp, top = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(22.dp),
     ) {
-        TABS.forEach { (filter, label) ->
-            val active = filter == selected
+        TABS.forEach { (tab, label) ->
+            val active = tab == selected
             Text(
                 text = stringResource(label),
                 style = HitsuType.Action.copy(
@@ -370,7 +447,7 @@ private fun FilterTabs(selected: MediaFilter, onSelected: (MediaFilter) -> Unit)
                 ),
                 color = if (active) HitsuColors.TextPrimary else HitsuColors.TextMuted,
                 modifier = Modifier
-                    .clickable(role = Role.Tab) { onSelected(filter) }
+                    .clickable(role = Role.Tab) { onSelected(tab) }
                     .padding(bottom = 12.dp)
                     .drawBehind {
                         if (active) {
@@ -465,7 +542,7 @@ private fun EmptyVault(onImport: () -> Unit) {
 }
 
 @Composable
-private fun MediaGrid(
+fun MediaGrid(
     days: List<MediaDay>,
     selection: Set<String>,
     selecting: Boolean,

@@ -36,6 +36,15 @@ object HitsuIcons {
         )
     }
 
+    /** A pencil: what the albums mockup puts next to a name you can change. */
+    val Edit: ImageVector by lazy {
+        lucide(
+            "edit",
+            "M12 20h9",
+            "M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1 -4z",
+        )
+    }
+
     val Check: ImageVector by lazy {
         lucide("check", "M20 6L9 17l-5 -5")
     }
