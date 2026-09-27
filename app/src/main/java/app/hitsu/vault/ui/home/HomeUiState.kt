@@ -16,6 +16,7 @@ data class HomeUiState(
     val albums: List<AlbumWithCount> = emptyList(),
     val showAlbumCounts: Boolean = true,
     val pickingAlbum: Boolean = false,
+    val namingAlbum: Boolean = false,
     val filter: MediaFilter = MediaFilter.All,
     val days: List<MediaDay> = emptyList(),
     val loaded: Boolean = false,

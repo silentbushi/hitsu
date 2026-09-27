@@ -14,6 +14,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.util.UUID
 
+/** An album as a backup carries it: a name and what was in it, with no ids that mean nothing elsewhere. */
+class AlbumSnapshot(val name: String, val createdAt: Long, val mediaIds: List<String>)
+
 /** The order the album list is shown in (spec §9, mockup `05-albumes.png`). */
 enum class AlbumOrder { Alphabetical, Newest }
 
@@ -92,6 +95,18 @@ class AlbumRepository(
             is AlbumCreation.Created -> created.id
             is AlbumCreation.NameTaken -> created.id
             AlbumCreation.Invalid -> null
+        }
+    }
+
+    /** Spec §7.10: which albums exist and what is in each, for the backup to carry. */
+    suspend fun snapshot(): List<AlbumSnapshot> = withContext(ioDispatcher) {
+        val entries = dao.allEntries().groupBy { it.albumId }
+        dao.all().map { album ->
+            AlbumSnapshot(
+                name = album.name,
+                createdAt = album.createdAt,
+                mediaIds = entries[album.id].orEmpty().map { it.mediaId },
+            )
         }
     }
 

@@ -10,15 +10,17 @@ import kotlinx.coroutines.flow.Flow
 interface AlbumDao {
 
     @Query(
-        "SELECT a.id, a.name, a.createdAt, COUNT(m.mediaId) AS itemCount FROM albums a " +
-            "LEFT JOIN album_media m ON m.albumId = a.id " +
+        "SELECT a.id, a.name, a.createdAt, COUNT(m.mediaId) AS itemCount, " +
+            "(SELECT am.mediaId FROM album_media am JOIN media md ON md.id = am.mediaId WHERE am.albumId = a.id ORDER BY COALESCE(md.takenAt, md.importedAt) DESC, md.id DESC LIMIT 1) AS coverId" +
+            " FROM albums a LEFT JOIN album_media m ON m.albumId = a.id " +
             "GROUP BY a.id ORDER BY a.name COLLATE NOCASE ASC",
     )
     fun observeByName(): Flow<List<AlbumWithCount>>
 
     @Query(
-        "SELECT a.id, a.name, a.createdAt, COUNT(m.mediaId) AS itemCount FROM albums a " +
-            "LEFT JOIN album_media m ON m.albumId = a.id " +
+        "SELECT a.id, a.name, a.createdAt, COUNT(m.mediaId) AS itemCount, " +
+            "(SELECT am.mediaId FROM album_media am JOIN media md ON md.id = am.mediaId WHERE am.albumId = a.id ORDER BY COALESCE(md.takenAt, md.importedAt) DESC, md.id DESC LIMIT 1) AS coverId" +
+            " FROM albums a LEFT JOIN album_media m ON m.albumId = a.id " +
             "GROUP BY a.id ORDER BY a.createdAt DESC",
     )
     fun observeByCreated(): Flow<List<AlbumWithCount>>
@@ -57,4 +59,10 @@ interface AlbumDao {
 
     @Query("SELECT albumId FROM album_media WHERE mediaId = :mediaId")
     suspend fun albumsOf(mediaId: String): List<String>
+
+    @Query("SELECT * FROM albums ORDER BY name COLLATE NOCASE ASC")
+    suspend fun all(): List<AlbumEntity>
+
+    @Query("SELECT * FROM album_media")
+    suspend fun allEntries(): List<AlbumMediaCrossRef>
 }

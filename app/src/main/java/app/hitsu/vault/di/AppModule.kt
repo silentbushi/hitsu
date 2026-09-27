@@ -212,6 +212,7 @@ object AppModule {
         albumPreferences = albumPreferences,
         backups = BackupStore(
             dao = dao,
+            albums = albums,
             files = files,
             vault = vault,
             clock = clock,

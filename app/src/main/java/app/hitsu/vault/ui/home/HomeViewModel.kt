@@ -33,6 +33,7 @@ class HomeViewModel @Inject constructor(
     private val filter = MutableStateFlow(MediaFilter.All)
     private val selection = MutableStateFlow(emptySet<String>())
     private val picking = MutableStateFlow(false)
+    private val naming = MutableStateFlow(false)
 
     init {
         repository.ensureFingerprints()
@@ -51,7 +52,17 @@ class HomeViewModel @Inject constructor(
         tab,
         albums.albums(preferences.order),
         picking,
-    ) { current, list, pickingAlbum -> Triple(current, list, pickingAlbum) }
+        naming,
+    ) { current, list, pickingAlbum, namingAlbum ->
+        AlbumState(current, list, pickingAlbum, namingAlbum)
+    }
+
+    private class AlbumState(
+        val tab: HomeTab,
+        val albums: List<app.hitsu.vault.data.db.AlbumWithCount>,
+        val picking: Boolean,
+        val naming: Boolean,
+    )
 
     val state: StateFlow<HomeUiState> = combine(
         filter,
@@ -59,13 +70,14 @@ class HomeViewModel @Inject constructor(
         selection,
         work,
         albumState,
-    ) { selected, items, chosen, (importStatus, sharing, exportStatus), (current, list, pickingAlbum) ->
+    ) { selected, items, chosen, (importStatus, sharing, exportStatus), albumState ->
         val days = groupByDay(items)
         HomeUiState(
-            tab = current,
-            albums = list,
+            tab = albumState.tab,
+            albums = albumState.albums,
             showAlbumCounts = preferences.showCounts,
-            pickingAlbum = pickingAlbum,
+            pickingAlbum = albumState.picking,
+            namingAlbum = albumState.naming,
             filter = selected,
             days = days,
             loaded = true,
@@ -117,6 +129,20 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onExportStatusSeen() = repository.clearExportStatus()
+
+    fun onNewAlbum() {
+        naming.value = true
+    }
+
+    fun onDismissNewAlbum() {
+        naming.value = false
+    }
+
+    /** From the tab, an album is born empty; what goes in it comes later, from a selection. */
+    fun onNewAlbumNamed(name: String) {
+        naming.value = false
+        viewModelScope.launch { albums.create(name) }
+    }
 
     fun onOpenPicker() {
         picking.value = true

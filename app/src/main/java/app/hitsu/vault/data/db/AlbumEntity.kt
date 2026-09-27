@@ -50,10 +50,14 @@ data class AlbumMediaCrossRef(
     val addedAt: Long,
 )
 
-/** An album plus how many things are in it, which is what the list shows. */
+/**
+ * An album as the grid shows it: its name, how many things are in it and the newest of them, which
+ * is the one used as the cover (mockup `album/album-main-page.png`).
+ */
 data class AlbumWithCount(
     val id: String,
     val name: String,
     val createdAt: Long,
     val itemCount: Int,
+    val coverId: String? = null,
 )

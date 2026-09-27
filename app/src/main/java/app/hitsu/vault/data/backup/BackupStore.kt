@@ -1,5 +1,6 @@
 package app.hitsu.vault.data.backup
 
+import app.hitsu.vault.data.AlbumRepository
 import app.hitsu.vault.data.db.MediaDao
 import app.hitsu.vault.data.media.VaultFiles
 import app.hitsu.vault.domain.Clock
@@ -26,11 +27,24 @@ data class BackupItem(
     val importedAt: Long = 0L,
 )
 
+/**
+ * An album as it travels: names, not ids. The ids of a vault mean nothing in another one, so what is
+ * kept is which files belonged together, and the albums are matched or made again by name on arrival.
+ */
+@Serializable
+data class BackupAlbum(
+    val name: String,
+    val createdAt: Long = 0L,
+    val items: List<String> = emptyList(),
+)
+
 @Serializable
 data class BackupManifest(
     val version: Int = VERSION,
     val createdAt: Long,
     val items: List<BackupItem>,
+    /** Added after the first backups existed; an older file simply has none. */
+    val albums: List<BackupAlbum> = emptyList(),
 ) {
     companion object {
         const val VERSION = 1
@@ -52,6 +66,7 @@ class BackupPassphraseException : Exception("Wrong passphrase")
  */
 class BackupStore(
     private val dao: MediaDao,
+    private val albums: AlbumRepository,
     private val files: VaultFiles,
     private val vault: VaultGateway,
     private val clock: Clock,
@@ -71,6 +86,9 @@ class BackupStore(
         val rows = dao.all()
         val manifest = BackupManifest(
             createdAt = clock.now(),
+            albums = albums.snapshot().map { album ->
+                BackupAlbum(name = album.name, createdAt = album.createdAt, items = album.mediaIds)
+            },
             items = rows.map {
                 BackupItem(
                     id = it.id,
@@ -109,12 +127,16 @@ class BackupStore(
      * Unpacks the backup one entry at a time, handing each to [importEntry] as a plaintext file that
      * is shredded as soon as it returns. One file exists in the clear at a time and no longer, which
      * is the same deal the importer already makes with anything shared into the app.
+     *
+     * [importEntry] answers with the id the file took in *this* vault, which is what lets the albums
+     * be rebuilt afterwards: a file that was already here answers with the id it already had, so a
+     * restore over a vault that has the photos still files them into their albums.
      */
     suspend fun restore(
         source: InputStream,
         passphrase: CharArray,
         onProgress: (done: Int, total: Int) -> Unit,
-        importEntry: suspend (File, BackupItem) -> Unit,
+        importEntry: suspend (File, BackupItem) -> String?,
     ) {
         val header = withContext(ioDispatcher) { BackupCrypto.readHeader(source) }
         val backup = withContext(ioDispatcher) { BackupCrypto.cipherFor(passphrase, header) }
@@ -137,6 +159,7 @@ class BackupStore(
             val byId = manifest.items.associateBy { it.id }
 
             var done = 0
+            val landed = mutableMapOf<String, String>()
             while (true) {
                 val entry = reader.next() ?: break
                 val id = entry.name.removePrefix(MEDIA_PREFIX)
@@ -153,13 +176,28 @@ class BackupStore(
                     }
                 }
                 try {
-                    importEntry(staging, item)
+                    importEntry(staging, item)?.let { landed[item.id] = it }
                 } finally {
                     withContext(ioDispatcher) { shred(staging) }
                 }
                 done++
                 onProgress(done, manifest.items.size)
             }
+
+            restoreAlbums(manifest.albums, landed)
+        }
+    }
+
+    /**
+     * Albums are matched by name, so restoring into a vault that already has «Viajes» adds to it
+     * rather than making a second one. What the backup never knew about is left alone.
+     */
+    private suspend fun restoreAlbums(backedUp: List<BackupAlbum>, landed: Map<String, String>) {
+        backedUp.forEach { album ->
+            val here = album.items.mapNotNull { landed[it] }
+            if (here.isEmpty()) return@forEach
+            val albumId = albums.destination(album.name) ?: return@forEach
+            albums.add(albumId, here)
         }
     }
 

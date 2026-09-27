@@ -388,7 +388,11 @@ class MediaRepository(
                         val outcome = withContext(ioDispatcher) {
                             importer.import(item.asImportSource(file), cipher)
                         }
-                        if (outcome is ImportOutcome.Duplicate) duplicates++
+                        when (outcome) {
+                            is ImportOutcome.Imported -> outcome.entity.id
+                            // Already here: its albums still apply, so it answers with the id it has.
+                            is ImportOutcome.Duplicate -> outcome.existingId.also { duplicates++ }
+                        }
                     }
                 }
                 _backupStatus.value = BackupStatus(

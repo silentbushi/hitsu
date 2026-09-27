@@ -88,6 +88,19 @@ class AlbumRepositoryTest {
     }
 
     @Test
+    fun theSnapshotSaysWhatBelongedTogether() = runTest(dispatcher) {
+        val viajes = repository.create("Viajes") as AlbumCreation.Created
+        repository.create("Recibos")
+        repository.add(viajes.id, listOf("a", "b"))
+
+        val snapshot = repository.snapshot()
+
+        assertEquals(listOf("Recibos", "Viajes"), snapshot.map { it.name })
+        assertEquals(listOf("a", "b"), snapshot.first { it.name == "Viajes" }.mediaIds)
+        assertTrue(snapshot.first { it.name == "Recibos" }.mediaIds.isEmpty())
+    }
+
+    @Test
     fun removingFromAnAlbumTouchesNothingElse() = runTest(dispatcher) {
         val album = repository.create("Viajes") as AlbumCreation.Created
         repository.add(album.id, listOf("a", "b"))
@@ -146,6 +159,10 @@ private class FakeAlbumDao : AlbumDao {
 
     override suspend fun albumsOf(mediaId: String): List<String> =
         entries.filter { it.mediaId == mediaId }.map { it.albumId }
+
+    override suspend fun all(): List<AlbumEntity> = albums.sortedBy { it.name.lowercase() }
+
+    override suspend fun allEntries(): List<AlbumMediaCrossRef> = entries.toList()
 
     private fun counted(): List<AlbumWithCount> = albums.map { album ->
         AlbumWithCount(

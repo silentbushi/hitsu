@@ -72,6 +72,8 @@ import java.time.LocalDate
 import androidx.compose.foundation.layout.RowScope
 import app.hitsu.vault.data.db.AlbumWithCount
 import app.hitsu.vault.ui.albums.AlbumPickerDialog
+import androidx.compose.ui.text.style.TextOverflow
+import app.hitsu.vault.ui.albums.NewAlbumDialog
 
 private val TABS = listOf(
     HomeTab.All to R.string.home_tab_all,
@@ -101,6 +103,9 @@ fun HomeRoute(
         onDismissPicker = viewModel::onDismissPicker,
         onAddToAlbum = viewModel::onAddToAlbum,
         onCreateAlbum = viewModel::onCreateAlbum,
+        onNewAlbum = viewModel::onNewAlbum,
+        onNewAlbumNamed = viewModel::onNewAlbumNamed,
+        onDismissNewAlbum = viewModel::onDismissNewAlbum,
         onToggleSelected = viewModel::onToggleSelected,
         onSelectAll = viewModel::onSelectAll,
         onClearSelection = viewModel::onClearSelection,
@@ -138,6 +143,9 @@ fun HomeScreen(
     onDismissPicker: () -> Unit = {},
     onAddToAlbum: (String) -> Unit = {},
     onCreateAlbum: (String) -> Unit = {},
+    onNewAlbum: () -> Unit = {},
+    onNewAlbumNamed: (String) -> Unit = {},
+    onDismissNewAlbum: () -> Unit = {},
 ) {
     var confirming by remember { mutableStateOf<Confirmation?>(null) }
     BackHandler(enabled = state.selecting) { onClearSelection() }
@@ -187,10 +195,11 @@ fun HomeScreen(
 
             Box(Modifier.fillMaxSize()) {
                 when {
-                    state.tab == HomeTab.Albums -> AlbumList(
+                    state.tab == HomeTab.Albums -> AlbumGrid(
                         albums = state.albums,
                         showCounts = state.showAlbumCounts,
                         onOpenAlbum = onOpenAlbum,
+                        onNewAlbum = onNewAlbum,
                     )
                     state.showEmptyState -> EmptyVault(onImport = onImport)
                     else -> MediaGrid(
@@ -232,6 +241,10 @@ fun HomeScreen(
                     )
                 }
             }
+        }
+
+        if (state.namingAlbum) {
+            NewAlbumDialog(onCancel = onDismissNewAlbum, onCreate = onNewAlbumNamed)
         }
 
         if (state.pickingAlbum) {
@@ -299,51 +312,157 @@ private sealed interface Confirmation {
     data class Export(override val count: Int) : Confirmation
 }
 
+/**
+ * Mockup `album/album-main-page.png`: the same dense grid as the photos, three columns with a 1px
+ * gap, each album showing its newest item as a cover. Creating one is a text action in the section
+ * header rather than another floating button, and the lock sits next to the count.
+ */
 @Composable
-private fun AlbumList(
+private fun AlbumGrid(
     albums: List<AlbumWithCount>,
     showCounts: Boolean,
     onOpenAlbum: (String) -> Unit,
+    onNewAlbum: () -> Unit,
 ) {
-    if (albums.isEmpty()) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(
-                text = stringResource(R.string.albums_none),
-                style = HitsuType.Body,
-                color = HitsuColors.TextMuted,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(horizontal = 32.dp),
+    Column(Modifier.fillMaxSize()) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .drawBehind {
+                    drawLine(
+                        color = HitsuColors.Stroke,
+                        start = Offset(0f, size.height),
+                        end = Offset(size.width, size.height),
+                        strokeWidth = 1.dp.toPx(),
+                    )
+                }
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Icon(
+                imageVector = HitsuIcons.Lock,
+                contentDescription = null,
+                tint = HitsuColors.TextMuted,
+                modifier = Modifier.size(13.dp),
             )
-        }
-        return
-    }
-    LazyColumn(Modifier.fillMaxSize()) {
-        items(albums, key = { it.id }) { album ->
-            Column {
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(HitsuColors.Stroke),
+            Text(
+                text = pluralStringResource(R.plurals.albums_count, albums.size, albums.size)
+                    .uppercase(),
+                style = HitsuType.Meta.copy(letterSpacing = HitsuType.Meta.fontSize * 0.08f),
+                color = HitsuColors.TextMuted,
+                modifier = Modifier.weight(1f),
+            )
+            Row(
+                Modifier.clickable(role = Role.Button, onClick = onNewAlbum),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                Icon(
+                    imageVector = HitsuIcons.Plus,
+                    contentDescription = null,
+                    tint = HitsuColors.Accent,
+                    modifier = Modifier.size(16.dp),
                 )
+                Text(
+                    text = stringResource(R.string.albums_new),
+                    style = HitsuType.Action,
+                    color = HitsuColors.Accent,
+                )
+            }
+        }
+
+        if (albums.isEmpty()) {
+            EmptyAlbums(onNewAlbum = onNewAlbum)
+            return@Column
+        }
+
+        LazyColumn(Modifier.fillMaxSize()) {
+            items(albums.chunked(GRID_COLUMNS), key = { row -> row.first().id }) { row ->
                 Row(
                     Modifier
                         .fillMaxWidth()
-                        .clickable(role = Role.Button) { onOpenAlbum(album.id) }
-                        .padding(horizontal = 16.dp, vertical = 18.dp),
-                    verticalAlignment = Alignment.CenterVertically,
+                        .padding(bottom = 1.dp),
+                    horizontalArrangement = Arrangement.spacedBy(1.dp),
                 ) {
-                    Text(album.name, style = HitsuType.Body, modifier = Modifier.weight(1f))
-                    if (showCounts) {
-                        Text(
-                            text = album.itemCount.toString(),
-                            style = HitsuType.Meta,
-                            color = HitsuColors.TextMuted,
+                    row.forEach { album ->
+                        AlbumCell(
+                            album = album,
+                            showCount = showCounts,
+                            onOpen = { onOpenAlbum(album.id) },
+                            modifier = Modifier.weight(1f),
                         )
                     }
+                    repeat(GRID_COLUMNS - row.size) { Spacer(Modifier.weight(1f)) }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun AlbumCell(
+    album: AlbumWithCount,
+    showCount: Boolean,
+    onOpen: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier.clickable(role = Role.Button, onClick = onOpen)) {
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .background(HitsuColors.BgElevated),
+        ) {
+            if (album.coverId != null) {
+                AsyncImage(
+                    model = ThumbnailKey(album.coverId),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize(),
+                )
+            }
+        }
+        Text(
+            text = album.name,
+            style = HitsuType.Caption,
+            color = HitsuColors.TextPrimary,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(start = 6.dp, end = 6.dp, top = 8.dp),
+        )
+        Text(
+            text = if (showCount) album.itemCount.toString() else "",
+            style = HitsuType.Meta,
+            color = HitsuColors.Accent,
+            modifier = Modifier.padding(start = 6.dp, end = 6.dp, top = 2.dp, bottom = 12.dp),
+        )
+    }
+}
+
+@Composable
+private fun EmptyAlbums(onNewAlbum: () -> Unit) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(horizontal = 24.dp),
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Text(text = stringResource(R.string.albums_none_title), style = HitsuType.Subtitle)
+        Text(
+            text = stringResource(R.string.albums_none),
+            style = HitsuType.Caption,
+            color = HitsuColors.TextMuted,
+            modifier = Modifier.padding(top = 10.dp),
+        )
+        HitsuButton(
+            text = stringResource(R.string.albums_new),
+            onClick = onNewAlbum,
+            style = HitsuButtonStyle.Outlined,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 24.dp),
+        )
     }
 }
 

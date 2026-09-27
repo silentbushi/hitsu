@@ -45,6 +45,15 @@ object HitsuIcons {
         )
     }
 
+    /** A closed padlock: the mockup puts one next to the album count. */
+    val Lock: ImageVector by lazy {
+        lucide(
+            "lock",
+            "M5 11a1 1 0 0 1 1 -1h12a1 1 0 0 1 1 1v9a1 1 0 0 1 -1 1H6a1 1 0 0 1 -1 -1z",
+            "M8 10V7a4 4 0 0 1 8 0v3",
+        )
+    }
+
     val Check: ImageVector by lazy {
         lucide("check", "M20 6L9 17l-5 -5")
     }
