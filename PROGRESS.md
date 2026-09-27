@@ -9,9 +9,9 @@ está en qué punto de ese plan estamos.
 _Actualizado: 27 sep 2026._
 
 Hay una app funcionando en el teléfono (Galaxy SM-S948B, Android 16), instalada por `installDebug` y
-probada a mano. 79 pruebas unitarias en verde y lint sin errores.
+probada a mano. 89 pruebas unitarias en verde y lint sin errores.
 
-Completado del orden de §16: **pasos 1 a 9, el 13 y el 14**.
+Completado del orden de §16: **pasos 1 a 10, el 13 y el 14**. Queda el 11 (álbumes) y el 12 (pulido).
 
 - **1–2. Cofre.** Setup de PIN, bloqueo, DEK envuelta por PIN + Keystore, cifrado en streaming por
   bloques de 1 MiB.
@@ -28,14 +28,18 @@ Completado del orden de §16: **pasos 1 a 9, el 13 y el 14**.
 - **14. Respaldo (§7.10).** Ajustes → Respaldo crea un archivo `.hitsubak` con todo el cofre, cifrado
   con una contraseña propia, y lo restaura. Probado en el teléfono: crear, restaurar sobre el mismo
   cofre sin duplicar, y contraseña equivocada.
-- **10 a medias.** Auto-bloqueo configurable y FLAG_SECURE están; faltan biometría y cambio de PIN.
+- **10. Bloqueo completo.** Auto-bloqueo configurable, FLAG_SECURE, desbloqueo con huella y cambio de
+  PIN, todo probado en el teléfono el 27 sep 2026.
 
-Sin hacer: **10** (lo que falta), **11** (álbumes) y **12** (pulido de movimiento e icono).
+Sin hacer: **11** (álbumes) y **12** (pulido de movimiento e icono).
 
 ## En progreso
 
-Nada a medio hacer. El paso 14 quedó cerrado y probado el 27 sep 2026, así que el trabajo continúa
-por lo que falta del paso 10.
+Nada a medio hacer. Lo siguiente es el **paso 11, álbumes**, que no se ha empezado.
+
+Cuando se haga, hay dos sitios que lo están esperando y que hoy están ocultos a propósito: la pestaña
+de álbumes en la pantalla principal y el botón **Álbum** de la barra de selección
+(`ui/home/HomeScreen.kt`, en `SelectionActions`). El mockup es `docs/design/settings/05-albumes.png`.
 
 Con el respaldo funcionando, **ya es seguro correr los tests instrumentados**
 (`:app:connectedDebugAndroidTest`), que desinstalan la app: basta hacer un respaldo antes y
@@ -43,15 +47,22 @@ restaurarlo después. Conviene avisar igualmente antes de lanzarlos.
 
 ## Próximos pasos
 
-1. **Resto del paso 10**: biometría y cambio de PIN; sus filas en Ajustes están ocultas hasta que
-   funcionen.
-2. **Paso 11**: álbumes, incluida la pestaña de la pantalla principal y el botón "Álbum" de la barra de
+1. **Paso 11**: álbumes, incluida la pestaña de la pantalla principal y el botón "Álbum" de la barra de
    selección, que hoy no se dibuja a propósito.
-3. **Paso 12**: pulido de movimiento e icono definitivo.
-4. **Sueltos**: el botón "Liberar espacio" del diálogo de sin espacio (hoy dice "Reintentar"), y el
+2. **Paso 12**: pulido de movimiento e icono definitivo.
+3. **Sueltos**: el botón "Liberar espacio" del diálogo de sin espacio (hoy dice "Reintentar"), y el
    texto al revés en los campos del login de TikTok (solo ahí; se rodea pegando el usuario).
 
 ## Decisiones y notas
+
+- **27 sep 2026 — La huella autoriza, no deriva.** El cofre guarda una segunda copia de la DEK sellada
+  con una llave del Keystore que exige autenticación para cada uso. De ahí que activarla necesite el
+  cofre abierto (es cuando la DEK está en memoria) y que cambiar las huellas del sistema la invalide:
+  se tira la llave y se vuelve al PIN, en vez de confiar en un dedo añadido después.
+- **27 sep 2026 — Cambiar el PIN no recifra nada.** Solo reenvuelve la DEK con la clave nueva y sal
+  nueva, así que el contenido no se toca y la copia que abre la huella sigue sirviendo. Un PIN actual
+  equivocado no gasta intento ni arranca la espera: a esa pantalla solo se llega con el cofre abierto,
+  donde un error es una errata y no alguien probando.
 
 - **27 sep 2026 — El respaldo lleva contraseña propia, no el PIN.** Dentro del teléfono el PIN aguanta
   porque el Keystore envuelve la DEK con una clave no exportable y limita los intentos; un archivo que
