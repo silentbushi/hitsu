@@ -33,6 +33,7 @@ probada a mano. 97 pruebas unitarias en verde y lint sin errores.
   y dos destinos automáticos: ninguno al importar y «Descargas» para lo que baja yt-dlp.
 - **12. Pulido.** Movimiento de §10.4 (fundido con escala 0.98→1 al navegar) e icono definitivo: el
   kanji 櫃 en negro sobre latón dentro de un marco de sello, con el trazo real de Noto Sans JP.
+  Después, a petición del usuario, se añadió cambiar de pestaña deslizando en la pantalla principal.
 - **10. Bloqueo completo.** Auto-bloqueo configurable, FLAG_SECURE, desbloqueo con huella y cambio de
   PIN, todo probado en el teléfono el 27 sep 2026.
 
@@ -40,8 +41,7 @@ Sin hacer: **11** (álbumes) y **12** (pulido de movimiento e icono).
 
 ## En progreso
 
-Nada a medio hacer. El paso 12 se instaló el 27 sep 2026 y falta que el usuario confirme el icono en
-el lanzador y el movimiento al navegar.
+Nada a medio hacer, y nada pendiente de confirmar: los catorce pasos están probados en el teléfono.
 
 Con el respaldo funcionando, **ya es seguro correr los tests instrumentados**
 (`:app:connectedDebugAndroidTest`), que desinstalan la app: basta hacer un respaldo antes y
