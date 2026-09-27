@@ -74,6 +74,9 @@ import app.hitsu.vault.ui.theme.HitsuColors
 import app.hitsu.vault.ui.theme.HitsuMotion
 import app.hitsu.vault.ui.theme.HitsuType
 import kotlin.math.abs
+import android.content.Intent
+import android.os.storage.StorageManager
+import android.provider.Settings
 
 private const val VOLUME_DRAG_RANGE_PX = 600f
 private const val BRIGHTNESS_DRAG_RANGE_PX = 600f
@@ -89,6 +92,15 @@ fun VideoPlayerRoute(onClose: () -> Unit, viewModel: VideoPlayerViewModel = hilt
      * window was dismissed: playing on with nothing visible would leave vault audio running.
      */
     LifecycleEventEffect(Lifecycle.Event.ON_STOP) { viewModel.onPause() }
+
+    /*
+     * Coming back from the system storage manager is the one case where the answer may have changed
+     * without the user doing anything here, so the video tries again by itself rather than leaving a
+     * dialog that now says something untrue.
+     */
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        if (state.phase is PlaybackPhase.NoSpace) viewModel.onRetryAfterSpace()
+    }
 
     DisposableEffect(Unit) {
         onDispose {
@@ -174,7 +186,14 @@ fun VideoPlayerScreen(
 
         when (val phase = state.phase) {
             is PlaybackPhase.Decrypting -> DecryptingOverlay(phase.progress, onClose)
-            is PlaybackPhase.NoSpace -> NoSpaceDialog(phase, onClose, viewModel::onRetryAfterSpace)
+            is PlaybackPhase.NoSpace -> NoSpaceDialog(
+                phase = phase,
+                onClose = onClose,
+                onFreeSpace = {
+                    viewModel.onFreeingSpace()
+                    context.startActivity(storageManagerIntent(context))
+                },
+            )
             PlaybackPhase.Failed -> FailedOverlay(onClose)
             PlaybackPhase.Ready -> Unit
         }
@@ -696,7 +715,11 @@ private fun FailedOverlay(onClose: () -> Unit) {
 }
 
 @Composable
-private fun NoSpaceDialog(phase: PlaybackPhase.NoSpace, onClose: () -> Unit, onRetry: () -> Unit) {
+private fun NoSpaceDialog(
+    phase: PlaybackPhase.NoSpace,
+    onClose: () -> Unit,
+    onFreeSpace: () -> Unit,
+) {
     val context = LocalContext.current
     HitsuDialog(
         title = stringResource(R.string.player_no_space_title),
@@ -707,17 +730,27 @@ private fun NoSpaceDialog(phase: PlaybackPhase.NoSpace, onClose: () -> Unit, onR
         ),
     ) {
         HitsuButton(
+            text = stringResource(R.string.action_free_space),
+            onClick = onFreeSpace,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        HitsuButton(
             text = stringResource(R.string.action_close),
             onClick = onClose,
             style = HitsuButtonStyle.Outlined,
             modifier = Modifier.fillMaxWidth(),
         )
-        HitsuButton(
-            text = stringResource(R.string.action_retry),
-            onClick = onRetry,
-            modifier = Modifier.fillMaxWidth(),
-        )
     }
+}
+
+/**
+ * The system screen for making room, which knows about caches and apps Hitsu cannot see. Older or
+ * trimmed-down systems may not have it, so the plain storage settings are the fallback.
+ */
+private fun storageManagerIntent(context: Context): Intent {
+    val manage = Intent(StorageManager.ACTION_MANAGE_STORAGE)
+    return manage.takeIf { it.resolveActivityInfo(context.packageManager, 0) != null }
+        ?: Intent(Settings.ACTION_INTERNAL_STORAGE_SETTINGS)
 }
 
 @Composable

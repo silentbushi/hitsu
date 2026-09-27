@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import app.hitsu.vault.domain.AutoLock
 
 val SPEEDS = listOf(0.5f, 0.75f, 1f, 1.25f, 1.5f, 2f)
 
@@ -65,6 +66,7 @@ data class VideoPlayerUiState(
 class VideoPlayerViewModel @Inject constructor(
     @ApplicationContext context: Context,
     private val repository: MediaRepository,
+    private val autoLock: AutoLock,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -229,6 +231,9 @@ class VideoPlayerViewModel @Inject constructor(
     fun onRetryAfterSpace() {
         viewModelScope.launch { prepare(_state.value.item) }
     }
+
+    /** The system storage manager backgrounds the app, and that must not close the vault. */
+    fun onFreeingSpace() = autoLock.allowNextBackground()
 
     private fun clearFeedbackSoon() {
         feedbackJob?.cancel()

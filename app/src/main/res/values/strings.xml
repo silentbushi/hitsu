@@ -99,6 +99,7 @@
     <string name="player_no_space_body">Este vídeo necesita %1$s libres para descifrarse. Tienes %2$s.</string>
     <string name="action_close">Cerrar</string>
     <string name="action_retry">Reintentar</string>
+    <string name="action_free_space">Liberar espacio</string>
     <string name="cd_play">Reproducir</string>
     <string name="cd_pause">Pausa</string>
     <string name="cd_mute">Silenciar</string>
