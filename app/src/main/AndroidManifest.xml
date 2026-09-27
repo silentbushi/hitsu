@@ -15,6 +15,16 @@
         android:name="android.permission.USE_FINGERPRINT"
         tools:node="remove" />
 
+    <!--
+        Package visibility (API 30+): without this, asking whether the storage manager exists always
+        answers no, and the dialog would fall back to plain settings on phones that have it.
+    -->
+    <queries>
+        <intent>
+            <action android:name="android.os.storage.action.MANAGE_STORAGE" />
+        </intent>
+    </queries>
+
     <application
         android:name=".HitsuApp"
         android:allowBackup="false"
