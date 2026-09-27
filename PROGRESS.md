@@ -26,37 +26,29 @@ Completado del orden de §16: **pasos 1 a 9, el 13 y el 14**.
   descarga rápida desde la hoja de compartir, notificación al terminar, y cookies creadas desde una
   ventana de login propia y guardadas cifradas.
 - **14. Respaldo (§7.10).** Ajustes → Respaldo crea un archivo `.hitsubak` con todo el cofre, cifrado
-  con una contraseña propia, y lo restaura. **Escrito y verificado en JVM, pendiente de probar en el
-  teléfono.**
+  con una contraseña propia, y lo restaura. Probado en el teléfono: crear, restaurar sobre el mismo
+  cofre sin duplicar, y contraseña equivocada.
 - **10 a medias.** Auto-bloqueo configurable y FLAG_SECURE están; faltan biometría y cambio de PIN.
 
 Sin hacer: **10** (lo que falta), **11** (álbumes) y **12** (pulido de movimiento e icono).
 
 ## En progreso
 
-El respaldo está implementado y no queda nada a medio escribir, pero **falta la prueba en el
-teléfono**, que es lo primero que hay que hacer al retomar:
+Nada a medio hacer. El paso 14 quedó cerrado y probado el 27 sep 2026, así que el trabajo continúa
+por lo que falta del paso 10.
 
-1. Ajustes → Respaldo → Crear respaldo, contraseña, elegir dónde guardarlo.
-2. Restaurarlo sobre el mismo cofre: no debe duplicar nada y debe decir cuántos ya estaban.
-3. Probar una contraseña equivocada: debe decirlo y no importar nada.
-
-Lo que hay escrito: `data/backup/BackupArchive.kt` (formato por entradas y bloques),
-`BackupCrypto.kt` (cabecera en claro con sal e iteraciones, clave derivada de la contraseña),
-`BackupStore.kt` (crear y restaurar en streaming), `VaultCipher.encryptingSink`/`decryptingSource`
-(los bloques cifrados sin pasar por memoria), `MediaRepository.createBackup`/`restoreBackup`, y la
-pantalla `ui/settings/BackupScreen.kt`. Las pruebas de formato están en `BackupFormatTest`.
+Con el respaldo funcionando, **ya es seguro correr los tests instrumentados**
+(`:app:connectedDebugAndroidTest`), que desinstalan la app: basta hacer un respaldo antes y
+restaurarlo después. Conviene avisar igualmente antes de lanzarlos.
 
 ## Próximos pasos
 
-1. **Probar el respaldo en el teléfono** (lo de arriba). Si algo falla, ahí es donde continúa el
-   trabajo.
-2. **Resto del paso 10**: biometría y cambio de PIN; sus filas en Ajustes están ocultas hasta que
+1. **Resto del paso 10**: biometría y cambio de PIN; sus filas en Ajustes están ocultas hasta que
    funcionen.
-3. **Paso 11**: álbumes, incluida la pestaña de la pantalla principal y el botón "Álbum" de la barra de
+2. **Paso 11**: álbumes, incluida la pestaña de la pantalla principal y el botón "Álbum" de la barra de
    selección, que hoy no se dibuja a propósito.
-4. **Paso 12**: pulido de movimiento e icono definitivo.
-5. **Sueltos**: el botón "Liberar espacio" del diálogo de sin espacio (hoy dice "Reintentar"), y el
+3. **Paso 12**: pulido de movimiento e icono definitivo.
+4. **Sueltos**: el botón "Liberar espacio" del diálogo de sin espacio (hoy dice "Reintentar"), y el
    texto al revés en los campos del login de TikTok (solo ahí; se rodea pegando el usuario).
 
 ## Decisiones y notas
@@ -103,5 +95,5 @@ pantalla `ui/settings/BackupScreen.kt`. Las pruebas de formato están en `Backup
   SHA-256, porque el índice está en claro y un hash normal deja demostrar desde fuera que un archivo
   concreto está en el cofre.
 - **Siempre — Los tests instrumentados borran el cofre.** `connectedDebugAndroidTest` desinstala la
-  app. No se ejecutan sobre el teléfono del usuario sin avisar; con el respaldo hecho dejará de ser un
-  problema.
+  app. No se ejecutan sobre el teléfono del usuario sin avisar; desde que existe el respaldo (27 sep
+  2026), la salida es hacer uno antes y restaurarlo después.
