@@ -42,6 +42,7 @@ class CookieStoreTest {
         override suspend fun create(pin: CharArray, biometricRequested: Boolean) = Unit
         override suspend fun unlock(pin: CharArray) = UnlockResult.Success
         override suspend fun setLockTimeout(millis: Long) = Unit
+        override suspend fun changePin(currentPin: CharArray, newPin: CharArray) = false
         override val biometricEnabled = false
         override fun biometricEnrollCipher(): Cipher? = null
         override fun biometricUnlockCipher(): Cipher? = null

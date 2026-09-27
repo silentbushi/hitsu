@@ -31,6 +31,7 @@ class AutoLockTest {
             lockTimeoutMillis = millis
         }
 
+        override suspend fun changePin(currentPin: CharArray, newPin: CharArray) = false
         override val biometricEnabled = false
         override fun biometricEnrollCipher(): Cipher? = null
         override fun biometricUnlockCipher(): Cipher? = null

@@ -7,6 +7,14 @@ import java.security.SecureRandom
 
 class CreatedVault(val meta: VaultMeta, val dek: ByteArray)
 
+sealed interface PinChange {
+    class Changed(val meta: VaultMeta) : PinChange
+
+    data object WrongPin : PinChange
+
+    data object Unrecoverable : PinChange
+}
+
 sealed interface VaultUnlock {
     class Success(val dek: ByteArray) : VaultUnlock
 
@@ -46,6 +54,38 @@ class VaultCrypto(
             biometricRequested = biometricRequested,
         )
         return CreatedVault(meta, dek)
+    }
+
+    /**
+     * Spec §5.1: changing the PIN rewraps the inner layer and nothing else. The DEK does not change,
+     * so no object is re-encrypted and the copy a fingerprint unseals (§5.2) keeps working — what was
+     * encrypted before the change opens after it. A fresh salt comes with the new PIN, because reusing
+     * the old one would leave the two derivations related for no reason.
+     */
+    fun changePin(currentPin: CharArray, newPin: CharArray, meta: VaultMeta): PinChange {
+        val dek = when (val unlocked = unlock(currentPin, meta)) {
+            is VaultUnlock.Success -> unlocked.dek
+            VaultUnlock.WrongPin -> return PinChange.WrongPin
+            VaultUnlock.Unrecoverable -> return PinChange.Unrecoverable
+        }
+        val salt = ByteArray(Pbkdf2.SALT_BYTES).also(random::nextBytes)
+        val kek = Pbkdf2.derive(newPin, salt, iterations)
+        val wrapped = try {
+            keyWrapper.wrap(AesGcm.encrypt(kek, dek))
+        } finally {
+            kek.fill(0)
+            dek.fill(0)
+        }
+        return PinChange.Changed(
+            meta.copy(
+                wrappedDek = wrapped.encodeBase64(),
+                kdfSalt = salt.encodeBase64(),
+                kdfIterations = iterations,
+                pinLength = newPin.size,
+                failedUnlocks = 0,
+                retryAtMillis = 0L,
+            ),
+        )
     }
 
     fun unlock(pin: CharArray, meta: VaultMeta): VaultUnlock {

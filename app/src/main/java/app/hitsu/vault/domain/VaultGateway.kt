@@ -31,6 +31,9 @@ interface VaultGateway {
 
     suspend fun unlock(pin: CharArray): UnlockResult
 
+    /** @return false when the current PIN is wrong, in which case nothing changed. */
+    suspend fun changePin(currentPin: CharArray, newPin: CharArray): Boolean
+
     suspend fun setLockTimeout(millis: Long)
 
     /** True when a fingerprint can open this vault, which needs a key that is still valid. */

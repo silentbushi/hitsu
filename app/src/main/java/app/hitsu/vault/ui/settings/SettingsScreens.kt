@@ -54,6 +54,7 @@ fun SettingsRoute(
     onBack: () -> Unit,
     onOpenAutoLock: () -> Unit,
     onOpenYtDlp: () -> Unit,
+    onOpenChangePin: () -> Unit,
     onOpenBackup: () -> Unit,
     onOpenAbout: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
@@ -68,6 +69,7 @@ fun SettingsRoute(
         onBack = onBack,
         onOpenAutoLock = onOpenAutoLock,
         onOpenYtDlp = onOpenYtDlp,
+        onOpenChangePin = onOpenChangePin,
         onOpenBackup = onOpenBackup,
         onOpenAbout = onOpenAbout,
         /*
@@ -98,6 +100,7 @@ fun SettingsScreen(
     onBack: () -> Unit,
     onOpenAutoLock: () -> Unit,
     onOpenYtDlp: () -> Unit,
+    onOpenChangePin: () -> Unit = {},
     onOpenBackup: () -> Unit,
     onOpenAbout: () -> Unit,
     onToggleBiometric: (() -> Unit)? = null,
@@ -120,6 +123,10 @@ fun SettingsScreen(
         )
 
         SettingsSection(stringResource(R.string.settings_storage))
+        SettingsRow(
+            title = stringResource(R.string.settings_change_pin),
+            onClick = onOpenChangePin,
+        )
         SettingsRow(
             title = stringResource(R.string.settings_biometric),
             onClick = if (state.biometricAvailable) onToggleBiometric else null,

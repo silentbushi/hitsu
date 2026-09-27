@@ -28,6 +28,13 @@
     <string name="biometric_prompt_title">Desbloquear Hitsu</string>
     <string name="biometric_prompt_subtitle">Tu huella abre el cofre.</string>
     <string name="biometric_enroll_subtitle">Confirma tu huella para activarla.</string>
+    <string name="settings_change_pin">Cambiar PIN</string>
+    <string name="change_pin_current">Escribe tu PIN actual</string>
+    <string name="change_pin_new">Elige el PIN nuevo</string>
+    <string name="change_pin_confirm">Repite el PIN nuevo</string>
+    <string name="change_pin_hint">Entre 6 y 12 dígitos.</string>
+    <string name="change_pin_wrong">Ese no es tu PIN actual.</string>
+    <string name="change_pin_mismatch">No coinciden. Prueba otra vez.</string>
     <string name="settings_biometric">Desbloqueo con huella</string>
     <string name="settings_biometric_note">Tu huella no abre nada por sí sola: autoriza una llave guardada en el teléfono. Si cambias las huellas del sistema, se desactiva y vuelves a entrar con el PIN.</string>
     <string name="settings_biometric_unavailable">Este teléfono no tiene huella configurada.</string>

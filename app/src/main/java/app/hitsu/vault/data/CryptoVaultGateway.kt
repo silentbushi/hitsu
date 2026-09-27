@@ -4,6 +4,7 @@ import app.hitsu.vault.crypto.BiometricKey
 import app.hitsu.vault.crypto.decodeBase64
 import app.hitsu.vault.crypto.encodeBase64
 import app.hitsu.vault.crypto.VaultCipher
+import app.hitsu.vault.crypto.PinChange
 import app.hitsu.vault.crypto.VaultCrypto
 import app.hitsu.vault.crypto.VaultUnlock
 import app.hitsu.vault.domain.Clock
@@ -161,6 +162,22 @@ class CryptoVaultGateway(
         biometricKey.delete()
         val current = meta ?: return@withLock
         persist(current.copy(biometricEnabled = false, biometricDek = null, biometricIv = null))
+    }
+
+    /**
+     * Reachable only from inside an open vault, so a wrong PIN here is a typo rather than a guess by
+     * someone who should not be here: it burns no attempt and starts no throttle.
+     */
+    override suspend fun changePin(currentPin: CharArray, newPin: CharArray): Boolean = mutex.withLock {
+        val current = meta ?: return@withLock false
+        require(PinPolicy.isValid(newPin.size)) { "Invalid PIN length" }
+        when (val result = withContext(cryptoDispatcher) { crypto.changePin(currentPin, newPin, current) }) {
+            is PinChange.Changed -> {
+                persist(result.meta)
+                true
+            }
+            PinChange.WrongPin, PinChange.Unrecoverable -> false
+        }
     }
 
     override suspend fun setLockTimeout(millis: Long) = mutex.withLock {
