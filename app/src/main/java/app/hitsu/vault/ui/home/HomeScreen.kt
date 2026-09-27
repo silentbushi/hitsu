@@ -74,6 +74,8 @@ import app.hitsu.vault.data.db.AlbumWithCount
 import app.hitsu.vault.ui.albums.AlbumPickerDialog
 import androidx.compose.ui.text.style.TextOverflow
 import app.hitsu.vault.ui.albums.NewAlbumDialog
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 
 private val TABS = listOf(
     HomeTab.All to R.string.home_tab_all,
@@ -194,21 +196,46 @@ fun HomeScreen(
             )
 
             Box(Modifier.fillMaxSize()) {
-                when {
-                    state.tab == HomeTab.Albums -> AlbumGrid(
-                        albums = state.albums,
-                        showCounts = state.showAlbumCounts,
-                        onOpenAlbum = onOpenAlbum,
-                        onNewAlbum = onNewAlbum,
-                    )
-                    state.showEmptyState -> EmptyVault(onImport = onImport)
-                    else -> MediaGrid(
-                        days = state.days,
-                        selection = state.selection,
-                        selecting = state.selecting,
-                        onOpen = onOpen,
-                        onToggleSelected = onToggleSelected,
-                    )
+                val pager = rememberPagerState(
+                    initialPage = TABS.indexOfFirst { it.first == state.tab }.coerceAtLeast(0),
+                    pageCount = { TABS.size },
+                )
+                /*
+                 * The tabs and the swipe are two ways of saying the same thing, so each follows the
+                 * other: settling on a page tells the model, and a tab tapped scrolls the pager.
+                 * Only the settled page counts, or dragging halfway would already switch tabs.
+                 */
+                LaunchedEffect(pager.settledPage) {
+                    onFilterSelected(TABS[pager.settledPage].first)
+                }
+                LaunchedEffect(state.tab) {
+                    val target = TABS.indexOfFirst { it.first == state.tab }
+                    if (target >= 0 && target != pager.currentPage) pager.animateScrollToPage(target)
+                }
+
+                HorizontalPager(
+                    state = pager,
+                    // Dragging while picking items would fight the selection, so it waits.
+                    userScrollEnabled = !state.selecting,
+                    modifier = Modifier.fillMaxSize(),
+                ) { page ->
+                    val tab = TABS[page].first
+                    when {
+                        tab == HomeTab.Albums -> AlbumGrid(
+                            albums = state.albums,
+                            showCounts = state.showAlbumCounts,
+                            onOpenAlbum = onOpenAlbum,
+                            onNewAlbum = onNewAlbum,
+                        )
+                        state.showEmptyState(tab) -> EmptyVault(onImport = onImport)
+                        else -> MediaGrid(
+                            days = state.pages[tab],
+                            selection = state.selection,
+                            selecting = state.selecting,
+                            onOpen = onOpen,
+                            onToggleSelected = onToggleSelected,
+                        )
+                    }
                 }
                 if (state.selecting) {
                     SelectionActionBar(modifier = Modifier.align(Alignment.BottomCenter)) {

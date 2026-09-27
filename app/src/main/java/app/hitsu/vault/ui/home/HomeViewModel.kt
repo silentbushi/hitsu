@@ -10,6 +10,7 @@ import app.hitsu.vault.data.MediaRepository
 import app.hitsu.vault.domain.AutoLock
 import app.hitsu.vault.domain.MediaFilter
 import dagger.hilt.android.lifecycle.HiltViewModel
+import app.hitsu.vault.domain.MediaType
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -30,7 +31,6 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val tab = MutableStateFlow(HomeTab.All)
-    private val filter = MutableStateFlow(MediaFilter.All)
     private val selection = MutableStateFlow(emptySet<String>())
     private val picking = MutableStateFlow(false)
     private val naming = MutableStateFlow(false)
@@ -65,20 +65,24 @@ class HomeViewModel @Inject constructor(
     )
 
     val state: StateFlow<HomeUiState> = combine(
-        filter,
-        filter.flatMapLatest { repository.media(it) },
+        repository.media(MediaFilter.All),
         selection,
         work,
         albumState,
-    ) { selected, items, chosen, (importStatus, sharing, exportStatus), albumState ->
-        val days = groupByDay(items)
+    ) { items, chosen, (importStatus, sharing, exportStatus), albumState ->
+        val pages = MediaPages(
+            all = groupByDay(items),
+            photos = groupByDay(items.filter { it.type == MediaType.Photo }),
+            videos = groupByDay(items.filter { it.type == MediaType.Video }),
+        )
+        val days = pages[albumState.tab]
         HomeUiState(
             tab = albumState.tab,
+            pages = pages,
             albums = albumState.albums,
             showAlbumCounts = preferences.showCounts,
             pickingAlbum = albumState.picking,
             namingAlbum = albumState.naming,
-            filter = selected,
             days = days,
             loaded = true,
             importStatus = importStatus,
@@ -91,13 +95,7 @@ class HomeViewModel @Inject constructor(
 
     fun onTabSelected(selected: HomeTab) {
         tab.value = selected
-        // Albums are a list, not a filter: the grid keeps whatever it was showing underneath.
-        when (selected) {
-            HomeTab.All -> filter.value = MediaFilter.All
-            HomeTab.Photos -> filter.value = MediaFilter.Photos
-            HomeTab.Videos -> filter.value = MediaFilter.Videos
-            HomeTab.Albums -> Unit
-        }
+        // Nothing stays selected out of sight when the tab it was selected in is left behind.
         if (selected == HomeTab.Albums) selection.value = emptySet()
     }
 
