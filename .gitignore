@@ -8,3 +8,9 @@ local.properties
 captures/
 .externalNativeBuild/
 .cxx/
+
+# La llave de firma y su contraseña no se publican: sin ellas nadie puede firmar una
+# actualización de esta app, y con ellas cualquiera podría.
+keystore.properties
+*.jks
+*.keystore

@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -26,11 +28,33 @@ android {
         }
     }
 
+    /*
+     * The release key lives outside the repository, in keystore.properties. A published APK has to
+     * be signed with a key only its author has: the debug key is the same on every machine, so
+     * anything signed with it can be installed over the app as if it were an update.
+     */
+    signingConfigs {
+        val properties = Properties().apply {
+            val file = rootProject.file("keystore.properties")
+            if (file.exists()) file.inputStream().use(::load)
+        }
+        if (properties.getProperty("storeFile") != null) {
+            create("release") {
+                storeFile = rootProject.file(properties.getProperty("storeFile"))
+                storePassword = properties.getProperty("storePassword")
+                keyAlias = properties.getProperty("keyAlias")
+                keyPassword = properties.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            // Without the key the release build still compiles; it just comes out unsigned.
+            signingConfig = signingConfigs.findByName("release")
         }
     }
 
