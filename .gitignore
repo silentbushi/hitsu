@@ -14,3 +14,8 @@ captures/
 keystore.properties
 *.jks
 *.keystore
+
+# Los APK se publican en Releases, no en el repositorio: son binarios de 23 MB
+# que se quedarian en el historial para siempre.
+*.apk
+*.aab
