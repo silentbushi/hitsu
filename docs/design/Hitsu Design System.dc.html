@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin:0; padding:0; background:#0B0B0C; }
+  * { box-sizing: border-box; }
+  a { color:#C4A574; text-decoration:none; }
+  a:hover { color:#F3F1EC; }
+  ::selection { background:#C4A574; color:#0B0B0C; }
+</style>
+</helmet>
+<div style="background:#0B0B0C; color:#F3F1EC; font-family:Manrope, sans-serif; min-height:100vh; padding:0 16px 120px;">
+
+  <div style="max-width:1080px; margin:0 auto;">
+
+    <header style="padding:88px 0 56px; border-bottom:1px solid #2A2A2E; display:flex; flex-wrap:wrap; gap:32px; align-items:flex-end; justify-content:space-between;">
+      <div>
+        <div style="font-family:Fraunces, serif; font-weight:500; font-size:56px; line-height:1; letter-spacing:-0.5px; color:#F3F1EC;">Hitsu <span style="color:#C4A574;">櫃</span></div>
+        <div style="margin-top:14px; font-size:15px; color:#8A8680; max-width:46ch; line-height:1.55;">Sistema de diseño derivado de §10 del spec. Dark-first, una tinta, tipografía estricta. Nada aquí es decorativo.</div>
+      </div>
+      <div style="font-size:12px; color:#8A8680; font-variant-numeric:tabular-nums; text-align:right; line-height:1.9;">
+        <div>v1 · dark</div>
+        <div>Fraunces / Manrope</div>
+        <div>Lucide stroke 1.5</div>
+      </div>
+    </header>
+
+    <section style="padding:56px 0; border-bottom:1px solid #2A2A2E;">
+      <div style="display:flex; gap:12px; align-items:baseline; margin-bottom:28px;">
+        <span style="font-size:12px; color:#C4A574; font-variant-numeric:tabular-nums;">10.1</span>
+        <h2 style="margin:0; font-size:20px; font-weight:600; letter-spacing:-0.2px;">Principio</h2>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:1px; background:#0B0B0C;">
+        <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E; padding:24px;"><div style="font-size:15px; font-weight:600; margin-bottom:8px;">Silencio visual</div><div style="font-size:13px; color:#8A8680; line-height:1.6;">Mucho negro. El contenido del cofre es lo único con color.</div></div>
+        <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E; padding:24px;"><div style="font-size:15px; font-weight:600; margin-bottom:8px;">Una tinta</div><div style="font-size:13px; color:#8A8680; line-height:1.6;">Latón apagado #C4A574. Un solo acento, usado poco.</div></div>
+        <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E; padding:24px;"><div style="font-size:15px; font-weight:600; margin-bottom:8px;">Predecible</div><div style="font-size:13px; color:#8A8680; line-height:1.6;">Geometría recta: radius 8 en controles, 0–2 en thumbs.</div></div>
+        <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E; padding:24px;"><div style="font-size:15px; font-weight:600; margin-bottom:8px;">Cero plantilla</div><div style="font-size:13px; color:#8A8680; line-height:1.6;">Sin purple seed, sin blobs, sin gradientes, sin ilustración.</div></div>
+      </div>
+    </section>
+
+    <section style="padding:56px 0; border-bottom:1px solid #2A2A2E;">
+      <div style="display:flex; gap:12px; align-items:baseline; margin-bottom:28px;">
+        <span style="font-size:12px; color:#C4A574; font-variant-numeric:tabular-nums;">10.2</span>
+        <h2 style="margin:0; font-size:20px; font-weight:600; letter-spacing:-0.2px;">Color</h2>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:1px; background:#0B0B0C;">
+        <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E; padding:0;">
+          <div style="height:96px; background:#0B0B0C; border-bottom:1px solid #2A2A2E;"></div>
+          <div style="padding:14px 16px 18px;"><div style="font-size:13px; font-weight:600;">bg</div><div style="font-size:12px; color:#8A8680; font-variant-numeric:tabular-nums; margin-top:3px;">#0B0B0C</div></div>
+        </div>
+        <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E;">
+          <div style="height:96px; background:#141416; border-bottom:1px solid #2A2A2E;"></div>
+          <div style="padding:14px 16px 18px;"><div style="font-size:13px; font-weight:600;">bgElevated</div><div style="font-size:12px; color:#8A8680; font-variant-numeric:tabular-nums; margin-top:3px;">#141416</div></div>
+        </div>
+        <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E;">
+          <div style="height:96px; background:#1C1C1F; border-bottom:1px solid #2A2A2E;"></div>
+          <div style="padding:14px 16px 18px;"><div style="font-size:13px; font-weight:600;">surfaceInput</div><div style="font-size:12px; color:#8A8680; font-variant-numeric:tabular-nums; margin-top:3px;">#1C1C1F</div></div>
+        </div>
+        <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E;">
+          <div style="height:96px; background:#2A2A2E; border-bottom:1px solid #2A2A2E;"></div>
+          <div style="padding:14px 16px 18px;"><div style="font-size:13px; font-weight:600;">stroke</div><div style="font-size:12px; color:#8A8680; font-variant-numeric:tabular-nums; margin-top:3px;">#2A2A2E</div></div>
+        </div>
+        <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E;">
+          <div style="height:96px; background:#F3F1EC; border-bottom:1px solid #2A2A2E;"></div>
+          <div style="padding:14px 16px 18px;"><div style="font-size:13px; font-weight:600;">textPrimary</div><div style="font-size:12px; color:#8A8680; font-variant-numeric:tabular-nums; margin-top:3px;">#F3F1EC</div></div>
+        </div>
+        <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E;">
+          <div style="height:96px; background:#8A8680; border-bottom:1px solid #2A2A2E;"></div>
+          <div style="padding:14px 16px 18px;"><div style="font-size:13px; font-weight:600;">textMuted</div><div style="font-size:12px; color:#8A8680; font-variant-numeric:tabular-nums; margin-top:3px;">#8A8680</div></div>
+        </div>
+        <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E;">
+          <div style="height:96px; background:#C4A574; border-bottom:1px solid #2A2A2E;"></div>
+          <div style="padding:14px 16px 18px;"><div style="font-size:13px; font-weight:600;">accent</div><div style="font-size:12px; color:#8A8680; font-variant-numeric:tabular-nums; margin-top:3px;">#C4A574</div></div>
+        </div>
+        <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E;">
+          <div style="height:96px; background:#A88A5C; border-bottom:1px solid #2A2A2E;"></div>
+          <div style="padding:14px 16px 18px;"><div style="font-size:13px; font-weight:600;">accentPress</div><div style="font-size:12px; color:#8A8680; font-variant-numeric:tabular-nums; margin-top:3px;">#A88A5C</div></div>
+        </div>
+        <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E;">
+          <div style="height:96px; background:#C45C4A; border-bottom:1px solid #2A2A2E;"></div>
+          <div style="padding:14px 16px 18px;"><div style="font-size:13px; font-weight:600;">danger</div><div style="font-size:12px; color:#8A8680; font-variant-numeric:tabular-nums; margin-top:3px;">#C45C4A</div></div>
+        </div>
+        <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E;">
+          <div style="height:96px; background:#6F8F6A; border-bottom:1px solid #2A2A2E;"></div>
+          <div style="padding:14px 16px 18px;"><div style="font-size:13px; font-weight:600;">ok</div><div style="font-size:12px; color:#8A8680; font-variant-numeric:tabular-nums; margin-top:3px;">#6F8F6A</div></div>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); gap:24px; margin-top:32px;">
+        <div style="border:1px solid #2A2A2E; padding:20px 22px;">
+          <div style="font-size:12px; text-transform:uppercase; letter-spacing:1.2px; color:#8A8680; margin-bottom:14px;">Uso del acento</div>
+          <div style="font-size:13px; color:#8A8680; line-height:1.7;">FAB, foco de input, dot de PIN activo, item seleccionado, link. Nunca como fondo de pantalla ni en texto largo.</div>
+        </div>
+        <div style="border:1px solid #2A2A2E; padding:20px 22px;">
+          <div style="font-size:12px; text-transform:uppercase; letter-spacing:1.2px; color:#8A8680; margin-bottom:14px;">Light mode (opcional)</div>
+          <div style="display:flex; gap:10px; align-items:center; font-variant-numeric:tabular-nums; font-size:12px; color:#8A8680;">
+            <span style="width:28px; height:28px; background:#F6F3EE; border:1px solid #2A2A2E;"></span>#F6F3EE
+            <span style="width:28px; height:28px; background:#161513; border:1px solid #2A2A2E; margin-left:6px;"></span>#161513
+            <span style="width:28px; height:28px; background:#8A6A3E; border:1px solid #2A2A2E; margin-left:6px;"></span>#8A6A3E
+          </div>
+        </div>
+        <div style="border:1px solid #C45C4A; padding:20px 22px;">
+          <div style="font-size:12px; text-transform:uppercase; letter-spacing:1.2px; color:#C45C4A; margin-bottom:14px;">Prohibido</div>
+          <div style="font-size:13px; color:#8A8680; line-height:1.7;">Purple 600, teal Material default, gradiente indigo-pink, tonalElevation llamativo, FAB extendido con texto.</div>
+        </div>
+      </div>
+
+      <sc-if value="{{ mostrarKotlin }}" hint-placeholder-val="{{ false }}">
+        <pre style="margin:28px 0 0; background:#141416; border:1px solid #2A2A2E; border-radius:8px; padding:20px 22px; font-family:ui-monospace, Menlo, monospace; font-size:12.5px; line-height:1.75; color:#8A8680; overflow:auto;"><span style="color:#F3F1EC;">object</span> HitsuColors {
+  <span style="color:#F3F1EC;">val</span> bg           = Color(0xFF0B0B0C)
+  <span style="color:#F3F1EC;">val</span> bgElevated   = Color(0xFF141416)
+  <span style="color:#F3F1EC;">val</span> surfaceInput = Color(0xFF1C1C1F)
+  <span style="color:#F3F1EC;">val</span> stroke       = Color(0xFF2A2A2E)
+  <span style="color:#F3F1EC;">val</span> textPrimary  = Color(0xFFF3F1EC)
+  <span style="color:#F3F1EC;">val</span> textMuted    = Color(0xFF8A8680)
+  <span style="color:#F3F1EC;">val</span> accent       = Color(0xFFC4A574)
+  <span style="color:#F3F1EC;">val</span> accentPress  = Color(0xFFA88A5C)
+  <span style="color:#F3F1EC;">val</span> danger       = Color(0xFFC45C4A)
+  <span style="color:#F3F1EC;">val</span> ok           = Color(0xFF6F8F6A)
+}</pre>
+      </sc-if>
+    </section>
+
+    <section style="padding:56px 0; border-bottom:1px solid #2A2A2E;">
+      <div style="display:flex; gap:12px; align-items:baseline; margin-bottom:28px;">
+        <span style="font-size:12px; color:#C4A574; font-variant-numeric:tabular-nums;">10.3</span>
+        <h2 style="margin:0; font-size:20px; font-weight:600; letter-spacing:-0.2px;">Tipografía</h2>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px,1fr)); gap:1px; background:#0B0B0C;">
+        <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E; padding:28px 24px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:#8A8680;">Display · Fraunces Medium</div>
+          <div style="font-family:Fraunces, serif; font-weight:500; font-size:44px; line-height:1.1; margin:18px 0 10px;">Hitsu</div>
+          <div style="font-size:12.5px; color:#8A8680; line-height:1.7;">Solo wordmark: lock, splash y about. Nunca en botones, títulos de pantalla ni listas.</div>
+        </div>
+        <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E; padding:28px 24px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:#8A8680;">UI · Manrope</div>
+          <div style="font-size:44px; font-weight:600; letter-spacing:-0.6px; line-height:1.1; margin:18px 0 10px;">Cofre bloqueado</div>
+          <div style="font-size:12.5px; color:#8A8680; line-height:1.7;">Todo lo demás. Títulos con letterspacing −0.2 sp.</div>
+        </div>
+      </div>
+
+      <div style="border:1px solid #2A2A2E; border-top:none; display:grid; grid-template-columns:repeat(auto-fit, minmax(240px,1fr));">
+        <div style="padding:22px 24px; border-right:1px solid #2A2A2E;">
+          <div style="font-size:24px; font-weight:600; letter-spacing:-0.4px;">Título 24 / 600</div>
+          <div style="font-size:11.5px; color:#8A8680; margin-top:8px; font-variant-numeric:tabular-nums;">headline · pantalla</div>
+        </div>
+        <div style="padding:22px 24px; border-right:1px solid #2A2A2E;">
+          <div style="font-size:16px; font-weight:600;">Subtítulo 16 / 600</div>
+          <div style="font-size:11.5px; color:#8A8680; margin-top:8px;">sticky header, diálogo</div>
+        </div>
+        <div style="padding:22px 24px; border-right:1px solid #2A2A2E;">
+          <div style="font-size:14px;">Cuerpo 14 / 400</div>
+          <div style="font-size:11.5px; color:#8A8680; margin-top:8px;">texto, ajustes</div>
+        </div>
+        <div style="padding:22px 24px;">
+          <div style="font-size:12px; color:#8A8680; font-variant-numeric:tabular-nums;">Meta 12 · tabular 0:42 / 12 / 84</div>
+          <div style="font-size:11.5px; color:#8A8680; margin-top:8px;">duración, índice, tamaño</div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding:56px 0; border-bottom:1px solid #2A2A2E;">
+      <div style="display:flex; gap:12px; align-items:baseline; margin-bottom:10px;">
+        <span style="font-size:12px; color:#C4A574; font-variant-numeric:tabular-nums;">10.5</span>
+        <h2 style="margin:0; font-size:20px; font-weight:600; letter-spacing:-0.2px;">Iconos</h2>
+      </div>
+      <div style="font-size:13px; color:#8A8680; margin-bottom:26px;">Lucide, stroke 1.5, 24×24, línea únicamente. Un solo set, nada filled.</div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(104px,1fr)); gap:1px; background:#0B0B0C;">
+        <sc-for list="{{ icons }}" as="ic" hint-placeholder-count="12">
+          <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E; padding:20px 8px 14px; display:flex; flex-direction:column; align-items:center; gap:12px;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F3F1EC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" dangerouslySetInnerHTML="{{ ic.html }}"></svg>
+            <span style="font-size:10.5px; color:#8A8680;">{{ ic.name }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <section style="padding:56px 0; border-bottom:1px solid #2A2A2E;">
+      <div style="display:flex; gap:12px; align-items:baseline; margin-bottom:28px;">
+        <span style="font-size:12px; color:#C4A574; font-variant-numeric:tabular-nums;">10.4</span>
+        <h2 style="margin:0; font-size:20px; font-weight:600; letter-spacing:-0.2px;">Controles</h2>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px,1fr)); gap:1px; background:#0B0B0C;">
+
+        <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E; padding:28px 24px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:#8A8680; margin-bottom:20px;">Botones · h48 r8</div>
+          <div style="display:flex; flex-direction:column; gap:14px; max-width:320px;">
+            <button style="height:48px; border-radius:8px; border:none; background:#C4A574; color:#0B0B0C; font-family:Manrope, sans-serif; font-size:15px; font-weight:600; cursor:pointer; transition:background 220ms cubic-bezier(0.4,0,0.2,1);" style-hover="background:#A88A5C" style-active="background:#A88A5C">Importar</button>
+            <button style="height:48px; border-radius:8px; border:1px solid #2A2A2E; background:transparent; color:#F3F1EC; font-family:Manrope, sans-serif; font-size:15px; font-weight:500; cursor:pointer; transition:background 220ms cubic-bezier(0.4,0,0.2,1);" style-hover="background:#141416">Conservar originales</button>
+            <button style="height:48px; border-radius:8px; border:1px solid #C45C4A; background:transparent; color:#C45C4A; font-family:Manrope, sans-serif; font-size:15px; font-weight:500; cursor:pointer; transition:background 220ms cubic-bezier(0.4,0,0.2,1);" style-hover="background:rgba(196,92,74,0.10)">Eliminar originales</button>
+            <button disabled="{{ true }}" style="height:48px; border-radius:8px; border:1px solid #2A2A2E; background:#141416; color:#8A8680; font-family:Manrope, sans-serif; font-size:15px; font-weight:500;">Exportar backup</button>
+          </div>
+          <sc-if value="{{ mostrarMedidas }}" hint-placeholder-val="{{ true }}">
+            <div style="margin-top:18px; font-size:11.5px; color:#8A8680; font-variant-numeric:tabular-nums; line-height:1.8;">height 48 · radius 8 · label 15/600 · ripple 220ms</div>
+          </sc-if>
+        </div>
+
+        <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E; padding:28px 24px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:#8A8680; margin-bottom:20px;">FAB · 56 cuadrado r8</div>
+          <div style="display:flex; gap:24px; align-items:flex-end;">
+            <div style="width:56px; height:56px; border-radius:8px; background:#C4A574; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:background 220ms;" style-hover="background:#A88A5C">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0B0B0C" stroke-width="1.75" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            </div>
+            <div style="width:56px; height:56px; border-radius:8px; background:#A88A5C; display:flex; align-items:center; justify-content:center;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0B0B0C" stroke-width="1.75" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            </div>
+            <div style="font-size:11.5px; color:#8A8680; line-height:1.8; font-variant-numeric:tabular-nums;">default / pressed<br>56×56 · radius 8<br>no pill, no label</div>
+          </div>
+
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:#8A8680; margin:32px 0 16px;">Tabs</div>
+          <div style="display:flex; gap:24px; border-bottom:1px solid #2A2A2E;">
+            <div style="padding:0 0 12px; font-size:14px; font-weight:600; color:#F3F1EC; box-shadow:inset 0 -2px 0 #C4A574;">Todos</div>
+            <div style="padding:0 0 12px; font-size:14px; color:#8A8680; cursor:pointer;" style-hover="color:#F3F1EC">Fotos</div>
+            <div style="padding:0 0 12px; font-size:14px; color:#8A8680; cursor:pointer;" style-hover="color:#F3F1EC">Vídeos</div>
+          </div>
+
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:#8A8680; margin:32px 0 16px;">Switch (auto-lock, bio)</div>
+          <div style="display:flex; align-items:center; justify-content:space-between; max-width:320px;">
+            <span style="font-size:14px;">Desbloquear con huella</span>
+            <div onClick="{{ toggleBio }}" style="width:46px; height:26px; border-radius:13px; background:#1C1C1F; border:1px solid #2A2A2E; position:relative; cursor:pointer;">
+              <div style="{{ knobStyle }}"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E; padding:28px 24px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:#8A8680; margin-bottom:20px;">Campos</div>
+          <div style="display:flex; flex-direction:column; gap:14px; max-width:320px;">
+            <input type="text" placeholder="Nombre del álbum" style="height:48px; border-radius:8px; background:#1C1C1F; border:1px solid #2A2A2E; color:#F3F1EC; font-family:Manrope, sans-serif; font-size:15px; padding:0 14px; outline:none;" style-focus="border-color:#C4A574" />
+            <div style="height:48px; border-radius:8px; background:#1C1C1F; border:1px solid #C4A574; color:#F3F1EC; font-size:15px; padding:0 14px; display:flex; align-items:center;">Passphrase<span style="width:1px; height:20px; background:#C4A574; margin-left:2px;"></span></div>
+            <div style="font-size:12px; color:#C45C4A;">PIN incorrecto. Intento 3 de 8.</div>
+          </div>
+
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:#8A8680; margin:32px 0 16px;">PIN · dots</div>
+          <div style="display:flex; gap:14px; align-items:center;">
+            <span style="width:12px; height:12px; border-radius:50%; background:#C4A574;"></span>
+            <span style="width:12px; height:12px; border-radius:50%; background:#C4A574;"></span>
+            <span style="width:12px; height:12px; border-radius:50%; background:#C4A574;"></span>
+            <span style="width:12px; height:12px; border-radius:50%; border:1px solid #2A2A2E;"></span>
+            <span style="width:12px; height:12px; border-radius:50%; border:1px solid #2A2A2E;"></span>
+            <span style="width:12px; height:12px; border-radius:50%; border:1px solid #2A2A2E;"></span>
+          </div>
+        </div>
+
+        <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E; padding:28px 24px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:#8A8680; margin-bottom:20px;">Teclado numérico</div>
+          <div style="display:grid; grid-template-columns:repeat(3, 72px); gap:1px; background:#0B0B0C; width:max-content;">
+            <sc-for list="{{ keys }}" as="k" hint-placeholder-count="12">
+              <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E; height:56px; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:500; color:#F3F1EC; cursor:pointer; font-variant-numeric:tabular-nums; transition:background 200ms;" style-hover="background:#141416">{{ k }}</div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding:56px 0; border-bottom:1px solid #2A2A2E;">
+      <div style="display:flex; gap:12px; align-items:baseline; margin-bottom:28px;">
+        <span style="font-size:12px; color:#C4A574; font-variant-numeric:tabular-nums;">§9</span>
+        <h2 style="margin:0; font-size:20px; font-weight:600; letter-spacing:-0.2px;">Grid y superficies</h2>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px,1fr)); gap:1px; background:#0B0B0C;">
+        <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E; padding:28px 24px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:#8A8680; margin-bottom:16px;">Thumbs · gap 1 · radius 0–2</div>
+          <div style="font-size:16px; font-weight:600; margin-bottom:12px;">21 sep 2026</div>
+          <div style="display:grid; gap:1px; {{ gridStyle }}">
+            <sc-for list="{{ cells }}" as="c" hint-placeholder-count="9">
+              <div style="{{ c.style }}">
+                <sc-if value="{{ c.dur }}" hint-placeholder-val="{{ false }}">
+                  <span style="position:absolute; right:4px; bottom:4px; font-size:10.5px; color:#F3F1EC; font-variant-numeric:tabular-nums; text-shadow:0 1px 3px rgba(0,0,0,0.9);">{{ c.dur }}</span>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+          <div style="font-size:11.5px; color:#8A8680; margin-top:14px; line-height:1.7;">Placeholder rayado = media cifrada. 3 col portrait · 5 landscape.</div>
+        </div>
+
+        <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E; padding:28px 24px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:#8A8680; margin-bottom:16px;">Diálogo</div>
+          <div style="background:#141416; border:1px solid #2A2A2E; border-radius:8px; padding:24px; max-width:380px;">
+            <div style="font-size:16px; font-weight:600; margin-bottom:10px;">¿Eliminar los originales de la galería del sistema?</div>
+            <div style="font-size:13.5px; color:#8A8680; line-height:1.6;">Se copiaron y cifraron en Hitsu. Esto no se puede deshacer desde Hitsu.</div>
+            <div style="display:flex; gap:10px; margin-top:22px;">
+              <button style="flex:1; height:48px; border-radius:8px; border:1px solid #2A2A2E; background:transparent; color:#F3F1EC; font-family:Manrope, sans-serif; font-size:14px; font-weight:600; cursor:pointer;" style-hover="background:#1C1C1F">Conservar originales</button>
+              <button style="flex:1; height:48px; border-radius:8px; border:1px solid #C45C4A; background:transparent; color:#C45C4A; font-family:Manrope, sans-serif; font-size:14px; font-weight:600; cursor:pointer;" style-hover="background:rgba(196,92,74,0.10)">Eliminar originales</button>
+            </div>
+          </div>
+          <div style="font-size:11.5px; color:#8A8680; margin-top:14px;">Default: la acción no destructiva a la izquierda.</div>
+        </div>
+
+        <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E; padding:28px 24px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:#8A8680; margin-bottom:16px;">Chrome del visor</div>
+          <div style="background:#000; border:1px solid #2A2A2E; padding:14px 16px; display:flex; align-items:center; justify-content:space-between;">
+            <div style="display:flex; align-items:center; gap:16px;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F3F1EC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+              <span style="font-size:13px; color:#F3F1EC; font-variant-numeric:tabular-nums;">12 / 84</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:18px;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F3F1EC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3m0 0L8 7m4-4l4 4"/><path d="M3 15v4a2 2 0 002 2h14a2 2 0 002-2v-4"/></svg>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F3F1EC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C45C4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>
+            </div>
+          </div>
+          <div style="background:#000; border:1px solid #2A2A2E; border-top:none; padding:16px;">
+            <div style="height:2px; background:#2A2A2E; position:relative;">
+              <div style="position:absolute; left:0; top:0; height:2px; width:38%; background:#C4A574;"></div>
+              <div style="position:absolute; left:38%; top:-4px; width:10px; height:10px; border-radius:50%; background:#C4A574; transform:translateX(-50%);"></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-top:10px; font-size:12px; color:#8A8680; font-variant-numeric:tabular-nums;"><span>0:42</span><span>1:50</span></div>
+          </div>
+        </div>
+
+        <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E; padding:28px 24px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:#8A8680; margin-bottom:16px;">Estados</div>
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <div style="border:1px solid #2A2A2E; padding:28px 20px; text-align:center;">
+              <div style="font-size:14px; color:#8A8680; margin-bottom:16px;">El cofre está vacío</div>
+              <button style="height:48px; border-radius:8px; border:none; background:#C4A574; color:#0B0B0C; font-family:Manrope, sans-serif; font-size:15px; font-weight:600; padding:0 28px; cursor:pointer;" style-hover="background:#A88A5C">Importar</button>
+            </div>
+            <div style="background:#141416; border:1px solid #2A2A2E; border-radius:8px; padding:14px 16px; display:flex; align-items:center; gap:12px;">
+              <span style="width:8px; height:8px; border-radius:50%; background:#6F8F6A; flex:none;"></span>
+              <span style="font-size:13.5px;">3 archivos cifrados en el cofre</span>
+            </div>
+            <div style="background:#141416; border:1px solid #2A2A2E; border-radius:8px; padding:14px 16px; display:flex; align-items:center; gap:12px;">
+              <span style="width:8px; height:8px; border-radius:50%; background:#C45C4A; flex:none;"></span>
+              <span style="font-size:13.5px;">IMG_2211.jpg no se pudo leer</span>
+            </div>
+            <div style="background:#141416; border:1px solid #2A2A2E; border-radius:8px; padding:16px;">
+              <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:10px;"><span>VID_0042.mp4</span><span style="color:#8A8680; font-variant-numeric:tabular-nums;">62%</span></div>
+              <div style="height:2px; background:#2A2A2E;"><div style="height:2px; width:62%; background:#C4A574;"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding:56px 0; border-bottom:1px solid #2A2A2E;">
+      <div style="display:flex; gap:12px; align-items:baseline; margin-bottom:28px;">
+        <span style="font-size:12px; color:#C4A574; font-variant-numeric:tabular-nums;">10.4</span>
+        <h2 style="margin:0; font-size:20px; font-weight:600; letter-spacing:-0.2px;">Espacio y movimiento</h2>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(230px,1fr)); gap:1px; background:#0B0B0C;">
+        <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E; padding:24px;">
+          <div style="font-size:13px; font-weight:600; margin-bottom:12px;">Escala</div>
+          <div style="font-size:12.5px; color:#8A8680; line-height:2; font-variant-numeric:tabular-nums;">padding horizontal 16<br>gap grid 1<br>separación lista 12 / 16<br>sección 24 / 32</div>
+        </div>
+        <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E; padding:24px;">
+          <div style="font-size:13px; font-weight:600; margin-bottom:12px;">Radios</div>
+          <div style="display:flex; gap:12px; align-items:flex-end; margin-bottom:12px;">
+            <div style="width:44px; height:44px; background:#1C1C1F; border:1px solid #2A2A2E; border-radius:0;"></div>
+            <div style="width:44px; height:44px; background:#1C1C1F; border:1px solid #2A2A2E; border-radius:2px;"></div>
+            <div style="width:44px; height:44px; background:#1C1C1F; border:1px solid #2A2A2E; border-radius:8px;"></div>
+          </div>
+          <div style="font-size:12.5px; color:#8A8680; line-height:1.8;">0 thumb · 2 máx thumb · 8 control. Nunca 16–28.</div>
+        </div>
+        <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E; padding:24px;">
+          <div style="font-size:13px; font-weight:600; margin-bottom:12px;">Motion</div>
+          <div style="font-size:12.5px; color:#8A8680; line-height:2; font-variant-numeric:tabular-nums;">tween(220) FastOutSlowIn<br>ripple 200–240 ms<br>thumb → visor: shared element<br>fallback fade + scale 0.98→1</div>
+        </div>
+        <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E; padding:24px;">
+          <div style="font-size:13px; font-weight:600; margin-bottom:12px;">Superficies</div>
+          <div style="font-size:12.5px; color:#8A8680; line-height:2;">Elevación por color, no por sombra. bg → bgElevated → surfaceInput. Hairline #2A2A2E para separar.</div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding:56px 0;">
+      <div style="display:flex; gap:12px; align-items:baseline; margin-bottom:28px;">
+        <span style="font-size:12px; color:#C4A574; font-variant-numeric:tabular-nums;">10.6</span>
+        <h2 style="margin:0; font-size:20px; font-weight:600; letter-spacing:-0.2px;">Copy</h2>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px,1fr)); gap:1px; background:#0B0B0C;">
+        <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E; padding:26px 24px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:#6F8F6A; margin-bottom:16px;">Así</div>
+          <div style="font-size:15px; line-height:2.1;">Cofre bloqueado<br>Importar<br>¿Eliminar originales de la galería?<br>Esto no se puede deshacer<br>Picture-in-picture<br>El vídeo se cierra al bloquear el cofre</div>
+        </div>
+        <div style="background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E; padding:26px 24px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:#C45C4A; margin-bottom:16px;">Así no</div>
+          <div style="font-size:15px; line-height:2.1; color:#8A8680; text-decoration:line-through; text-decoration-color:#C45C4A;">¡Listo, tus recuerdos están a salvo!<br>Welcome to your journey<br>Add memories<br>Oops, algo salió mal</div>
+          <div style="font-size:12.5px; color:#8A8680; margin-top:18px; line-height:1.7; text-decoration:none;">Tú, corto, sin marketing. Sin emoji. El error dice el nombre del archivo.</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;mostrarMedidas&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Documentación&quot;},&quot;mostrarKotlin&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Documentación&quot;},&quot;gridCols&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:3,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Grid&quot;}}">
+class Component extends DCLogic {
+  state = { bio: true };
+
+  icons() {
+    const p = (d) => ({ __html: d });
+    return [
+      { name: "plus", html: p('<path d="M12 5v14M5 12h14"/>') },
+      { name: "lock", html: p('<rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>') },
+      { name: "scan", html: p('<path d="M3 8V5a2 2 0 012-2h3"/><path d="M16 3h3a2 2 0 012 2v3"/><path d="M21 16v3a2 2 0 01-2 2h-3"/><path d="M8 21H5a2 2 0 01-2-2v-3"/>') },
+      { name: "image", html: p('<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>') },
+      { name: "play", html: p('<path d="M7 4l12 8-12 8z"/>') },
+      { name: "pause", html: p('<path d="M9 4v16M15 4v16"/>') },
+      { name: "chevron-left", html: p('<path d="M15 18l-6-6 6-6"/>') },
+      { name: "x", html: p('<path d="M18 6L6 18M6 6l12 12"/>') },
+      { name: "check", html: p('<path d="M20 6L9 17l-5-5"/>') },
+      { name: "trash-2", html: p('<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/><path d="M10 11v6M14 11v6"/>') },
+      { name: "download", html: p('<path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M3 17v2a2 2 0 002 2h14a2 2 0 002-2v-2"/>') },
+      { name: "share", html: p('<path d="M12 15V3m0 0L8 7m4-4l4 4"/><path d="M3 15v4a2 2 0 002 2h14a2 2 0 002-2v-4"/>') },
+      { name: "info", html: p('<circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/>') },
+      { name: "pip", html: p('<rect x="3" y="4" width="18" height="14" rx="2"/><rect x="12" y="11" width="7" height="5" rx="1"/>') },
+      { name: "volume-x", html: p('<path d="M11 5L6 9H3v6h3l5 4z"/><path d="M17 9l4 6M21 9l-4 6"/>') },
+      { name: "settings", html: p('<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>') },
+      { name: "folder", html: p('<path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>') },
+      { name: "rotate-ccw", html: p('<path d="M3 12a9 9 0 109-9 9 9 0 00-6.4 2.6L3 8"/><path d="M3 3v5h5"/>') }
+    ];
+  }
+
+  renderVals() {
+    const cols = this.props.gridCols ?? 3;
+    const stripe = (i) => {
+      const a = i % 3 === 0 ? "#141416" : i % 3 === 1 ? "#17171A" : "#121214";
+      return "position:relative; aspect-ratio:1; background:repeating-linear-gradient(135deg, " + a + " 0 6px, #0F0F11 6px 12px); border-radius:2px;";
+    };
+    const durs = { 2: "0:42", 5: "1:50", 7: "0:08" };
+    const cells = Array.from({ length: cols * 3 }, (_, i) => ({
+      style: stripe(i),
+      dur: durs[i] || false
+    }));
+    const on = this.state.bio;
+    return {
+      icons: this.icons(),
+      keys: ["1","2","3","4","5","6","7","8","9","","0","⌫"],
+      cells,
+      gridStyle: "grid-template-columns:repeat(" + cols + ", 1fr)",
+      knobStyle: "position:absolute; top:2px; left:" + (on ? "22px" : "2px") +
+        "; width:20px; height:20px; border-radius:50%; background:" + (on ? "#C4A574" : "#8A8680") +
+        "; transition:left 220ms cubic-bezier(0.4,0,0.2,1), background 220ms;",
+      mostrarMedidas: this.props.mostrarMedidas ?? true,
+      mostrarKotlin: this.props.mostrarKotlin ?? false,
+      toggleBio: () => this.setState(s => ({ bio: !s.bio }))
+    };
+  }
+}
+</script>
+</body>
+</html>

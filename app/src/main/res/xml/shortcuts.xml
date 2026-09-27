@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--
+        Lets the share sheet offer "Descarga rápida" under the Hitsu icon, so a link can go
+        straight to the vault without opening the app.
+    -->
+    <share-target android:targetClass="app.hitsu.vault.QuickDownloadActivity">
+        <data android:mimeType="text/plain" />
+        <category android:name="app.hitsu.vault.category.QUICK_DOWNLOAD" />
+    </share-target>
+</shortcuts>

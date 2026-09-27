@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin:0; padding:0; background:#09090A; }
+  * { box-sizing:border-box; }
+  a { color:#C4A574; text-decoration:none; }
+  a:hover { color:#F3F1EC; }
+  ::selection { background:#C4A574; color:#0B0B0C; }
+</style>
+</helmet>
+<div style="background:#09090A; color:#F3F1EC; font-family:Manrope, sans-serif; min-height:100vh; padding:0 24px 120px;">
+  <div style="max-width:1760px; margin:0 auto;">
+
+    <header style="padding:72px 0 40px; display:flex; flex-wrap:wrap; gap:24px; align-items:flex-end; justify-content:space-between; box-shadow:0 1px 0 #2A2A2E;">
+      <div>
+        <div style="font-family:Fraunces, serif; font-weight:500; font-size:40px; line-height:1; letter-spacing:-0.4px;">Pantallas</div>
+        <div style="margin-top:12px; font-size:14px; color:#8A8680; max-width:56ch; line-height:1.6;">Mockups 393 × 852 sobre los tokens de §10. Un frame por estado.</div>
+      </div>
+      <div style="font-size:12px; color:#8A8680; font-variant-numeric:tabular-nums; text-align:right; line-height:1.9;">
+        <div>edge-to-edge · FLAG_SECURE</div>
+        <div>Manrope UI · Fraunces wordmark</div>
+      </div>
+    </header>
+
+    <section style="padding:48px 0 8px;">
+      <div style="display:flex; gap:12px; align-items:baseline; margin-bottom:24px;">
+        <span style="font-size:12px; color:#C4A574;">setup</span>
+        <h2 style="margin:0; font-size:18px; font-weight:600; letter-spacing:-0.2px;">Primer lanzamiento</h2>
+      </div>
+      <div style="width:393px;">
+        <div style="width:393px; height:852px; background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E; display:flex; flex-direction:column; overflow:hidden;">
+          <div style="height:44px; display:flex; align-items:center; justify-content:space-between; padding:0 20px; font-size:12px; font-variant-numeric:tabular-nums; flex:none;"><span>9:41</span><span style="color:#8A8680;">▲ ▮</span></div>
+          <div style="flex:1; padding:40px 16px 24px; display:flex; flex-direction:column;">
+            <div style="font-family:Fraunces, serif; font-weight:500; font-size:34px; letter-spacing:-0.3px;">Hitsu</div>
+            <div style="font-size:14px; color:#8A8680; margin-top:10px; line-height:1.55; max-width:30ch;">Un cofre para lo que no va en la galería.</div>
+            <div style="margin-top:44px; font-size:16px; font-weight:600;">Crea un PIN</div>
+            <div style="font-size:13px; color:#8A8680; margin-top:6px;">6 a 12 dígitos.</div>
+            <div style="display:flex; gap:14px; margin-top:24px;">
+              <span style="width:12px; height:12px; border-radius:50%; background:#C4A574;"></span>
+              <span style="width:12px; height:12px; border-radius:50%; background:#C4A574;"></span>
+              <span style="width:12px; height:12px; border-radius:50%; background:#C4A574;"></span>
+              <span style="width:12px; height:12px; border-radius:50%; background:#C4A574;"></span>
+              <span style="width:12px; height:12px; border-radius:50%; box-shadow:0 0 0 1px #2A2A2E;"></span>
+              <span style="width:12px; height:12px; border-radius:50%; box-shadow:0 0 0 1px #2A2A2E;"></span>
+            </div>
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-top:36px; padding-top:20px; box-shadow:inset 0 1px 0 #2A2A2E;">
+              <div>
+                <div style="font-size:14px;">Desbloquear con huella</div>
+                <div style="font-size:12px; color:#8A8680; margin-top:3px;">Se activa después del PIN.</div>
+              </div>
+              <div onClick="{{ toggleBio }}" style="width:46px; height:26px; border-radius:13px; background:#1C1C1F; box-shadow:0 0 0 1px #2A2A2E; position:relative; cursor:pointer; flex:none;">
+                <div style="{{ knobStyle }}"></div>
+              </div>
+            </div>
+            <div style="margin-top:28px; font-size:12.5px; color:#8A8680; line-height:1.75;">Cifrado local. Sin cuenta y sin red. Desinstalar la app borra el cofre. Si olvidas el PIN no hay forma de abrirlo. Al importar siempre se pregunta antes de borrar originales.</div>
+            <div style="flex:1;"></div>
+            <button style="height:48px; border-radius:8px; border:none; background:#C4A574; color:#0B0B0C; font-family:Manrope, sans-serif; font-size:15px; font-weight:600; cursor:pointer;" style-hover="background:#A88A5C">Continuar</button>
+          </div>
+        </div>
+        <div style="margin-top:14px; font-size:12px; color:#8A8680;">setup · crear PIN, biometría, disclaimer</div>
+      </div>
+    </section>
+
+    <section style="padding:56px 0 8px;">
+      <div style="display:flex; gap:12px; align-items:baseline; margin-bottom:24px;">
+        <span style="font-size:12px; color:#C4A574;">lock</span>
+        <h2 style="margin:0; font-size:18px; font-weight:600; letter-spacing:-0.2px;">Cuatro estados</h2>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:40px;">
+        <sc-for list="{{ lockStates }}" as="s" hint-placeholder-count="4">
+          <div style="width:393px;">
+            <div style="width:393px; height:852px; background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E; display:flex; flex-direction:column; overflow:hidden;">
+              <div style="height:44px; display:flex; align-items:center; justify-content:space-between; padding:0 20px; font-size:12px; font-variant-numeric:tabular-nums; flex:none;"><span>9:41</span><span style="color:#8A8680;">▲ ▮</span></div>
+              <div style="flex:1; padding:0 16px 28px; display:flex; flex-direction:column; align-items:center;">
+                <div style="margin-top:96px; font-family:Fraunces, serif; font-weight:500; font-size:30px; letter-spacing:-0.2px;">Hitsu</div>
+                <div style="margin-top:14px; font-size:14px; color:#8A8680;">Cofre bloqueado</div>
+                <div style="display:flex; gap:14px; margin-top:40px;">
+                  <sc-for list="{{ s.dots }}" as="d" hint-placeholder-count="6">
+                    <span style="{{ d }}"></span>
+                  </sc-for>
+                </div>
+                <div style="{{ s.msgStyle }}">{{ s.msg }}</div>
+                <div style="flex:1;"></div>
+                <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1px; width:100%; max-width:300px;">
+                  <sc-for list="{{ keys }}" as="k" hint-placeholder-count="12">
+                    <div style="{{ s.keyStyle }}">{{ k }}</div>
+                  </sc-for>
+                </div>
+                <div style="{{ s.footStyle }}">
+                  <sc-if value="{{ s.bio }}" hint-placeholder-val="{{ true }}">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C4A574" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8V5a2 2 0 012-2h3"/><path d="M16 3h3a2 2 0 012 2v3"/><path d="M21 16v3a2 2 0 01-2 2h-3"/><path d="M8 21H5a2 2 0 01-2-2v-3"/><path d="M12 9v3a4 4 0 01-1 2.6"/><path d="M9.5 9.5a2.5 2.5 0 015 0V13"/></svg>
+                  </sc-if>
+                  <span style="font-size:14px; font-weight:500;">{{ s.foot }}</span>
+                </div>
+              </div>
+            </div>
+            <div style="margin-top:14px; font-size:12px; color:#8A8680;">{{ s.label }}</div>
+          </div>
+        </sc-for>
+
+        <sc-for list="{{ bioStates }}" as="b" hint-placeholder-count="3">
+          <div style="width:393px;">
+            <div style="width:393px; height:852px; background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E; display:flex; flex-direction:column; overflow:hidden; position:relative;">
+              <div style="height:44px; display:flex; align-items:center; justify-content:space-between; padding:0 20px; font-size:12px; font-variant-numeric:tabular-nums; flex:none;"><span>9:41</span><span style="color:#8A8680;">▲ ▮</span></div>
+              <div style="flex:1; padding:0 16px 28px; display:flex; flex-direction:column; align-items:center;">
+                <div style="margin-top:96px; font-family:Fraunces, serif; font-weight:500; font-size:30px; letter-spacing:-0.2px;">Hitsu</div>
+                <div style="margin-top:14px; font-size:14px; color:#8A8680;">Cofre bloqueado</div>
+                <div style="display:flex; gap:14px; margin-top:40px;">
+                  <sc-for list="{{ emptyDots }}" as="d" hint-placeholder-count="6">
+                    <span style="{{ d }}"></span>
+                  </sc-for>
+                </div>
+                <div style="height:18px; margin-top:16px;"></div>
+                <div style="flex:1;"></div>
+                <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1px; width:100%; max-width:300px; opacity:0.35;">
+                  <sc-for list="{{ keys }}" as="k" hint-placeholder-count="12">
+                    <div style="height:64px; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:500; font-variant-numeric:tabular-nums; color:#F3F1EC;">{{ k }}</div>
+                  </sc-for>
+                </div>
+                <div style="min-height:22px; margin-top:28px;"></div>
+              </div>
+              <div style="position:absolute; inset:0; background:rgba(0,0,0,0.6); display:flex; align-items:flex-end;">
+                <div style="width:100%; background:#141416; box-shadow:inset 0 1px 0 #2A2A2E; padding:32px 24px 34px; display:flex; flex-direction:column; align-items:center;">
+                  <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="{{ b.iconColor }}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8V5a2 2 0 012-2h3"/><path d="M16 3h3a2 2 0 012 2v3"/><path d="M21 16v3a2 2 0 01-2 2h-3"/><path d="M8 21H5a2 2 0 01-2-2v-3"/><path d="M12 9v3a4 4 0 01-1 2.6"/><path d="M9.5 9.5a2.5 2.5 0 015 0V13"/></svg>
+                  <div style="font-size:16px; font-weight:600; margin-top:20px; text-align:center;">{{ b.title }}</div>
+                  <div style="{{ b.subStyle }}">{{ b.sub }}</div>
+                  <button style="{{ b.ctaStyle }}">{{ b.cta }}</button>
+                </div>
+              </div>
+            </div>
+            <div style="margin-top:14px; font-size:12px; color:#8A8680;">{{ b.label }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <section style="padding:56px 0 8px;">
+      <div style="display:flex; gap:12px; align-items:baseline; margin-bottom:24px;">
+        <span style="font-size:12px; color:#C4A574;">home</span>
+        <h2 style="margin:0; font-size:18px; font-weight:600; letter-spacing:-0.2px;">Contenido · vacío · selección · diálogo</h2>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:40px;">
+
+        <div style="width:393px;">
+          <div style="width:393px; height:852px; background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E; display:flex; flex-direction:column; overflow:hidden; position:relative;">
+            <div style="height:44px; display:flex; align-items:center; justify-content:space-between; padding:0 20px; font-size:12px; font-variant-numeric:tabular-nums; flex:none;"><span>9:41</span><span style="color:#8A8680;">▲ ▮</span></div>
+            <div style="padding:8px 16px 0; display:flex; align-items:center; justify-content:space-between; flex:none;">
+              <div style="font-size:24px; font-weight:600; letter-spacing:-0.4px;">Hitsu</div>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F3F1EC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+            </div>
+            <div style="display:flex; gap:22px; padding:16px 16px 0; flex:none; box-shadow:inset 0 -1px 0 #2A2A2E;">
+              <div style="padding-bottom:12px; font-size:14px; font-weight:600; box-shadow:inset 0 -2px 0 #C4A574;">Todos</div>
+              <div style="padding-bottom:12px; font-size:14px; color:#8A8680;">Fotos</div>
+              <div style="padding-bottom:12px; font-size:14px; color:#8A8680;">Vídeos</div>
+              <div style="padding-bottom:12px; font-size:14px; color:#8A8680;">Álbumes</div>
+            </div>
+            <div style="flex:1; overflow:hidden;">
+              <sc-for list="{{ days }}" as="d" hint-placeholder-count="3">
+                <div style="position:sticky; top:0; background:#0B0B0C; padding:16px 16px 10px; font-size:13px; font-weight:600; font-variant-numeric:tabular-nums;">{{ d.label }}</div>
+                <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1px;">
+                  <sc-for list="{{ d.cells }}" as="c" hint-placeholder-count="9">
+                    <div style="{{ c.style }}">
+                      <sc-if value="{{ c.dur }}" hint-placeholder-val="{{ false }}">
+                        <span style="position:absolute; right:5px; bottom:4px; font-size:10.5px; font-variant-numeric:tabular-nums; text-shadow:0 1px 3px rgba(0,0,0,0.95);">{{ c.dur }}</span>
+                      </sc-if>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-for>
+            </div>
+            <div style="position:absolute; right:16px; bottom:28px; width:56px; height:56px; border-radius:8px; background:#C4A574; display:flex; align-items:center; justify-content:center;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0B0B0C" stroke-width="1.75" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            </div>
+            <div style="position:absolute; right:2px; top:170px; display:flex; flex-direction:column; align-items:flex-end; gap:10px; font-size:9.5px; color:#8A8680; font-variant-numeric:tabular-nums;"><span>sep</span><span>ago</span><span style="color:#C4A574;">jul</span><span>jun</span></div>
+          </div>
+          <div style="margin-top:14px; font-size:12px; color:#8A8680;">home · con contenido</div>
+        </div>
+
+        <div style="width:393px;">
+          <div style="width:393px; height:852px; background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E; display:flex; flex-direction:column; overflow:hidden; position:relative;">
+            <div style="height:44px; display:flex; align-items:center; justify-content:space-between; padding:0 20px; font-size:12px; font-variant-numeric:tabular-nums; flex:none;"><span>9:41</span><span style="color:#8A8680;">▲ ▮</span></div>
+            <div style="padding:8px 16px 0; display:flex; align-items:center; justify-content:space-between; flex:none;">
+              <div style="font-size:24px; font-weight:600; letter-spacing:-0.4px;">Hitsu</div>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F3F1EC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+            </div>
+            <div style="display:flex; gap:22px; padding:16px 16px 0; flex:none; box-shadow:inset 0 -1px 0 #2A2A2E;">
+              <div style="padding-bottom:12px; font-size:14px; font-weight:600; box-shadow:inset 0 -2px 0 #C4A574;">Todos</div>
+              <div style="padding-bottom:12px; font-size:14px; color:#8A8680;">Fotos</div>
+              <div style="padding-bottom:12px; font-size:14px; color:#8A8680;">Vídeos</div>
+              <div style="padding-bottom:12px; font-size:14px; color:#8A8680;">Álbumes</div>
+            </div>
+            <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:22px; padding:0 16px;">
+              <div style="font-size:14px; color:#8A8680;">El cofre está vacío</div>
+              <button style="height:48px; border-radius:8px; border:none; background:#C4A574; color:#0B0B0C; font-family:Manrope, sans-serif; font-size:15px; font-weight:600; padding:0 32px; cursor:pointer;" style-hover="background:#A88A5C">Importar</button>
+            </div>
+            <div style="position:absolute; right:16px; bottom:28px; width:56px; height:56px; border-radius:8px; background:#C4A574; display:flex; align-items:center; justify-content:center;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0B0B0C" stroke-width="1.75" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            </div>
+          </div>
+          <div style="margin-top:14px; font-size:12px; color:#8A8680;">home · vacío</div>
+        </div>
+
+        <div style="width:393px;">
+          <div style="width:393px; height:852px; background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E; display:flex; flex-direction:column; overflow:hidden; position:relative;">
+            <div style="height:44px; display:flex; align-items:center; justify-content:space-between; padding:0 20px; font-size:12px; font-variant-numeric:tabular-nums; flex:none;"><span>9:41</span><span style="color:#8A8680;">▲ ▮</span></div>
+            <div style="padding:10px 16px 14px; display:flex; align-items:center; justify-content:space-between; flex:none; box-shadow:inset 0 -1px 0 #2A2A2E;">
+              <div style="display:flex; align-items:center; gap:14px;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F3F1EC" stroke-width="1.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                <span style="font-size:16px; font-weight:600; font-variant-numeric:tabular-nums;">3 seleccionados</span>
+              </div>
+              <span style="font-size:13px; color:#C4A574;">Todo</span>
+            </div>
+            <div style="flex:1; overflow:hidden;">
+              <sc-for list="{{ selDays }}" as="d" hint-placeholder-count="2">
+                <div style="position:sticky; top:0; background:#0B0B0C; padding:16px 16px 10px; font-size:13px; font-weight:600; font-variant-numeric:tabular-nums;">{{ d.label }}</div>
+                <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1px;">
+                  <sc-for list="{{ d.cells }}" as="c" hint-placeholder-count="9">
+                    <div style="{{ c.style }}">
+                      <sc-if value="{{ c.sel }}" hint-placeholder-val="{{ false }}">
+                        <span style="position:absolute; inset:0; background:rgba(196,165,116,0.18); box-shadow:inset 0 0 0 2px #C4A574;"></span>
+                      </sc-if>
+                      <sc-if value="{{ c.sel }}" hint-placeholder-val="{{ false }}">
+                        <span style="position:absolute; top:6px; right:6px; width:20px; height:20px; border-radius:50%; background:#C4A574; display:flex; align-items:center; justify-content:center;">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0B0B0C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                        </span>
+                      </sc-if>
+                      <sc-if value="{{ c.dur }}" hint-placeholder-val="{{ false }}">
+                        <span style="position:absolute; right:5px; bottom:4px; font-size:10.5px; font-variant-numeric:tabular-nums; text-shadow:0 1px 3px rgba(0,0,0,0.95);">{{ c.dur }}</span>
+                      </sc-if>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-for>
+            </div>
+            <div style="flex:none; background:#141416; box-shadow:inset 0 1px 0 #2A2A2E; padding:14px 8px 28px; display:grid; grid-template-columns:repeat(3, 1fr);">
+              <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F3F1EC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3m0 0L8 7m4-4l4 4"/><path d="M3 15v4a2 2 0 002 2h14a2 2 0 002-2v-4"/></svg>
+                <span style="font-size:12px;">Exportar</span>
+              </div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F3F1EC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M12 11v5M9.5 13.5h5"/></svg>
+                <span style="font-size:12px;">Álbum</span>
+              </div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C45C4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/><path d="M10 11v6M14 11v6"/></svg>
+                <span style="font-size:12px; color:#C45C4A;">Borrar</span>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:14px; font-size:12px; color:#8A8680;">home · modo selección (long-press)</div>
+        </div>
+
+        <div style="width:393px;">
+          <div style="width:393px; height:852px; background:#0B0B0C; box-shadow:0 0 0 1px #2A2A2E; display:flex; flex-direction:column; overflow:hidden; position:relative;">
+            <div style="height:44px; display:flex; align-items:center; justify-content:space-between; padding:0 20px; font-size:12px; font-variant-numeric:tabular-nums; flex:none;"><span>9:41</span><span style="color:#8A8680;">▲ ▮</span></div>
+            <div style="padding:8px 16px 0; display:flex; align-items:center; justify-content:space-between; flex:none;">
+              <div style="font-size:24px; font-weight:600; letter-spacing:-0.4px;">Hitsu</div>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F3F1EC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+            </div>
+            <div style="display:flex; gap:22px; padding:16px 16px 0; flex:none; box-shadow:inset 0 -1px 0 #2A2A2E;">
+              <div style="padding-bottom:12px; font-size:14px; font-weight:600; box-shadow:inset 0 -2px 0 #C4A574;">Todos</div>
+              <div style="padding-bottom:12px; font-size:14px; color:#8A8680;">Fotos</div>
+              <div style="padding-bottom:12px; font-size:14px; color:#8A8680;">Vídeos</div>
+              <div style="padding-bottom:12px; font-size:14px; color:#8A8680;">Álbumes</div>
+            </div>
+            <div style="flex:1; overflow:hidden;">
+              <sc-for list="{{ days }}" as="d" hint-placeholder-count="3">
+                <div style="padding:16px 16px 10px; font-size:13px; font-weight:600; font-variant-numeric:tabular-nums;">{{ d.label }}</div>
+                <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1px;">
+                  <sc-for list="{{ d.cells }}" as="c" hint-placeholder-count="9">
+                    <div style="{{ c.style }}"></div>
+                  </sc-for>
+                </div>
+              </sc-for>
+            </div>
+            <div style="position:absolute; inset:0; background:rgba(0,0,0,0.72); display:flex; align-items:center; padding:0 16px;">
+              <div style="background:#141416; box-shadow:0 0 0 1px #2A2A2E; border-radius:8px; padding:24px; width:100%;">
+                <div style="font-size:16px; font-weight:600; line-height:1.35;">¿Eliminar los originales de la galería del sistema?</div>
+                <div style="font-size:13.5px; color:#8A8680; line-height:1.6; margin-top:10px;">Se copiaron y cifraron en Hitsu. Esto no se puede deshacer desde Hitsu.</div>
+                <div style="font-size:12.5px; color:#8A8680; margin-top:14px; font-variant-numeric:tabular-nums;">12 archivos · 486 MB</div>
+                <div style="display:flex; flex-direction:column; gap:10px; margin-top:22px;">
+                  <button style="height:48px; border-radius:8px; border:none; background:#C4A574; color:#0B0B0C; font-family:Manrope, sans-serif; font-size:15px; font-weight:600; cursor:pointer;" style-hover="background:#A88A5C">Conservar originales</button>
+                  <button style="height:48px; border-radius:8px; background:transparent; border:1px solid #C45C4A; color:#C45C4A; font-family:Manrope, sans-serif; font-size:15px; font-weight:600; cursor:pointer;" style-hover="background:rgba(196,92,74,0.10)">Eliminar originales</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:14px; font-size:12px; color:#8A8680;">diálogo · default = conservar</div>
+        </div>
+
+      </div>
+    </section>
+
+    <section style="padding:56px 0 8px;">
+      <div style="display:flex; gap:12px; align-items:baseline; margin-bottom:24px;">
+        <span style="font-size:12px; color:#C4A574;">video</span>
+        <h2 style="margin:0; font-size:18px; font-weight:600; letter-spacing:-0.2px;">Player · chrome visible, oculto, doble tap</h2>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:40px;">
+
+        <div style="width:393px;">
+          <div style="width:393px; height:852px; background:#000; box-shadow:0 0 0 1px #2A2A2E; display:flex; flex-direction:column; overflow:hidden; position:relative;">
+            <div style="height:44px; display:flex; align-items:center; justify-content:space-between; padding:0 20px; font-size:12px; font-variant-numeric:tabular-nums; flex:none;"><span>9:41</span><span style="color:#8A8680;">▲ ▮</span></div>
+            <div style="flex:1; display:flex; align-items:center;">
+              <div style="width:100%; aspect-ratio:16/9; background:repeating-linear-gradient(135deg, #141416 0 9px, #0B0B0C 9px 18px);"></div>
+            </div>
+            <div style="position:absolute; top:44px; left:0; right:0; padding:12px 16px; display:flex; align-items:center; justify-content:space-between; background:linear-gradient(#000000cc, transparent);">
+              <div style="display:flex; align-items:center; gap:14px;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F3F1EC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                <span style="font-size:13px; font-variant-numeric:tabular-nums;">VID_0042.mp4</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:18px;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F3F1EC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><rect x="12" y="11" width="7" height="5" rx="1"/></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F3F1EC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M17 9l4 6M21 9l-4 6"/></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F3F1EC" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+              </div>
+            </div>
+            <div style="position:absolute; left:0; right:0; bottom:0; padding:28px 16px 34px; background:linear-gradient(transparent, #000000e6);">
+              <div style="display:flex; align-items:center; gap:22px; margin-bottom:22px;">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#F3F1EC" stroke-width="1.5" stroke-linecap="round"><path d="M9 4v16M15 4v16"/></svg>
+                <span style="font-size:13px; color:#8A8680; font-variant-numeric:tabular-nums;">×1</span>
+              </div>
+              <div style="height:2px; background:#2A2A2E; position:relative;">
+                <div style="position:absolute; left:0; top:0; height:2px; width:38%; background:#C4A574;"></div>
+                <div style="position:absolute; left:38%; top:-5px; width:12px; height:12px; border-radius:50%; background:#C4A574; transform:translateX(-50%);"></div>
+              </div>
+              <div style="display:flex; justify-content:space-between; margin-top:12px; font-size:12px; color:#8A8680; font-variant-numeric:tabular-nums;"><span style="color:#F3F1EC;">0:42</span><span>1:50</span></div>
+            </div>
+          </div>
+          <div style="margin-top:14px; font-size:12px; color:#8A8680;">player · chrome visible</div>
+        </div>
+
+        <div style="width:393px;">
+          <div style="width:393px; height:852px; background:#000; box-shadow:0 0 0 1px #2A2A2E; display:flex; align-items:center; overflow:hidden;">
+            <div style="width:100%; aspect-ratio:16/9; background:repeating-linear-gradient(135deg, #141416 0 9px, #0B0B0C 9px 18px);"></div>
+          </div>
+          <div style="margin-top:14px; font-size:12px; color:#8A8680;">player · chrome oculto (tap)</div>
+        </div>
+
+        <div style="width:393px;">
+          <div style="width:393px; height:852px; background:#000; box-shadow:0 0 0 1px #2A2A2E; display:flex; align-items:center; overflow:hidden; position:relative;">
+            <div style="width:100%; aspect-ratio:16/9; background:repeating-linear-gradient(135deg, #141416 0 9px, #0B0B0C 9px 18px);"></div>
+            <div style="position:absolute; inset:0; display:grid; grid-template-columns:1fr 1fr;">
+              <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; background:radial-gradient(circle at 30% 50%, rgba(243,241,236,0.10), transparent 62%);">
+                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#F3F1EC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 109-9 9 9 0 00-6.4 2.6L3 8"/><path d="M3 3v5h5"/></svg>
+                <span style="font-size:14px; font-weight:600; font-variant-numeric:tabular-nums;">−10 s</span>
+              </div>
+              <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; opacity:0.28;">
+                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#F3F1EC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-9-9 9 9 0 016.4 2.6L21 8"/><path d="M21 3v5h-5"/></svg>
+                <span style="font-size:14px; font-weight:600; font-variant-numeric:tabular-nums;">+10 s</span>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:14px; font-size:12px; color:#8A8680;">player · flash doble tap (izquierda activa)</div>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{}">
+class Component extends DCLogic {
+  state = { bio: true };
+
+  cell(i, opts) {
+    const o = opts || {};
+    const a = i % 3 === 0 ? "#141416" : i % 3 === 1 ? "#17171A" : "#121214";
+    return {
+      style: "position:relative; aspect-ratio:1; background:repeating-linear-gradient(135deg, " + a + " 0 7px, #0F0F11 7px 14px);",
+      dur: o.dur || false,
+      sel: o.sel || false
+    };
+  }
+
+  dots(filled, danger) {
+    const color = danger ? "#C45C4A" : "#C4A574";
+    return Array.from({ length: 6 }, (_, i) => {
+      const base = "width:12px; height:12px; border-radius:50%; ";
+      return i < filled ? base + "background:" + color + ";" : base + "box-shadow:0 0 0 1px " + (danger ? "#C45C4A" : "#2A2A2E") + ";";
+    });
+  }
+
+  key(disabled) {
+    return "height:64px; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:500; font-variant-numeric:tabular-nums; border-radius:8px; color:" +
+      (disabled ? "#3A3A3E" : "#F3F1EC") + "; cursor:" + (disabled ? "default" : "pointer") + ";";
+  }
+
+  msg(text, color) {
+    return { msg: text, msgStyle: "height:18px; margin-top:16px; font-size:12px; color:" + color + ";" };
+  }
+
+  foot(text, bio, color) {
+    return {
+      foot: text, bio,
+      footStyle: "display:flex; align-items:center; gap:10px; margin-top:28px; color:" + color + "; min-height:22px;"
+    };
+  }
+
+  renderVals() {
+    const on = this.state.bio;
+    const lockStates = [
+      Object.assign({ label: "lock · vacío", dots: this.dots(0, false), keyStyle: this.key(false) },
+        this.msg("", "#8A8680"), this.foot("Usar huella", true, "#C4A574")),
+      Object.assign({ label: "lock · escribiendo (3 / 6)", dots: this.dots(3, false), keyStyle: this.key(false) },
+        this.msg("", "#8A8680"), this.foot("Usar huella", true, "#C4A574")),
+      Object.assign({ label: "lock · PIN incorrecto", dots: this.dots(6, true), keyStyle: this.key(false) },
+        this.msg("PIN incorrecto. Intento 3 de 8.", "#C45C4A"), this.foot("Usar huella", true, "#C4A574")),
+      Object.assign({ label: "lock · bloqueado por intentos", dots: this.dots(0, false), keyStyle: this.key(true) },
+        this.msg("Demasiados intentos.", "#C45C4A"), this.foot("Espera 30 s", false, "#8A8680"))
+    ];
+
+    const days = [
+      { label: "21 sep 2026", cells: [this.cell(0), this.cell(1, { dur: "0:42" }), this.cell(2), this.cell(3), this.cell(4), this.cell(5)] },
+      { label: "18 sep 2026", cells: [this.cell(6), this.cell(7), this.cell(8, { dur: "1:50" }), this.cell(9), this.cell(10), this.cell(11), this.cell(12), this.cell(13), this.cell(14)] },
+      { label: "9 sep 2026", cells: [this.cell(15), this.cell(16), this.cell(17, { dur: "0:08" })] }
+    ];
+
+    const selDays = [
+      { label: "21 sep 2026", cells: [this.cell(0, { sel: true }), this.cell(1, { dur: "0:42", sel: true }), this.cell(2), this.cell(3), this.cell(4, { sel: true }), this.cell(5)] },
+      { label: "18 sep 2026", cells: [this.cell(6), this.cell(7), this.cell(8, { dur: "1:50" }), this.cell(9), this.cell(10), this.cell(11), this.cell(12), this.cell(13), this.cell(14)] }
+    ];
+
+    const sub = (c) => "font-size:13.5px; color:" + c + "; margin-top:10px; text-align:center; line-height:1.55; max-width:32ch;";
+    const cta = (accent) => "height:48px; border-radius:8px; margin-top:26px; width:100%; max-width:300px; font-family:Manrope, sans-serif; font-size:15px; font-weight:600; cursor:pointer; " +
+      (accent ? "border:none; background:#C4A574; color:#0B0B0C;" : "background:transparent; border:1px solid #2A2A2E; color:#F3F1EC;");
+
+    const bioStates = [
+      { label: "lock · biometría solicitada", iconColor: "#C4A574", title: "Desbloquear Hitsu", sub: "Toca el sensor de huella.", subStyle: sub("#8A8680"), cta: "Usar PIN", ctaStyle: cta(false) },
+      { label: "lock · huella no reconocida", iconColor: "#C45C4A", title: "No se reconoció", sub: "Inténtalo otra vez o usa el PIN.", subStyle: sub("#C45C4A"), cta: "Usar PIN", ctaStyle: cta(false) },
+      { label: "lock · biometría invalidada", iconColor: "#8A8680", title: "Biometría desactivada", sub: "Cambiaste las huellas del sistema. Entra con PIN para volver a activarla.", subStyle: sub("#8A8680"), cta: "Introducir PIN", ctaStyle: cta(true) }
+    ];
+
+    return {
+      lockStates, bioStates, emptyDots: this.dots(0, false), days, selDays,
+      keys: ["1","2","3","4","5","6","7","8","9","","0","⌫"],
+      knobStyle: "position:absolute; top:2px; left:" + (on ? "22px" : "2px") +
+        "; width:20px; height:20px; border-radius:50%; background:" + (on ? "#C4A574" : "#8A8680") +
+        "; transition:left 220ms cubic-bezier(0.4,0,0.2,1), background 220ms;",
+      toggleBio: () => this.setState(s => ({ bio: !s.bio }))
+    };
+  }
+}
+</script>
+</body>
+</html>

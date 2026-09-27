@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" translatable="false">Hitsu</string>
+    <string name="wordmark" translatable="false">Hitsu</string>
+
+    <string name="action_continue">Continuar</string>
+    <string name="action_use_pin">Usar PIN</string>
+    <string name="action_enter_pin">Introducir PIN</string>
+
+    <string name="setup_tagline">Un cofre para lo que no va en la galería.</string>
+    <string name="setup_create_title">Crea un PIN</string>
+    <string name="setup_create_hint" tools:ignore="PluralsCandidate">%1$d a %2$d dígitos.</string>
+    <string name="setup_confirm_title">Confirma el PIN</string>
+    <string name="setup_confirm_hint">Escríbelo otra vez.</string>
+    <string name="setup_mismatch">Los PIN no coinciden. Crea uno nuevo.</string>
+    <string name="setup_biometric_title">Desbloquear con huella</string>
+    <string name="setup_biometric_hint">Se activa después del PIN.</string>
+    <string name="setup_disclaimer">Cifrado local. Sin cuenta y sin red. Desinstalar la app borra el cofre. Si olvidas el PIN no hay forma de abrirlo.</string>
+    <string name="setup_disclaimer_originals">Hitsu solo copia lo que importas: los originales siguen en tu galería y los tienes que borrar tú a mano.</string>
+
+    <string name="lock_title">Cofre bloqueado</string>
+    <string name="lock_wrong_pin">PIN incorrecto. Intento %1$d de %2$d.</string>
+    <string name="lock_too_many_attempts">Demasiados intentos.</string>
+    <string name="lock_wait_seconds">Espera %1$d s</string>
+    <string name="lock_wait_minutes">Espera %1$d min</string>
+    <string name="lock_use_biometric">Usar huella</string>
+
+    <string name="biometric_requested_title">Desbloquear Hitsu</string>
+    <string name="biometric_requested_body">Toca el sensor de huella.</string>
+    <string name="biometric_failed_title">No se reconoció</string>
+    <string name="biometric_failed_body">Inténtalo otra vez o usa el PIN.</string>
+    <string name="biometric_invalidated_title">Biometría desactivada</string>
+    <string name="biometric_invalidated_body">Cambiaste las huellas del sistema. Entra con PIN para volver a activarla.</string>
+
+    <string name="home_empty">El cofre está vacío</string>
+
+    <string name="cd_backspace">Borrar</string>
+    <string name="cd_pin_progress" tools:ignore="PluralsCandidate">%1$d de %2$d dígitos</string>
+
+    <string name="home_tab_all">Todos</string>
+    <string name="home_tab_photos">Fotos</string>
+    <string name="home_tab_videos">Vídeos</string>
+    <string name="action_import">Importar</string>
+    <string name="home_importing">Importando %1$d de %2$d</string>
+    <string name="home_import_failed">No se pudo importar %1$s</string>
+    <string name="cd_import">Importar</string>
+    <string name="date_day" tools:ignore="PluralsCandidate">%1$d %2$s %3$d</string>
+
+    <string-array name="month_abbreviations">
+        <item>ene</item>
+        <item>feb</item>
+        <item>mar</item>
+        <item>abr</item>
+        <item>may</item>
+        <item>jun</item>
+        <item>jul</item>
+        <item>ago</item>
+        <item>sep</item>
+        <item>oct</item>
+        <item>nov</item>
+        <item>dic</item>
+    </string-array>
+
+
+    <plurals name="import_duplicates">
+        <item quantity="one">%1$d ya estaba en el cofre</item>
+        <item quantity="other">%1$d ya estaban en el cofre</item>
+    </plurals>
+    <string name="viewer_index">%1$d / %2$d</string>
+    <string name="viewer_info_name">Nombre</string>
+    <string name="viewer_info_imported">Importada</string>
+    <string name="viewer_info_dimensions">Dimensiones</string>
+    <string name="viewer_info_size">Tamaño</string>
+    <string name="viewer_info_dimensions_value">%1$d × %2$d</string>
+    <string name="date_day_time">%1$s %2$s</string>
+    <string name="cd_close">Cerrar</string>
+    <string name="cd_info">Información</string>
+    <string name="cd_photo">Foto</string>
+    <string name="player_speed">Velocidad</string>
+    <string name="player_loop">Repetir</string>
+    <string name="player_decrypting">Descifrando · %1$d%%</string>
+    <string name="player_failed">No se pudo reproducir este vídeo</string>
+    <string name="player_skip_back">−10 s</string>
+    <string name="player_skip_forward">+10 s</string>
+    <string name="player_no_space_title">No hay espacio para reproducir</string>
+    <string name="player_no_space_body">Este vídeo necesita %1$s libres para descifrarse. Tienes %2$s.</string>
+    <string name="action_close">Cerrar</string>
+    <string name="action_retry">Reintentar</string>
+    <string name="cd_play">Reproducir</string>
+    <string name="cd_pause">Pausa</string>
+    <string name="cd_mute">Silenciar</string>
+    <string name="cd_menu">Menú</string>
+    <string name="cd_pip">Picture-in-picture</string>
+    <string name="home_receiving_share">Recibiendo lo compartido…</string>
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_security">Seguridad</string>
+    <string name="settings_storage">Almacenamiento</string>
+    <string name="settings_tools">Herramientas</string>
+    <string name="settings_auto_lock">Bloqueo automático</string>
+    <string name="settings_auto_lock_note">El cofre se bloquea al salir de la app.</string>
+    <string name="settings_auto_lock_confirm_title">¿Bloquear a los %1$s?</string>
+    <string name="settings_auto_lock_confirm_body">El cofre queda abierto hasta %1$s con la app en segundo plano. Quien tenga el teléfono en ese tiempo puede verlo.</string>
+    <string name="settings_space_used">Espacio usado</string>
+    <string name="settings_about">Acerca de</string>
+    <string name="action_cancel">Cancelar</string>
+    <string name="action_all">Todo</string>
+    <string name="action_export">Exportar</string>
+    <string name="action_delete">Borrar</string>
+    <plurals name="home_selected">
+        <item quantity="one">%d seleccionado</item>
+        <item quantity="other">%d seleccionados</item>
+    </plurals>
+    <string name="cd_leave_selection">Salir de la selección</string>
+    <string name="dialog_delete_title">¿Borrar del cofre?</string>
+    <plurals name="dialog_delete_body">
+        <item quantity="one">Se borra del cofre, con su miniatura. Esto no se puede deshacer.</item>
+        <item quantity="other">Se borran %d del cofre, con sus miniaturas. Esto no se puede deshacer.</item>
+    </plurals>
+    <string name="dialog_export_title">¿Exportar a la galería?</string>
+    <plurals name="dialog_export_body">
+        <item quantity="one">Quedará visible en otras galerías. Sale sin ubicación: los vídeos se reempaquetan y los HEIC salen como JPEG.</item>
+        <item quantity="other">Quedarán visibles en otras galerías. Salen sin ubicación: los vídeos se reempaquetan y los HEIC salen como JPEG.</item>
+    </plurals>
+    <string name="home_exporting">Exportando %1$d de %2$d</string>
+    <plurals name="home_exported">
+        <item quantity="one">%d copia en la galería</item>
+        <item quantity="other">%d copias en la galería</item>
+    </plurals>
+    <plurals name="home_export_failed">
+        <item quantity="one">%d no se pudo exportar</item>
+        <item quantity="other">%d no se pudieron exportar</item>
+    </plurals>
+    <string name="action_confirm">Confirmar</string>
+    <string name="action_done">Listo</string>
+    <string name="action_paste">Pegar</string>
+    <string name="action_change">Cambiar</string>
+
+    <string name="auto_lock_immediate">Inmediato</string>
+    <string name="auto_lock_10s">10 s</string>
+    <string name="auto_lock_30s">30 s</string>
+    <string name="auto_lock_1m">1 min</string>
+    <string name="auto_lock_5m">5 min</string>
+    <string name="auto_lock_15m">15 min</string>
+
+    <string name="about_kanji" translatable="false">櫃</string>
+    <string name="about_version">Versión %1$s (%2$d)</string>
+    <string name="about_description">Hitsu / 櫃 — cofre local. Cifrado en el dispositivo.</string>
+    <string name="about_uninstall">Desinstalar la app borra el cofre.</string>
+    <string name="cd_back">Volver</string>
+    <string name="cd_settings">Ajustes</string>
+    <string name="download_title">Descargar</string>
+    <string name="download_reading">Leyendo el enlace…</string>
+    <string name="download_ready">Listo para descargar</string>
+    <string name="download_running">Descargando…</string>
+    <string name="download_importing">Guardando en el cofre…</string>
+    <string name="download_done">Guardado en el cofre</string>
+    <string name="download_start">Descargar</string>
+    <string name="download_open_vault">Ver en el cofre</string>
+    <string name="download_failed_unsupported">No se pudo leer el enlace. Puede que el sitio no esté soportado o que el post sea privado.</string>
+    <string name="download_failed_network">Falló la descarga. Revisa tu conexión e inténtalo otra vez.</string>
+    <string name="download_failed_locked">El cofre se cerró durante la descarga, así que no se guardó nada.</string>
+    <string name="download_failed_storage">No hay espacio para guardar esta descarga.</string>
+    <string name="settings_ytdlp" translatable="false">yt-dlp</string>
+    <string name="ytdlp_installed_version">Versión instalada</string>
+    <string name="ytdlp_unknown_version" translatable="false">—</string>
+    <string name="ytdlp_preparing">Preparando el motor…</string>
+    <string name="ytdlp_updating">Descargando la actualización…</string>
+    <string name="ytdlp_updating_action">Actualizando…</string>
+    <string name="ytdlp_check">Buscar actualización</string>
+    <string name="ytdlp_up_to_date">Ya tienes la última versión.</string>
+    <string name="ytdlp_updated">Actualizado.</string>
+    <string name="ytdlp_update_failed">No se pudo actualizar. Revisa tu conexión.</string>
+    <string name="ytdlp_hint">Actualízalo cuando un enlace deje de funcionar.</string>
+    <string name="ytdlp_note">yt-dlp es lo único en Hitsu que usa la red, y solo al descargar un enlace que compartas.</string>
+    <string name="notification_channel_downloads">Descargas</string>
+    <string name="notification_channel_downloads_description">Progreso y resultado de lo que descarga Hitsu.</string>
+    <string name="notification_downloading">Descargando…</string>
+    <string name="notification_saved">Guardado en el cofre</string>
+    <string name="notification_waiting">Descargado. Abre Hitsu para guardarlo en el cofre.</string>
+    <string name="notification_failed">No se pudo descargar</string>
+    <string name="quick_download">Descarga rápida</string>
+    <string name="quick_download_started">Descargando en segundo plano</string>
+    <plurals name="notification_saved_many">
+        <item quantity="one">%1$d archivo guardado en el cofre</item>
+        <item quantity="other">%1$d archivos guardados en el cofre</item>
+    </plurals>
+    <string name="ytdlp_last_check">Última comprobación: %1$s</string>
+    <string name="cookies_section">Cookies</string>
+    <string name="cookies_create">Crear cookies</string>
+    <string name="cookies_save">Guardar cookies de este sitio</string>
+    <string name="cookies_empty">No hay cookies guardadas</string>
+    <string name="cookies_url_title">Crear cookies</string>
+    <string name="cookies_url_body">Escribe la dirección del sitio donde vas a iniciar sesión. Al terminar, toca Listo y se guardan sus cookies.</string>
+    <string name="cookies_url_placeholder">https://</string>
+    <string name="cookies_delete_hint">Toca un sitio para borrar sus cookies.</string>
+    <string name="cookies_saved_on">Creada %1$s</string>
+</resources>

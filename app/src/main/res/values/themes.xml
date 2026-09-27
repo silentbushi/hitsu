@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Hitsu" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/hitsu_bg</item>
+        <item name="android:colorAccent">@color/hitsu_accent</item>
+    </style>
+    <style name="Theme.Hitsu.Invisible" parent="android:Theme.Translucent.NoTitleBar">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoDisplay">true</item>
+    </style>
+</resources>
