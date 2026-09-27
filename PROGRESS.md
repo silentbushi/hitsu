@@ -9,9 +9,9 @@ está en qué punto de ese plan estamos.
 _Actualizado: 27 sep 2026._
 
 Hay una app funcionando en el teléfono (Galaxy SM-S948B, Android 16), instalada por `installDebug` y
-probada a mano. 89 pruebas unitarias en verde y lint sin errores.
+probada a mano. 97 pruebas unitarias en verde y lint sin errores.
 
-Completado del orden de §16: **pasos 1 a 10, el 13 y el 14**. Queda el 11 (álbumes) y el 12 (pulido).
+**Los catorce pasos de §16 están hechos.** Lo que queda son remates y lo que vaya saliendo al usarla.
 
 - **1–2. Cofre.** Setup de PIN, bloqueo, DEK envuelta por PIN + Keystore, cifrado en streaming por
   bloques de 1 MiB.
@@ -28,6 +28,11 @@ Completado del orden de §16: **pasos 1 a 10, el 13 y el 14**. Queda el 11 (álb
 - **14. Respaldo (§7.10).** Ajustes → Respaldo crea un archivo `.hitsubak` con todo el cofre, cifrado
   con una contraseña propia, y lo restaura. Probado en el teléfono: crear, restaurar sobre el mismo
   cofre sin duplicar, y contraseña equivocada.
+- **11. Álbumes.** Pestaña con la rejilla del mockup `album/`, portada por álbum, crear vacío desde el
+  encabezado, añadir desde la selección, pantalla de álbum con quitar, ajustes con renombrar y borrar,
+  y dos destinos automáticos: ninguno al importar y «Descargas» para lo que baja yt-dlp.
+- **12. Pulido.** Movimiento de §10.4 (fundido con escala 0.98→1 al navegar) e icono definitivo: el
+  kanji 櫃 en negro sobre latón dentro de un marco de sello, con el trazo real de Noto Sans JP.
 - **10. Bloqueo completo.** Auto-bloqueo configurable, FLAG_SECURE, desbloqueo con huella y cambio de
   PIN, todo probado en el teléfono el 27 sep 2026.
 
@@ -35,11 +40,8 @@ Sin hacer: **11** (álbumes) y **12** (pulido de movimiento e icono).
 
 ## En progreso
 
-Nada a medio hacer. Lo siguiente es el **paso 11, álbumes**, que no se ha empezado.
-
-Cuando se haga, hay dos sitios que lo están esperando y que hoy están ocultos a propósito: la pestaña
-de álbumes en la pantalla principal y el botón **Álbum** de la barra de selección
-(`ui/home/HomeScreen.kt`, en `SelectionActions`). El mockup es `docs/design/settings/05-albumes.png`.
+Nada a medio hacer. El paso 12 se instaló el 27 sep 2026 y falta que el usuario confirme el icono en
+el lanzador y el movimiento al navegar.
 
 Con el respaldo funcionando, **ya es seguro correr los tests instrumentados**
 (`:app:connectedDebugAndroidTest`), que desinstalan la app: basta hacer un respaldo antes y
@@ -47,13 +49,25 @@ restaurarlo después. Conviene avisar igualmente antes de lanzarlos.
 
 ## Próximos pasos
 
-1. **Paso 11**: álbumes, incluida la pestaña de la pantalla principal y el botón "Álbum" de la barra de
-   selección, que hoy no se dibuja a propósito.
-2. **Paso 12**: pulido de movimiento e icono definitivo.
-3. **Sueltos**: el botón "Liberar espacio" del diálogo de sin espacio (hoy dice "Reintentar"), y el
+Ya no hay pasos pendientes en §16. Lo que queda apuntado:
+
+1. **Sueltos**: el botón «Liberar espacio» del diálogo de sin espacio (hoy dice «Reintentar»), y el
    texto al revés en los campos del login de TikTok (solo ahí; se rodea pegando el usuario).
+2. **Pruebas instrumentadas**: pasarlas ahora que hay respaldo, y mirar si merece la pena añadir
+   alguna sobre álbumes y exportación, que hoy solo se prueban a mano.
+3. **Lo que pida el uso diario.** La app está terminada según el spec; de aquí en adelante manda lo
+   que aparezca usándola.
 
 ## Decisiones y notas
+
+- **27 sep 2026 — El icono es el kanji de verdad, no un dibujo aproximado.** El trazo de 櫃 sale de
+  Noto Sans JP (licencia SIL OFL, así que se puede empotrar) en vez de dibujarse a mano: dieciocho
+  trazos hechos a ojo se leen como un error para quien conoce el carácter. Se genera una vez a un
+  `pathData` y se queda en el repositorio; el guion que lo extrajo no hace falta para compilar.
+- **27 sep 2026 — El respaldo guarda los álbumes por nombre.** Un id de este cofre no significa nada
+  en otro teléfono, así que el manifiesto guarda nombres y qué archivos iban juntos. Al restaurar,
+  cada archivo dice con qué id se quedó aquí — el nuevo, o el que ya tenía si estaba repetido — y con
+  eso se rehacen los álbumes reutilizando los que ya existan con ese nombre.
 
 - **27 sep 2026 — La huella autoriza, no deriva.** El cofre guarda una segunda copia de la DEK sellada
   con una llave del Keystore que exige autenticación para cada uso. De ahí que activarla necesite el

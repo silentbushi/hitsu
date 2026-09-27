@@ -2,6 +2,8 @@ package app.hitsu.vault.ui.nav
 
 import android.os.SystemClock
 import androidx.compose.animation.fadeIn
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
@@ -56,10 +58,15 @@ fun HitsuNavHost(vaultState: VaultState, pendingLink: String?, onLinkHandled: ()
         modifier = Modifier
             .fillMaxSize()
             .background(HitsuColors.Bg),
-        enterTransition = { fadeIn(HitsuMotion.standard()) },
-        exitTransition = { fadeOut(HitsuMotion.standard()) },
-        popEnterTransition = { fadeIn(HitsuMotion.standard()) },
-        popExitTransition = { fadeOut(HitsuMotion.standard()) },
+        /*
+         * Spec §10.4: fade with a hint of scale, 0.98 to 1. A shared element from the thumbnail to
+         * the viewer would be nicer, but not at the price of fighting Navigation for it; this reads
+         * as the screen settling into place rather than sliding in from somewhere it never was.
+         */
+        enterTransition = { fadeIn(HitsuMotion.standard()) + scaleIn(HitsuMotion.standard(), ENTER_SCALE) },
+        exitTransition = { fadeOut(HitsuMotion.standard()) + scaleOut(HitsuMotion.standard(), EXIT_SCALE) },
+        popEnterTransition = { fadeIn(HitsuMotion.standard()) + scaleIn(HitsuMotion.standard(), EXIT_SCALE) },
+        popExitTransition = { fadeOut(HitsuMotion.standard()) + scaleOut(HitsuMotion.standard(), ENTER_SCALE) },
     ) {
         composable(Routes.SPLASH) { SplashScreen() }
         composable(Routes.SETUP) { SetupRoute() }
@@ -176,3 +183,7 @@ fun HitsuNavHost(vaultState: VaultState, pendingLink: String?, onLinkHandled: ()
         }
     }
 }
+
+/** Coming in from just under full size; going out to just over it, so the two never look identical. */
+private const val ENTER_SCALE = 0.98f
+private const val EXIT_SCALE = 1.02f

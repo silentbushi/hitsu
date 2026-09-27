@@ -2,4 +2,6 @@
 <resources>
     <color name="hitsu_bg">#FF0B0B0C</color>
     <color name="hitsu_accent">#FFC4A574</color>
+    <!-- docs/design/icon: the mark is a seal, black on brass, so its background is the accent. -->
+    <color name="hitsu_icon_background">#FFC4A574</color>
 </resources>

@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Spec §19 and docs/design/icon: the name and the mark in one sign. The kanji for a chest, in black
+    on brass, inside a hanko frame; no padlock, no gradient, no face. The outline is the real glyph,
+    taken from Noto Sans JP (SIL Open Font License), because eighteen strokes drawn by eye would read
+    as a mistake to anyone who knows the character.
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
     <path
-        android:pathData="M32,37h44v10h-44z"
-        android:strokeWidth="3"
-        android:strokeColor="#C4A574"
-        android:strokeLineJoin="round" />
+        android:pathData="M24.70,24.70h58.60v58.60h-58.60z"
+        android:strokeWidth="3.4"
+        android:strokeColor="#FF111111"
+        android:strokeLineJoin="miter" />
     <path
-        android:pathData="M35,47h38v26h-38z"
-        android:strokeWidth="3"
-        android:strokeColor="#C4A574"
-        android:strokeLineJoin="round" />
-    <path
-        android:pathData="M54,47v8"
-        android:strokeWidth="3"
-        android:strokeColor="#C4A574"
-        android:strokeLineCap="round" />
+        android:pathData="M51.11 68.80H75.00V72.95H51.11ZM53.92 47.75H74.59V50.42H53.92ZM61.97 39.10H66.33V48.91H61.97ZM48.30 34.88H74.50V38.89H53.07V74.75H48.30ZM59.49 42.94V44.44H68.90V42.94ZM55.62 40.87H72.87V46.52H55.62ZM65.34 65.39 68.46 63.24Q70.00 63.98 71.81 65.02Q73.63 66.06 74.70 66.92L71.42 69.27Q70.43 68.45 68.67 67.35Q66.91 66.25 65.34 65.39ZM59.87 57.21V58.48H68.44V57.21ZM59.87 60.63V61.93H68.44V60.63ZM59.87 53.82V55.03H68.44V53.82ZM55.49 51.57H73.04V64.19H55.49ZM60.20 63.14 63.62 65.35Q62.19 66.42 60.26 67.51Q58.34 68.60 56.79 69.25Q56.32 68.69 55.49 67.93Q54.65 67.17 53.98 66.68Q55.03 66.25 56.20 65.65Q57.37 65.05 58.43 64.39Q59.48 63.73 60.20 63.14ZM34.07 42.42H47.53V47.26H34.07ZM38.83 33.25H43.56V74.73H38.83ZM38.74 45.77 41.55 46.70Q41.12 49.31 40.50 52.13Q39.89 54.95 39.09 57.66Q38.29 60.37 37.32 62.73Q36.36 65.10 35.29 66.80Q34.98 65.75 34.27 64.41Q33.57 63.07 33.00 62.16Q33.96 60.72 34.85 58.78Q35.73 56.83 36.48 54.61Q37.23 52.39 37.81 50.13Q38.40 47.86 38.74 45.77ZM43.32 49.21Q43.67 49.65 44.37 50.79Q45.07 51.93 45.90 53.27Q46.73 54.60 47.39 55.75Q48.05 56.89 48.33 57.38L45.82 61.04Q45.51 60.07 44.91 58.70Q44.32 57.33 43.66 55.89Q43.00 54.46 42.39 53.20Q41.78 51.93 41.38 51.17Z"
+        android:fillColor="#FF111111" />
 </vector>
