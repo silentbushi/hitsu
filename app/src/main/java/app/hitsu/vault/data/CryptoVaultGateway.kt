@@ -1,5 +1,8 @@
 package app.hitsu.vault.data
 
+import app.hitsu.vault.crypto.BiometricKey
+import app.hitsu.vault.crypto.decodeBase64
+import app.hitsu.vault.crypto.encodeBase64
 import app.hitsu.vault.crypto.VaultCipher
 import app.hitsu.vault.crypto.VaultCrypto
 import app.hitsu.vault.crypto.VaultUnlock
@@ -19,13 +22,17 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import android.security.keystore.KeyPermanentlyInvalidatedException
+import java.security.GeneralSecurityException
+import javax.crypto.Cipher
 
 class CryptoVaultGateway(
     private val crypto: VaultCrypto,
+    private val biometricKey: BiometricKey,
     private val store: VaultMetaStore,
     private val clock: Clock,
     private val cryptoDispatcher: CoroutineDispatcher,
-    scope: CoroutineScope,
+    private val scope: CoroutineScope,
 ) : VaultGateway {
 
     private val mutex = Mutex()
@@ -42,6 +49,27 @@ class CryptoVaultGateway(
     override val biometricRequested: Boolean get() = meta?.biometricRequested ?: false
     override val retryAtMillis: Long get() = meta?.retryAtMillis ?: 0L
     override val lockTimeoutMillis: Long get() = meta?.lockTimeoutMillis ?: 0L
+
+    override val biometricEnabled: Boolean
+        get() = meta?.biometricEnabled == true && meta?.biometricDek != null && biometricKey.exists()
+
+    override fun biometricEnrollCipher(): Cipher? =
+        runCatching { biometricKey.encryptCipher() }.getOrNull()
+
+    override fun biometricUnlockCipher(): Cipher? {
+        val iv = meta?.biometricIv?.decodeBase64() ?: return null
+        return try {
+            biometricKey.decryptCipher(iv)
+        } catch (_: KeyPermanentlyInvalidatedException) {
+            // A fingerprint was added or removed: this key will never open again, so it is dropped.
+            scope.launch { forgetBiometric() }
+            null
+        } catch (_: GeneralSecurityException) {
+            null
+        } catch (_: IllegalStateException) {
+            null
+        }
+    }
 
     init {
         scope.launch { bootstrap() }
@@ -87,6 +115,52 @@ class CryptoVaultGateway(
             // A lost Keystore key is not a wrong guess, so it must not burn an attempt.
             VaultUnlock.Unrecoverable -> UnlockResult.Rejected(current.failedUnlocks, current.retryAtMillis)
         }
+    }
+
+    /**
+     * Only with the vault open, because what gets sealed is the DEK that is in memory right now. The
+     * cipher comes from the prompt the user just answered, so the sealing is authorised by the same
+     * fingerprint that will later authorise the opening.
+     */
+    override suspend fun enableBiometric(cipher: Cipher): Boolean = mutex.withLock {
+        val current = meta ?: return@withLock false
+        val key = dek ?: return@withLock false
+        val sealed = try {
+            withContext(cryptoDispatcher) { cipher.doFinal(key) }
+        } catch (_: GeneralSecurityException) {
+            return@withLock false
+        }
+        persist(
+            current.copy(
+                biometricEnabled = true,
+                biometricDek = sealed.encodeBase64(),
+                biometricIv = cipher.iv.encodeBase64(),
+            ),
+        )
+        true
+    }
+
+    override suspend fun unlockWithBiometric(cipher: Cipher): Boolean = mutex.withLock {
+        val current = meta ?: return@withLock false
+        val sealed = current.biometricDek?.decodeBase64() ?: return@withLock false
+        val key = try {
+            withContext(cryptoDispatcher) { cipher.doFinal(sealed) }
+        } catch (_: GeneralSecurityException) {
+            return@withLock false
+        }
+        // A fingerprint is not a PIN guess: an unlock through it clears no throttle it did not earn.
+        if (current.failedUnlocks != 0 || current.retryAtMillis != 0L) {
+            persist(current.copy(failedUnlocks = 0, retryAtMillis = 0L))
+        }
+        openSession(key)
+        true
+    }
+
+    /** After the key is gone — turned off, or invalidated by a new fingerprint — the PIN is the way in. */
+    override suspend fun forgetBiometric() = mutex.withLock {
+        biometricKey.delete()
+        val current = meta ?: return@withLock
+        persist(current.copy(biometricEnabled = false, biometricDek = null, biometricIv = null))
     }
 
     override suspend fun setLockTimeout(millis: Long) = mutex.withLock {

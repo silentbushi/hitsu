@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.crypto.Cipher
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,11 +27,35 @@ class LockViewModel @Inject constructor(
     private var count = 0
     private var countdown: Job? = null
 
-    private val _state = MutableStateFlow(LockUiState(pinLength = vault.pinLength))
+    private val _state = MutableStateFlow(
+        LockUiState(
+            pinLength = vault.pinLength,
+            biometric = if (vault.biometricEnabled) BiometricState.Available else BiometricState.Unavailable,
+        ),
+    )
     val state: StateFlow<LockUiState> = _state.asStateFlow()
 
     init {
         if (vault.retryAtMillis > clock.now()) startCountdown(vault.retryAtMillis)
+    }
+
+    /** The cipher the prompt has to authorise, or null when the key no longer opens anything. */
+    fun unlockCipher(): Cipher? = vault.biometricUnlockCipher()
+
+    fun onBiometricUnavailable() {
+        _state.update { it.copy(biometric = BiometricState.Invalidated) }
+    }
+
+    fun onBiometricNotRecognised() {
+        _state.update { it.copy(biometric = BiometricState.NotRecognized) }
+    }
+
+    fun onBiometricAuthorised(cipher: Cipher) {
+        viewModelScope.launch {
+            if (!vault.unlockWithBiometric(cipher)) {
+                _state.update { it.copy(biometric = BiometricState.Invalidated) }
+            }
+        }
     }
 
     fun onDigit(digit: Int) {

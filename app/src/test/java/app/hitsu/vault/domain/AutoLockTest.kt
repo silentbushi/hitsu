@@ -11,6 +11,7 @@ import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import javax.crypto.Cipher
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AutoLockTest {
@@ -29,6 +30,13 @@ class AutoLockTest {
         override suspend fun setLockTimeout(millis: Long) {
             lockTimeoutMillis = millis
         }
+
+        override val biometricEnabled = false
+        override fun biometricEnrollCipher(): Cipher? = null
+        override fun biometricUnlockCipher(): Cipher? = null
+        override suspend fun enableBiometric(cipher: Cipher) = false
+        override suspend fun unlockWithBiometric(cipher: Cipher) = false
+        override suspend fun forgetBiometric() = Unit
 
         override fun lock() {
             _state.value = VaultState.Locked

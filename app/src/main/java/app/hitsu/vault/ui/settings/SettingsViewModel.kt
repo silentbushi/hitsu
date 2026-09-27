@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import app.hitsu.vault.R
 import app.hitsu.vault.data.MediaRepository
 import app.hitsu.vault.data.download.YtDlpEngine
+import app.hitsu.vault.domain.BiometricAvailability
 import app.hitsu.vault.domain.VaultGateway
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.crypto.Cipher
 import javax.inject.Inject
 
 /** Spec §5.5 plus the fifteen minutes the mockups added. */
@@ -39,6 +41,8 @@ data class SettingsUiState(
     val vaultBytes: Long = 0L,
     val ytDlpVersion: String? = null,
     val pendingConfirmation: AutoLockChoice? = null,
+    val biometricEnabled: Boolean = false,
+    val biometricAvailable: Boolean = false,
 )
 
 @HiltViewModel
@@ -46,10 +50,15 @@ class SettingsViewModel @Inject constructor(
     private val vault: VaultGateway,
     private val repository: MediaRepository,
     private val ytDlp: YtDlpEngine,
+    private val biometrics: BiometricAvailability,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(
-        SettingsUiState(autoLock = AutoLockChoice.of(vault.lockTimeoutMillis)),
+        SettingsUiState(
+            autoLock = AutoLockChoice.of(vault.lockTimeoutMillis),
+            biometricEnabled = vault.biometricEnabled,
+            biometricAvailable = biometrics.canEnroll(),
+        ),
     )
     val state: StateFlow<SettingsUiState> = _state.asStateFlow()
 
@@ -84,4 +93,21 @@ class SettingsViewModel @Inject constructor(
         _state.update { it.copy(autoLock = choice, pendingConfirmation = null) }
         viewModelScope.launch { vault.setLockTimeout(choice.millis) }
     }
+    /** The cipher the prompt has to authorise before the DEK can be sealed for a fingerprint. */
+    fun enrollCipher(): Cipher? = vault.biometricEnrollCipher()
+
+    fun onBiometricAuthorised(cipher: Cipher) {
+        viewModelScope.launch {
+            val enabled = vault.enableBiometric(cipher)
+            _state.update { it.copy(biometricEnabled = enabled) }
+        }
+    }
+
+    fun onBiometricDisabled() {
+        viewModelScope.launch {
+            vault.forgetBiometric()
+            _state.update { it.copy(biometricEnabled = false) }
+        }
+    }
+
 }

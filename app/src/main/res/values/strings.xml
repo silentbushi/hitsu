@@ -25,6 +25,12 @@
     <string name="lock_wait_minutes">Espera %1$d min</string>
     <string name="lock_use_biometric">Usar huella</string>
 
+    <string name="biometric_prompt_title">Desbloquear Hitsu</string>
+    <string name="biometric_prompt_subtitle">Tu huella abre el cofre.</string>
+    <string name="biometric_enroll_subtitle">Confirma tu huella para activarla.</string>
+    <string name="settings_biometric">Desbloqueo con huella</string>
+    <string name="settings_biometric_note">Tu huella no abre nada por sí sola: autoriza una llave guardada en el teléfono. Si cambias las huellas del sistema, se desactiva y vuelves a entrar con el PIN.</string>
+    <string name="settings_biometric_unavailable">Este teléfono no tiene huella configurada.</string>
     <string name="biometric_requested_title">Desbloquear Hitsu</string>
     <string name="biometric_requested_body">Toca el sensor de huella.</string>
     <string name="biometric_failed_title">No se reconoció</string>

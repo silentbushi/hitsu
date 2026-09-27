@@ -1,6 +1,7 @@
 package app.hitsu.vault
 
 import app.hitsu.vault.crypto.AesGcm
+import app.hitsu.vault.crypto.BiometricKey
 import app.hitsu.vault.crypto.KeyWrapper
 import app.hitsu.vault.crypto.VaultCrypto
 import app.hitsu.vault.data.CryptoVaultGateway
@@ -9,6 +10,10 @@ import app.hitsu.vault.data.VaultMetaStore
 import app.hitsu.vault.domain.Clock
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import javax.crypto.Cipher
+import javax.crypto.KeyGenerator
+import javax.crypto.SecretKey
+import javax.crypto.spec.GCMParameterSpec
 
 /** Stands in for the Keystore: same sealing, but with a key the test owns. */
 class FakeKeyWrapper(private val key: ByteArray = AesGcm.newKey()) : KeyWrapper {
@@ -39,4 +44,33 @@ suspend fun testGateway(
     clock: Clock,
     store: VaultMetaStore = InMemoryVaultMetaStore(),
     crypto: VaultCrypto = testCrypto(),
-): CryptoVaultGateway = CryptoVaultGateway(crypto, store, clock, dispatcher, scope).apply { bootstrap() }
+    biometricKey: BiometricKey = FakeBiometricKey(),
+): CryptoVaultGateway =
+    CryptoVaultGateway(crypto, biometricKey, store, clock, dispatcher, scope).apply { bootstrap() }
+
+/**
+ * What the Keystore key does, minus the part that needs a fingerprint: a plain AES-GCM key, so the
+ * sealing and unsealing of the DEK can be checked without a device to authenticate against.
+ */
+class FakeBiometricKey : BiometricKey {
+    private var key: SecretKey? = null
+
+    override fun exists(): Boolean = key != null
+
+    override fun encryptCipher(): Cipher {
+        val fresh = KeyGenerator.getInstance("AES").apply { init(256) }.generateKey()
+        key = fresh
+        return Cipher.getInstance("AES/GCM/NoPadding").apply { init(Cipher.ENCRYPT_MODE, fresh) }
+    }
+
+    override fun decryptCipher(iv: ByteArray): Cipher {
+        val existing = checkNotNull(key) { "No biometric key" }
+        return Cipher.getInstance("AES/GCM/NoPadding").apply {
+            init(Cipher.DECRYPT_MODE, existing, GCMParameterSpec(128, iv))
+        }
+    }
+
+    override fun delete() {
+        key = null
+    }
+}

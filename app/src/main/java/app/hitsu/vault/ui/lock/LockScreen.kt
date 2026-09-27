@@ -36,11 +36,35 @@ import app.hitsu.vault.ui.theme.ControlShape
 import app.hitsu.vault.ui.theme.HitsuColors
 import app.hitsu.vault.ui.theme.HitsuTheme
 import app.hitsu.vault.ui.theme.HitsuType
+import androidx.compose.runtime.LaunchedEffect
 
 @Composable
 fun LockRoute(viewModel: LockViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     BackHandler(enabled = state.biometricSheetVisible, onBack = viewModel::onUsePin)
+
+    val prompter = rememberBiometricPrompter()
+    val (title, subtitle, negative) = biometricPromptStrings()
+    LaunchedEffect(state.biometric) {
+        if (state.biometric != BiometricState.Requested) return@LaunchedEffect
+        val cipher = viewModel.unlockCipher()
+        if (prompter == null || cipher == null) {
+            viewModel.onBiometricUnavailable()
+            return@LaunchedEffect
+        }
+        prompter.authenticate(title, subtitle, negative, cipher) { outcome ->
+            when (outcome) {
+                is BiometricOutcome.Authorised -> viewModel.onBiometricAuthorised(outcome.cipher)
+                BiometricOutcome.NotRecognised -> viewModel.onBiometricNotRecognised()
+                BiometricOutcome.Dismissed -> viewModel.onUsePin()
+            }
+        }
+    }
+
+    // Spec §5.2: if a fingerprint can open it, offer that first instead of making them ask.
+    LaunchedEffect(Unit) {
+        if (state.biometric == BiometricState.Available) viewModel.onUseBiometric()
+    }
     LockScreen(
         state = state,
         onDigit = viewModel::onDigit,

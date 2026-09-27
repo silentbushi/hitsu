@@ -16,6 +16,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import java.io.File
+import javax.crypto.Cipher
 
 /**
  * Cookies are live credentials for the user's accounts, so what matters here is not only that yt-dlp
@@ -41,6 +42,12 @@ class CookieStoreTest {
         override suspend fun create(pin: CharArray, biometricRequested: Boolean) = Unit
         override suspend fun unlock(pin: CharArray) = UnlockResult.Success
         override suspend fun setLockTimeout(millis: Long) = Unit
+        override val biometricEnabled = false
+        override fun biometricEnrollCipher(): Cipher? = null
+        override fun biometricUnlockCipher(): Cipher? = null
+        override suspend fun enableBiometric(cipher: Cipher) = false
+        override suspend fun unlockWithBiometric(cipher: Cipher) = false
+        override suspend fun forgetBiometric() = Unit
         override fun lock() = Unit
     }
 

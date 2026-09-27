@@ -44,6 +44,10 @@ import app.hitsu.vault.ui.theme.HitsuTheme
 import app.hitsu.vault.ui.theme.HitsuType
 import java.time.Instant
 import java.time.ZoneId
+import app.hitsu.vault.ui.components.HitsuSwitch
+import app.hitsu.vault.ui.lock.BiometricOutcome
+import app.hitsu.vault.ui.lock.biometricPromptStrings
+import app.hitsu.vault.ui.lock.rememberBiometricPrompter
 
 @Composable
 fun SettingsRoute(
@@ -55,6 +59,10 @@ fun SettingsRoute(
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val prompter = rememberBiometricPrompter()
+    val (title, _, negative) = biometricPromptStrings()
+    val subtitle = stringResource(R.string.biometric_enroll_subtitle)
+
     SettingsScreen(
         state = state,
         onBack = onBack,
@@ -62,6 +70,25 @@ fun SettingsRoute(
         onOpenYtDlp = onOpenYtDlp,
         onOpenBackup = onOpenBackup,
         onOpenAbout = onOpenAbout,
+        /*
+         * Turning it on asks for the fingerprint there and then: the key that will hold the DEK is
+         * only usable once authenticated, so the same finger that will open the vault is the one
+         * that seals it. Turning it off needs no permission — it only throws a key away.
+         */
+        onToggleBiometric = {
+            if (state.biometricEnabled) {
+                viewModel.onBiometricDisabled()
+            } else {
+                val cipher = viewModel.enrollCipher()
+                if (prompter != null && cipher != null) {
+                    prompter.authenticate(title, subtitle, negative, cipher) { outcome ->
+                        if (outcome is BiometricOutcome.Authorised) {
+                            viewModel.onBiometricAuthorised(outcome.cipher)
+                        }
+                    }
+                }
+            }
+        },
     )
 }
 
@@ -73,6 +100,7 @@ fun SettingsScreen(
     onOpenYtDlp: () -> Unit,
     onOpenBackup: () -> Unit,
     onOpenAbout: () -> Unit,
+    onToggleBiometric: (() -> Unit)? = null,
 ) {
     val context = LocalContext.current
     Column(
@@ -92,6 +120,21 @@ fun SettingsScreen(
         )
 
         SettingsSection(stringResource(R.string.settings_storage))
+        SettingsRow(
+            title = stringResource(R.string.settings_biometric),
+            onClick = if (state.biometricAvailable) onToggleBiometric else null,
+            trailing = { HitsuSwitch(checked = state.biometricEnabled) },
+        )
+        SettingsNote(
+            stringResource(
+                if (state.biometricAvailable) {
+                    R.string.settings_biometric_note
+                } else {
+                    R.string.settings_biometric_unavailable
+                },
+            ),
+        )
+
         SettingsRow(
             title = stringResource(R.string.settings_space_used),
             value = Formatter.formatShortFileSize(context, state.vaultBytes),

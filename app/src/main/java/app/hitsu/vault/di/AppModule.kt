@@ -3,6 +3,8 @@ package app.hitsu.vault.di
 import android.content.Context
 import android.os.storage.StorageManager
 import androidx.core.content.getSystemService
+import app.hitsu.vault.crypto.BiometricKey
+import app.hitsu.vault.crypto.KeystoreBiometricKey
 import app.hitsu.vault.crypto.KeyWrapper
 import app.hitsu.vault.crypto.KeystoreKeyWrapper
 import app.hitsu.vault.crypto.VaultCrypto
@@ -46,6 +48,7 @@ import java.io.File
 import javax.inject.Singleton
 
 private const val KEYSTORE_ALIAS = "hitsu.vault.dek.wrap"
+private const val BIOMETRIC_ALIAS = "hitsu.vault.dek.biometric"
 private const val META_FILE = "vault/meta.json"
 private const val VAULT_DIR = "vault"
 private const val STAGING_DIR = "staging"
@@ -82,6 +85,10 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideBiometricKey(): BiometricKey = KeystoreBiometricKey(BIOMETRIC_ALIAS)
+
+    @Provides
+    @Singleton
     fun provideVaultCrypto(keyWrapper: KeyWrapper): VaultCrypto = VaultCrypto(keyWrapper)
 
     @Provides
@@ -95,11 +102,12 @@ object AppModule {
     @Singleton
     fun provideVaultGateway(
         crypto: VaultCrypto,
+        biometricKey: BiometricKey,
         store: VaultMetaStore,
         clock: Clock,
         @CryptoDispatcher cryptoDispatcher: CoroutineDispatcher,
         @ApplicationScope scope: CoroutineScope,
-    ): VaultGateway = CryptoVaultGateway(crypto, store, clock, cryptoDispatcher, scope)
+    ): VaultGateway = CryptoVaultGateway(crypto, biometricKey, store, clock, cryptoDispatcher, scope)
 
     @Provides
     @Singleton

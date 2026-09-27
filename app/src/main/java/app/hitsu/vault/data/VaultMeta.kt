@@ -18,6 +18,9 @@ data class VaultMeta(
     val pinLength: Int,
     val biometricRequested: Boolean = false,
     val biometricEnabled: Boolean = false,
+    /** The DEK sealed by the Keystore key that a fingerprint authorises, and its IV (spec §5.2). */
+    val biometricDek: String? = null,
+    val biometricIv: String? = null,
     val failedUnlocks: Int = 0,
     val retryAtMillis: Long = 0L,
     val lockTimeoutMillis: Long = 0L,
