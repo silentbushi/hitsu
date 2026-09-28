@@ -71,12 +71,17 @@ subir el compileSdk. Todo pasa por `gradle/libs.versions.toml`.
 ./gradlew :app:testDebugUnitTest :app:lintDebug   # pruebas JVM y lint
 ./gradlew :app:installDebug                       # instalar en el teléfono conectado
 ./gradlew :app:assembleDebug                      # solo compilar el APK
+./gradlew :app:assembleRelease                    # APK firmado y minificado, el que se publica
 ```
 
 - `adb shell am force-stop app.hitsu.vault` después de instalar, para que arranque con el código nuevo.
 - `adb logcat -s <TAG>` para leer lo que se instrumente; el registro nunca lleva PIN, DEK ni paths.
 - **`:app:connectedDebugAndroidTest` desinstala la app y con ella el cofre del teléfono.** No se ejecuta
   sobre un dispositivo con contenido real sin avisar antes.
+- El build de release minifica con R8, así que **se prueba instalado antes de publicarlo**: lo que se
+  lee por reflexión no se nota roto en depuración. `app/build/outputs/mapping/release/usage.txt` dice
+  qué borró R8 y `mapping.txt` traduce los nombres ofuscados de los errores. El motor de descargas
+  (youtubedl-android, Jackson, commons-compress) queda fuera de la minificación por eso.
 
 ## Forma de trabajo
 - Seguir el orden de SPEC §16, un paso a la vez.

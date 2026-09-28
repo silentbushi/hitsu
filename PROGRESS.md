@@ -8,8 +8,10 @@ está en qué punto de ese plan estamos.
 
 _Actualizado: 27 sep 2026._
 
-Hay una app funcionando en el teléfono (Galaxy SM-S948B, Android 16), instalada por `installDebug` y
-probada a mano. 97 pruebas unitarias y 31 instrumentadas en verde, y lint sin errores.
+Hay una app funcionando en el teléfono (Galaxy SM-S948B, Android 16), ya con el APK firmado de
+release y probada a mano. 97 pruebas unitarias y 31 instrumentadas en verde, y lint sin errores.
+
+Publicada en GitHub: **v0.1.1** es la versión buena, y la v0.1.0 lleva un aviso de que no descarga.
 
 **Los catorce pasos de §16 están hechos.** Lo que queda son remates y lo que vaya saliendo al usarla.
 
@@ -36,8 +38,9 @@ probada a mano. 97 pruebas unitarias y 31 instrumentadas en verde, y lint sin er
   Después, a petición del usuario, se añadió cambiar de pestaña deslizando en la pantalla principal.
 - **10. Bloqueo completo.** Auto-bloqueo configurable, FLAG_SECURE, desbloqueo con huella y cambio de
   PIN, todo probado en el teléfono el 27 sep 2026.
-
-Sin hacer: **11** (álbumes) y **12** (pulido de movimiento e icono).
+- **Release.** APK firmado con una llave que vive fuera del repo (`keystore.properties`), publicado
+  con su SHA-256 y el del certificado. Toda versión futura tiene que ir con ese mismo certificado o
+  no se instalará encima.
 
 ## En progreso
 
@@ -61,6 +64,19 @@ escriben al revés, medido y acotado a esa página. Se rodea pegando el texto, y
 personal el usuario prefiere dejarlo así en vez de interceptar la composición del teclado.
 
 ## Decisiones y notas
+
+- **27 sep 2026 — El build de release no se da por bueno sin probarlo en el teléfono.** El APK
+  publicado de la v0.1.0 no descargaba nada, y los dos motivos eran de R8: había borrado los campos
+  de `VideoInfo` (lo que Jackson rellena con la respuesta de yt-dlp) y los constructores sin
+  argumentos de los `ZipExtraField` de commons-compress (que `ExtraFieldUtils` instancia por
+  reflexión, y sin ellos falla el descomprimido de Python). Ninguno de los dos se nota en depuración,
+  porque ahí no hay minificación. La segunda pista fue un error en pantalla que decía `sc.f`: el
+  nombre ofuscado, que se traduce con `app/build/outputs/mapping/release/mapping.txt`.
+- **27 sep 2026 — El motor de descargas queda fuera de la minificación entero.** En vez de enumerar
+  cada rincón reflexivo de youtubedl-android, Jackson y commons-compress, se conservan las tres
+  librerías completas: son la única parte del proyecto que se lee por reflexión, y cuesta un megabyte
+  de dex sobre los catorce de Python. El resto de la app sigue minificada. Antes de publicar un APK
+  conviene mirar `usage.txt` de la carpeta `mapping/release`, que es donde se ven estos borrados.
 
 - **27 sep 2026 — Los tests instrumentados se pasan con respaldo delante.** Desinstalan la app y se
   llevan el cofre, así que el orden es: crear respaldo, correrlos, reinstalar, restaurar. Se hizo así
