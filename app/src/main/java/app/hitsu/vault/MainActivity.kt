@@ -96,9 +96,18 @@ class MainActivity : FragmentActivity() {
             Intent.ACTION_SEND -> listOfNotNull(intent.mediaUri(Intent.EXTRA_STREAM))
             Intent.ACTION_SEND_MULTIPLE ->
                 intent.mediaUris(Intent.EXTRA_STREAM) ?: emptyList()
-            else -> emptyList()
-        }
+            else -> return
+        }.ifEmpty { intent.clipUris() }
         if (uris.isNotEmpty()) mediaRepository.stageShared(uris)
+    }
+
+    /**
+     * Not every app fills EXTRA_STREAM: the share sheet carries the same URIs in the clip data, and
+     * some galleries send only those. They are the same grant, so they are staged the same way.
+     */
+    private fun Intent?.clipUris(): List<Uri> {
+        val clip = this?.clipData ?: return emptyList()
+        return (0 until clip.itemCount).mapNotNull { clip.getItemAt(it).uri }
     }
 
     @Suppress("DEPRECATION")

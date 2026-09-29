@@ -37,8 +37,6 @@ class HomeViewModel @Inject constructor(
 
     init {
         repository.ensureFingerprints()
-        // Reaching home means the vault is open, which is what anything shared was waiting for.
-        repository.importShared()
     }
 
     /** Grouped because combine only goes up to five flows. */

@@ -21,6 +21,7 @@ import app.hitsu.vault.domain.MediaFilter
 import app.hitsu.vault.domain.MediaItem
 import app.hitsu.vault.domain.MediaType
 import app.hitsu.vault.domain.VaultGateway
+import app.hitsu.vault.domain.VaultState
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -29,6 +30,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -104,6 +106,35 @@ class MediaRepository(
     private var exportJob: Job? = null
     private var backupJob: Job? = null
 
+    init {
+        /*
+         * Spec §7.4: what was shared waits staged until the vault can seal it, and the wait is
+         * watched here rather than kicked off by a screen. Both ends of it are asynchronous — the
+         * copy out of the sharing app takes as long as the file is big, and the unlock happens
+         * whenever the PIN is typed — so any single call placed at the start of a screen loses the
+         * race, or never runs at all when that screen is already on display (sharing into the open
+         * app reuses the activity, so nothing is constructed a second time).
+         */
+        appScope.launch {
+            combine(intake.staged, vault.state) { staged, state ->
+                staged.isNotEmpty() && state == VaultState.Unlocked
+            }.collect { ready ->
+                if (!ready) return@collect
+                /*
+                 * Drained in a loop, not once per emission: sharing again while the first batch is
+                 * still being sealed can leave the second staged with no emission of its own to
+                 * carry it, because this collector was busy when it arrived.
+                 */
+                while (vault.state.value == VaultState.Unlocked && intake.staged.value.isNotEmpty()) {
+                    // An import already in flight would refuse this one, so let it finish first.
+                    importJob?.join()
+                    val job = importShared() ?: break
+                    job.join()
+                }
+            }
+        }
+    }
+
     fun media(filter: MediaFilter): Flow<List<MediaItem>> {
         val rows = when (filter) {
             MediaFilter.All -> dao.observeAll()
@@ -125,7 +156,7 @@ class MediaRepository(
     }
 
     /** Spec §7.4: what other apps shared was copied aside before the PIN; now it can be sealed. */
-    fun importShared(): Job? {
+    private fun importShared(): Job? {
         if (importJob?.isActive == true) return null
         val staged = intake.take()
         if (staged.isEmpty()) return null
