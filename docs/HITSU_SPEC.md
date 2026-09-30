@@ -115,9 +115,18 @@ Cada item importado:
 
 ### 5.5 Auto-lock
 
-Ajustes: Inmediato / 10s / 30s / 1min / 5min. Default: **inmediato al ir a background** (onStop no config change).  
+Ajustes: Inmediato / 10s / 30s / 1min / 5min / 15min / Nunca. Default: **inmediato al ir a background** (onStop no config change).  
 Rotación no debe relockear.  
 PiP: ver §8.
+
+**Nunca**: el cofre no se cierra solo, ni en segundo plano ni con el tiempo. Se guarda como un
+centinela (`-1`), no como un plazo larguísimo, para que nada pueda convertirlo en una cuenta atrás.
+La DEK sigue viviendo solo en memoria: si el sistema mata el proceso o se reinicia el teléfono, al
+volver pide PIN. Elegirlo exige confirmar un aviso que diga lo que cuesta: quien coja el teléfono
+desbloqueado ve el cofre entero sin PIN.
+
+**Cerrar el cofre** (Ajustes → Seguridad): bloquea al momento y vuelve a la pantalla de PIN. Es la
+única salida cuando el auto-bloqueo está en «Nunca», y sirve igual antes de prestar el teléfono.
 
 ### 5.6 Recuperación
 

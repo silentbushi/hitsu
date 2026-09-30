@@ -88,6 +88,18 @@ class AutoLockTest {
         assertEquals(false, vault.locked)
     }
 
+    /** Spec §5.5 «Nunca»: no countdown at all, however long the app stays away. */
+    @Test
+    fun neverMeansTheVaultStaysOpen() = runTest(dispatcher) {
+        val (autoLock, vault) = autoLock(timeoutMillis = LOCK_TIMEOUT_NEVER)
+
+        autoLock.onBackgrounded(changingConfiguration = false)
+        advanceTimeBy(24 * 60 * 60_000L)
+        runCurrent()
+
+        assertEquals(false, vault.locked)
+    }
+
     @Test
     fun rotatingIsNotLeaving() = runTest(dispatcher) {
         val (autoLock, vault) = autoLock(timeoutMillis = 0L)

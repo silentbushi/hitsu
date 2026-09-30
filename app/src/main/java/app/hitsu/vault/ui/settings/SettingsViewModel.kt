@@ -7,6 +7,7 @@ import app.hitsu.vault.R
 import app.hitsu.vault.data.MediaRepository
 import app.hitsu.vault.data.download.YtDlpEngine
 import app.hitsu.vault.domain.BiometricAvailability
+import app.hitsu.vault.domain.LOCK_TIMEOUT_NEVER
 import app.hitsu.vault.domain.VaultGateway
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,10 +26,13 @@ enum class AutoLockChoice(val millis: Long, @StringRes val label: Int) {
     OneMinute(60_000L, R.string.auto_lock_1m),
     FiveMinutes(5 * 60_000L, R.string.auto_lock_5m),
     FifteenMinutes(15 * 60_000L, R.string.auto_lock_15m),
+
+    /** The vault stays open until it is closed by hand or the process dies (spec §5.5). */
+    Never(LOCK_TIMEOUT_NEVER, R.string.auto_lock_never),
     ;
 
     /** Long enough that someone holding the phone could walk into an open vault. */
-    val needsConfirmation: Boolean get() = millis >= FiveMinutes.millis
+    val needsConfirmation: Boolean get() = this == Never || millis >= FiveMinutes.millis
 
     companion object {
         fun of(millis: Long): AutoLockChoice =
@@ -93,6 +97,9 @@ class SettingsViewModel @Inject constructor(
         _state.update { it.copy(autoLock = choice, pendingConfirmation = null) }
         viewModelScope.launch { vault.setLockTimeout(choice.millis) }
     }
+    /** Spec §5.5: the way out of «Nunca», and of handing the unlocked phone to someone. */
+    fun onLockNow() = vault.lock()
+
     /** The cipher the prompt has to authorise before the DEK can be sealed for a fingerprint. */
     fun enrollCipher(): Cipher? = vault.biometricEnrollCipher()
 

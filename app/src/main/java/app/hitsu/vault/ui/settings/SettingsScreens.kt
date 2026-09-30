@@ -69,6 +69,7 @@ fun SettingsRoute(
         state = state,
         onBack = onBack,
         onOpenAutoLock = onOpenAutoLock,
+        onLockNow = viewModel::onLockNow,
         onOpenYtDlp = onOpenYtDlp,
         onOpenAlbums = onOpenAlbums,
         onOpenChangePin = onOpenChangePin,
@@ -106,6 +107,7 @@ fun SettingsScreen(
     onOpenChangePin: () -> Unit = {},
     onOpenBackup: () -> Unit,
     onOpenAbout: () -> Unit,
+    onLockNow: () -> Unit = {},
     onToggleBiometric: (() -> Unit)? = null,
 ) {
     val context = LocalContext.current
@@ -124,6 +126,16 @@ fun SettingsScreen(
             value = stringResource(state.autoLock.label),
             onClick = onOpenAutoLock,
         )
+        /*
+         * With «Nunca» chosen nothing else ever closes the vault, so the way out cannot live in the
+         * auto-lock screen alone. Navigation follows the vault state, so locking here is enough to
+         * land back on the PIN.
+         */
+        SettingsRow(
+            title = stringResource(R.string.settings_lock_now),
+            onClick = onLockNow,
+        )
+        SettingsNote(stringResource(R.string.settings_lock_now_note))
 
         SettingsSection(stringResource(R.string.settings_storage))
         SettingsRow(
@@ -201,14 +213,32 @@ fun AutoLockScreen(
             )
         }
         SettingsDivider()
-        SettingsNote(stringResource(R.string.settings_auto_lock_note))
+        SettingsNote(
+            stringResource(
+                if (state.autoLock == AutoLockChoice.Never) {
+                    R.string.settings_auto_lock_never_note
+                } else {
+                    R.string.settings_auto_lock_note
+                },
+            ),
+        )
     }
 
     val pending = state.pendingConfirmation
     if (pending != null) {
+        // «Nunca» is not a longer delay but the absence of one, so it gets its own warning.
+        val never = pending == AutoLockChoice.Never
         HitsuDialog(
-            title = stringResource(R.string.settings_auto_lock_confirm_title, stringResource(pending.label)),
-            body = stringResource(R.string.settings_auto_lock_confirm_body, stringResource(pending.label)),
+            title = if (never) {
+                stringResource(R.string.settings_auto_lock_never_title)
+            } else {
+                stringResource(R.string.settings_auto_lock_confirm_title, stringResource(pending.label))
+            },
+            body = if (never) {
+                stringResource(R.string.settings_auto_lock_never_body)
+            } else {
+                stringResource(R.string.settings_auto_lock_confirm_body, stringResource(pending.label))
+            },
         ) {
             HitsuButton(
                 text = stringResource(R.string.action_cancel),
@@ -219,6 +249,7 @@ fun AutoLockScreen(
             HitsuButton(
                 text = stringResource(R.string.action_change),
                 onClick = onConfirm,
+                style = if (never) HitsuButtonStyle.Danger else HitsuButtonStyle.Primary,
                 modifier = Modifier.fillMaxWidth(),
             )
         }

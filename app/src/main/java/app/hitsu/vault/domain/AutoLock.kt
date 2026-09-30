@@ -15,6 +15,8 @@ import javax.inject.Singleton
  * The countdown runs in the background rather than on the way back, so the key spends no longer in
  * memory than was asked for, whether or not the app is ever reopened. Rotation is not leaving, and
  * the system photo picker is a hop the user asked for, so neither starts it.
+ *
+ * [LOCK_TIMEOUT_NEVER] opts out of all of it: the vault only closes when the user asks.
  */
 @Singleton
 class AutoLock @Inject constructor(
@@ -35,6 +37,7 @@ class AutoLock @Inject constructor(
 
         pending?.cancel()
         val timeout = vault.lockTimeoutMillis
+        if (timeout == LOCK_TIMEOUT_NEVER) return
         if (timeout <= 0L) {
             vault.lock()
             return

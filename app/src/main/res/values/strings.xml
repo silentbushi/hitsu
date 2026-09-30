@@ -113,6 +113,11 @@
     <string name="settings_auto_lock_note">El cofre se bloquea al salir de la app.</string>
     <string name="settings_auto_lock_confirm_title">¿Bloquear a los %1$s?</string>
     <string name="settings_auto_lock_confirm_body">El cofre queda abierto hasta %1$s con la app en segundo plano. Quien tenga el teléfono en ese tiempo puede verlo.</string>
+    <string name="settings_auto_lock_never_note">El cofre no se bloquea solo. Se cierra cuando lo cierras tú en Ajustes, o cuando el sistema cierra la app.</string>
+    <string name="settings_auto_lock_never_title">¿No bloquear nunca?</string>
+    <string name="settings_auto_lock_never_body">El cofre queda abierto sin límite, también en segundo plano. Quien coja el teléfono desbloqueado lo ve entero sin PIN. Ciérralo tú desde Ajustes cuando acabes.</string>
+    <string name="settings_lock_now">Cerrar el cofre</string>
+    <string name="settings_lock_now_note">Lo bloquea ya y vuelve a pedir el PIN.</string>
     <string name="settings_space_used">Espacio usado</string>
     <string name="settings_about">Acerca de</string>
     <string name="action_cancel">Cancelar</string>
@@ -191,6 +196,7 @@
     <string name="auto_lock_1m">1 min</string>
     <string name="auto_lock_5m">5 min</string>
     <string name="auto_lock_15m">15 min</string>
+    <string name="auto_lock_never">Nunca</string>
 
     <string name="about_kanji" translatable="false">櫃</string>
     <string name="about_version">Versión %1$s (%2$d)</string>

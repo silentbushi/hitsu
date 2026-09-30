@@ -6,6 +6,13 @@ import javax.crypto.Cipher
 
 enum class VaultState { Unknown, Absent, Locked, Unlocked }
 
+/**
+ * [VaultGateway.lockTimeoutMillis] for a vault that never closes on its own (spec §5.5). It is a
+ * sentinel and not a very long timeout so that nothing can round it back into a countdown: the vault
+ * then stays open until the user closes it from settings, or the process dies and the key with it.
+ */
+const val LOCK_TIMEOUT_NEVER = -1L
+
 enum class PinKind { Numeric, Passphrase }
 
 sealed interface UnlockResult {
