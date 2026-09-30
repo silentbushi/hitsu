@@ -126,22 +126,6 @@ fun SettingsScreen(
             value = stringResource(state.autoLock.label),
             onClick = onOpenAutoLock,
         )
-        /*
-         * With «Nunca» chosen nothing else ever closes the vault, so the way out cannot live in the
-         * auto-lock screen alone. Navigation follows the vault state, so locking here is enough to
-         * land back on the PIN.
-         */
-        SettingsRow(
-            title = stringResource(R.string.settings_lock_now),
-            onClick = onLockNow,
-        )
-        SettingsNote(stringResource(R.string.settings_lock_now_note))
-
-        SettingsSection(stringResource(R.string.settings_storage))
-        SettingsRow(
-            title = stringResource(R.string.settings_change_pin),
-            onClick = onOpenChangePin,
-        )
         SettingsRow(
             title = stringResource(R.string.settings_biometric),
             onClick = if (state.biometricAvailable) onToggleBiometric else null,
@@ -156,7 +140,22 @@ fun SettingsScreen(
                 },
             ),
         )
+        SettingsRow(
+            title = stringResource(R.string.settings_change_pin),
+            onClick = onOpenChangePin,
+        )
+        /*
+         * With «Nunca» chosen nothing else ever closes the vault, so the way out cannot live in the
+         * auto-lock screen alone. Navigation follows the vault state, so locking here is enough to
+         * land back on the PIN.
+         */
+        SettingsRow(
+            title = stringResource(R.string.settings_lock_now),
+            onClick = onLockNow,
+        )
+        SettingsNote(stringResource(R.string.settings_lock_now_note))
 
+        SettingsSection(stringResource(R.string.settings_storage))
         SettingsRow(
             title = stringResource(R.string.settings_space_used),
             value = Formatter.formatShortFileSize(context, state.vaultBytes),
