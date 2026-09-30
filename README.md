@@ -26,15 +26,18 @@ Se abre con **PIN o huella**. La huella no descifra nada por sí sola: autoriza 
 que guarda una segunda copia de la DEK, y si cambias las huellas del sistema esa llave se invalida y
 vuelve a pedir el PIN. El PIN se puede cambiar sin recifrar ni un byte del contenido.
 
-Se cierra solo cuando la app se va de la pantalla, con el retardo que elijas (desde inmediato hasta
-15 minutos), y todas las ventanas llevan `FLAG_SECURE`: ni capturas ni miniatura en recientes.
+Se cierra solo cuando la app se va de la pantalla, con el retardo que elijas: desde inmediato hasta
+15 minutos, o **nunca** si aceptas el aviso de lo que eso cuesta. Para eso está **Cerrar el cofre**
+en Ajustes, que lo bloquea al momento. Aunque elijas «Nunca», la clave vive solo en memoria: si el
+sistema cierra la app o reinicias el teléfono, al volver pide PIN. Todas las ventanas llevan
+`FLAG_SECURE`: ni capturas ni miniatura en recientes.
 
 ### Entrar contenido
 
 - **Importar** desde el selector de fotos del sistema. Hitsu **copia**: no borra ni modifica tu
   galería, los originales los borras tú.
-- **Compartir a Hitsu** desde cualquier app. Si el cofre está cerrado, lo compartido se guarda aparte
-  y se cifra en cuanto entras.
+- **Compartir a Hitsu** desde cualquier app, con Hitsu abierta o cerrada. Si el cofre está cerrado, lo
+  compartido se guarda aparte y se cifra en cuanto entras.
 - **Descargar** el contenido de un post: comparte el enlace y **yt-dlp** lo baja directo al cofre, con
   notificación al terminar y un acceso de *descarga rápida* en la hoja de compartir que no abre la
   app. Para los sitios que piden sesión hay una ventana de login propia; sus cookies se guardan
@@ -86,7 +89,7 @@ Necesita JDK 17+ y el SDK de Android (plataforma 35). `minSdk` 29.
 ./gradlew :app:connectedDebugAndroidTest          # pruebas en el dispositivo
 ```
 
-Hoy: 97 pruebas unitarias y 31 instrumentadas.
+Hoy: 98 pruebas unitarias y 31 instrumentadas.
 
 > Las pruebas instrumentadas **desinstalan la app**, y con ella el cofre del dispositivo. Haz un
 > respaldo antes y restáuralo después.

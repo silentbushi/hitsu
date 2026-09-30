@@ -18,8 +18,8 @@ android {
         applicationId = "app.hitsu.vault"
         minSdk = 29
         targetSdk = 35
-        versionCode = 2
-        versionName = "0.1.1"
+        versionCode = 3
+        versionName = "0.2.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         // yt-dlp ships a Python runtime per ABI; only this phone's architecture is worth carrying.

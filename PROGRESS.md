@@ -6,12 +6,13 @@ está en qué punto de ese plan estamos.
 
 ## Estado actual
 
-_Actualizado: 27 sep 2026._
+_Actualizado: 29 sep 2026._
 
 Hay una app funcionando en el teléfono (Galaxy SM-S948B, Android 16), ya con el APK firmado de
-release y probada a mano. 97 pruebas unitarias y 31 instrumentadas en verde, y lint sin errores.
+release y probada a mano. 98 pruebas unitarias y 31 instrumentadas en verde, y lint sin errores.
 
-Publicada en GitHub: **v0.1.1** es la versión buena, y la v0.1.0 lleva un aviso de que no descarga.
+Publicada en GitHub: **v0.2.0** es la última, **v0.1.1** fue la anterior buena, y la v0.1.0 lleva un
+aviso de que no descarga.
 
 **Los catorce pasos de §16 están hechos.** Lo que queda son remates y lo que vaya saliendo al usarla.
 
@@ -42,6 +43,25 @@ Publicada en GitHub: **v0.1.1** es la versión buena, y la v0.1.0 lleva un aviso
   con su SHA-256 y el del certificado. Toda versión futura tiene que ir con ese mismo certificado o
   no se instalará encima.
 
+## v0.2.0 (29 sep 2026)
+
+Tres cambios salidos de usar la app:
+
+- **Compartir con Hitsu abierta ya funciona.** La importación de lo compartido la arrancaba el `init`
+  del ViewModel de home, que solo corre la primera vez que se construye esa pantalla; con la app ya
+  abierta el intent llega por `onNewIntent` sin crear nada, así que los bytes se copiaban al staging y
+  se quedaban ahí hasta que el cofre se cerraba y los borraba. Ahora un `SharedImportWatcher` en el
+  `appScope` sigue el estado del cofre y cifra lo que haya en staging en cuanto está abierto, desde
+  cualquier pantalla. De paso cubre el arranque en frío en el que la copia no había terminado cuando
+  aparecía home.
+- **Bloqueo automático «Nunca»** (§5.5), guardado como centinela `-1` y no como un plazo enorme, para
+  que nada pueda convertirlo en cuenta atrás. Elegirlo exige confirmar un aviso propio. La clave sigue
+  viviendo solo en memoria: matar la app desde recientes o reiniciar vuelve a pedir PIN, y eso se
+  midió con el PID del proceso cuando pareció un fallo. Con «Nunca» nada más cierra el cofre, así que
+  Ajustes estrena **Cerrar el cofre**.
+- **Ajustes ordenado como el mockup**: «Desbloqueo con huella» y «Cambiar PIN» estaban bajo el
+  encabezado ALMACENAMIENTO en vez de SEGURIDAD.
+
 ## En progreso
 
 Nada. Los catorce pasos de §16 están hechos y probados en el teléfono, y los remates que quedaban
@@ -57,7 +77,12 @@ apuntados también:
 
 ## Próximos pasos
 
-No hay nada pendiente. Lo que venga saldrá de usar la app.
+Nada planificado; lo que venga saldrá de usar la app. Dos cosas apuntadas de v0.2.0:
+
+- Queda probar a mano en el teléfono el arreglo de compartir con la app abierta y **Cerrar el cofre**;
+  «Nunca» sí se probó.
+- El mockup `settings/01-main-settings.png` pone «Exportar copia de seguridad» en ALMACENAMIENTO,
+  mientras el código tiene «Respaldo» en HERRAMIENTAS.
 
 Una cosa conocida y **decidida como aceptable** (27 sep 2026): en el login de TikTok los campos
 escriben al revés, medido y acotado a esa página. Se rodea pegando el texto, y como la app es de uso
