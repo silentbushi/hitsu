@@ -311,6 +311,41 @@ el título de la página y **Listo**.
   al cofre. El archivo en claro se destruye en cuanto yt-dlp termina.
 - Esta ventana también lleva `FLAG_SECURE`, como el resto.
 
+### 7.11 Presentación (pase de fotos)
+
+Un pase de las fotos del cofre en pantalla completa, sin gestos que haya que aprender: se arranca, se
+mira y se sale.
+
+**De dónde salen las fotos.** La presentación se arranca desde tres sitios y el conjunto es siempre
+el que se estaba viendo:
+
+- Cabecera de la pantalla principal: la pestaña actual (**Todo** o **Fotos**).
+- Cabecera de la pantalla de álbum: ese álbum.
+- Visor de fotos: el mismo conjunto del visor, empezando por la foto que está delante.
+
+**Solo fotos.** Los vídeos del conjunto se omiten: el pase no arranca el reproductor a mitad. Si al
+filtrar no queda ninguna foto, el botón de arrancar no se muestra.
+
+**Ajustes → Presentación**, y se recuerdan entre sesiones:
+
+- **Tiempo por foto**: 3 s / 5 s / 10 s / 30 s / 1 min. Default 5 s.
+- **Aleatorio**: el orden se baraja al arrancar. Apagado sigue el orden de la galería (§9).
+- **Bucle**: al llegar al final vuelve a empezar. Apagado termina y sale a la pantalla de donde salió.
+
+Con aleatorio y bucle a la vez, cada vuelta se vuelve a barajar, para que la segunda pasada no repita
+el mismo orden.
+
+**Transición.** Fundido cruzado de 600 ms con la curva de §10.4: la foto que sale se desvanece
+mientras entra la siguiente. Nunca un corte seco, y nunca dos fotos nítidas a la vez peleándose.
+
+**Mientras corre.** Fondo negro, foto `ContentScale.Fit`, sin recortar. Un toque muestra u oculta el
+control: pausa/reanudar, y el índice (`3 / 48`). Atrás sale. La pantalla no se apaga durante el pase
+(`FLAG_KEEP_SCREEN_ON`), que además evita que el auto-bloqueo se dispare por el apagado; al salir, la
+bandera se quita. Si el usuario deja la app, se aplica el auto-bloqueo de §5.5 como en cualquier otra
+pantalla, y la presentación no sobrevive a un cofre cerrado.
+
+El pase no modifica nada: no borra, no exporta y no cambia álbumes.
+
 ## 8. Player de vídeo (v1, obligatorio)
 
 Motor: Media3.
@@ -459,6 +494,8 @@ Nada de “¡Listo, tus recuerdos están a salvo! 🎉”.
 | `settings/albums` | renombrar, borrar y contar álbumes; destinos automáticos |
 | `photo/{id}` | visor |
 | `video/{id}` | player |
+| `slideshow?album={id}&filter={f}&start={id}` | presentación a pantalla completa (§7.11) |
+| `settings/slideshow` | tiempo por foto, aleatorio, bucle |
 | `settings` | auto-lock, bio on/off, cambiar PIN, espacio usado, export all (si hay), about |
 | `importProgress` | overlay o screen con lista |
 
