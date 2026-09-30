@@ -13,6 +13,7 @@ import app.hitsu.vault.data.CryptoVaultGateway
 import app.hitsu.vault.data.AlbumPreferences
 import app.hitsu.vault.data.AlbumRepository
 import app.hitsu.vault.data.MediaRepository
+import app.hitsu.vault.data.SharedImportWatcher
 import app.hitsu.vault.data.VaultSessionCleaner
 import app.hitsu.vault.data.db.HitsuDatabase
 import app.hitsu.vault.data.db.AlbumDao
@@ -288,6 +289,14 @@ object AppModule {
         repository: MediaRepository,
         @ApplicationScope scope: CoroutineScope,
     ): VaultSessionCleaner = VaultSessionCleaner(context, vault, repository, scope)
+
+    @Provides
+    @Singleton
+    fun provideSharedImportWatcher(
+        vault: VaultGateway,
+        repository: MediaRepository,
+        @ApplicationScope scope: CoroutineScope,
+    ): SharedImportWatcher = SharedImportWatcher(vault, repository, scope)
 
     @Provides
     fun provideBiometricAvailability(@ApplicationContext context: Context): BiometricAvailability =

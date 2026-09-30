@@ -211,6 +211,9 @@ class MediaRepository(
 
     val sharing: StateFlow<Boolean> get() = intake.staging
 
+    /** Something shared is copied aside and waiting for the vault to open (spec §7.4). */
+    val sharedWaiting: Flow<Boolean> get() = intake.staged.map { it.isNotEmpty() }
+
     fun stageShared(uris: List<Uri>) = intake.stage(uris)
 
     fun hasShared(): Boolean = intake.staged.value.isNotEmpty()

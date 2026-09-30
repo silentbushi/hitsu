@@ -6,6 +6,7 @@ import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
 import app.hitsu.vault.data.MediaRepository
+import app.hitsu.vault.data.SharedImportWatcher
 import app.hitsu.vault.data.VaultSessionCleaner
 import app.hitsu.vault.ui.media.EncryptedImageFetcher
 import app.hitsu.vault.ui.media.EncryptedThumbnailFetcher
@@ -25,9 +26,13 @@ class HitsuApp : Application(), SingletonImageLoader.Factory {
     @Inject
     lateinit var sessionCleaner: VaultSessionCleaner
 
+    @Inject
+    lateinit var sharedImports: SharedImportWatcher
+
     override fun onCreate() {
         super.onCreate()
         sessionCleaner.start()
+        sharedImports.start()
         publishQuickDownload()
     }
 
