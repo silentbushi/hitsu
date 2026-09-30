@@ -53,6 +53,7 @@ import app.hitsu.vault.ui.lock.rememberBiometricPrompter
 fun SettingsRoute(
     onBack: () -> Unit,
     onOpenAutoLock: () -> Unit,
+    onOpenSlideshow: () -> Unit,
     onOpenYtDlp: () -> Unit,
     onOpenAlbums: () -> Unit,
     onOpenChangePin: () -> Unit,
@@ -61,6 +62,11 @@ fun SettingsRoute(
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    // The slideshow settings are a screen of their own, so their row catches up on the way back.
+    LifecycleResumeEffect(Unit) {
+        viewModel.refreshSlideshow()
+        onPauseOrDispose {}
+    }
     val prompter = rememberBiometricPrompter()
     val (title, _, negative) = biometricPromptStrings()
     val subtitle = stringResource(R.string.biometric_enroll_subtitle)
@@ -69,6 +75,7 @@ fun SettingsRoute(
         state = state,
         onBack = onBack,
         onOpenAutoLock = onOpenAutoLock,
+        onOpenSlideshow = onOpenSlideshow,
         onLockNow = viewModel::onLockNow,
         onOpenYtDlp = onOpenYtDlp,
         onOpenAlbums = onOpenAlbums,
@@ -102,6 +109,7 @@ fun SettingsScreen(
     state: SettingsUiState,
     onBack: () -> Unit,
     onOpenAutoLock: () -> Unit,
+    onOpenSlideshow: () -> Unit = {},
     onOpenYtDlp: () -> Unit,
     onOpenAlbums: () -> Unit = {},
     onOpenChangePin: () -> Unit = {},
@@ -162,6 +170,11 @@ fun SettingsScreen(
         )
 
         SettingsSection(stringResource(R.string.settings_tools))
+        SettingsRow(
+            title = stringResource(R.string.settings_slideshow),
+            value = stringResource(state.slideshowInterval.label),
+            onClick = onOpenSlideshow,
+        )
         SettingsRow(
             title = stringResource(R.string.settings_albums),
             onClick = onOpenAlbums,
@@ -252,6 +265,60 @@ fun AutoLockScreen(
                 modifier = Modifier.fillMaxWidth(),
             )
         }
+    }
+}
+
+@Composable
+fun SlideshowSettingsRoute(onBack: () -> Unit, viewModel: SlideshowSettingsViewModel = hiltViewModel()) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    SlideshowSettingsScreen(
+        state = state,
+        onBack = onBack,
+        onPick = viewModel::onIntervalPicked,
+        onToggleShuffle = viewModel::onShuffleToggled,
+        onToggleLoop = viewModel::onLoopToggled,
+    )
+}
+
+@Composable
+fun SlideshowSettingsScreen(
+    state: SlideshowSettingsUiState,
+    onBack: () -> Unit,
+    onPick: (SlideshowInterval) -> Unit = {},
+    onToggleShuffle: () -> Unit = {},
+    onToggleLoop: () -> Unit = {},
+) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .background(HitsuColors.Bg)
+            .verticalScroll(rememberScrollState())
+            .navigationBarsPadding(),
+    ) {
+        SettingsTopBar(title = stringResource(R.string.settings_slideshow), onBack = onBack)
+
+        SettingsSection(stringResource(R.string.slideshow_per_photo))
+        SlideshowInterval.entries.forEach { choice ->
+            SettingsChoiceRow(
+                label = stringResource(choice.label),
+                selected = choice == state.interval,
+                onSelect = { onPick(choice) },
+            )
+        }
+
+        SettingsSection(stringResource(R.string.slideshow_order))
+        SettingsRow(
+            title = stringResource(R.string.slideshow_shuffle),
+            onClick = onToggleShuffle,
+            trailing = { HitsuSwitch(checked = state.shuffle) },
+        )
+        SettingsRow(
+            title = stringResource(R.string.slideshow_loop),
+            onClick = onToggleLoop,
+            trailing = { HitsuSwitch(checked = state.loop) },
+        )
+        SettingsDivider()
+        SettingsNote(stringResource(R.string.settings_slideshow_note))
     }
 }
 
@@ -426,6 +493,19 @@ private fun SettingsPreview() = HitsuTheme {
         onOpenYtDlp = {},
         onOpenBackup = {},
         onOpenAbout = {},
+    )
+}
+
+@PhonePreview
+@Composable
+private fun SlideshowSettingsPreview() = HitsuTheme {
+    SlideshowSettingsScreen(
+        state = SlideshowSettingsUiState(
+            interval = SlideshowInterval.TenSeconds,
+            shuffle = true,
+            loop = false,
+        ),
+        onBack = {},
     )
 }
 

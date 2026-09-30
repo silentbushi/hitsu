@@ -34,6 +34,9 @@ import app.hitsu.vault.ui.settings.BackupRoute
 import app.hitsu.vault.ui.settings.ChangePinRoute
 import app.hitsu.vault.ui.settings.AutoLockRoute
 import app.hitsu.vault.ui.settings.SettingsRoute
+import app.hitsu.vault.ui.settings.SlideshowSettingsRoute
+import app.hitsu.vault.ui.slideshow.SlideshowRoute
+import app.hitsu.vault.ui.slideshow.SlideshowViewModel
 import app.hitsu.vault.ui.settings.YtDlpRoute
 import app.hitsu.vault.ui.splash.SplashScreen
 import app.hitsu.vault.ui.viewer.PhotoViewerRoute
@@ -77,6 +80,7 @@ fun HitsuNavHost(vaultState: VaultState, pendingLink: String?, onLinkHandled: ()
                 onOpenVideo = { id -> navController.navigate(Routes.video(id)) },
                 onOpenSettings = { navController.navigate(Routes.SETTINGS) },
                 onOpenAlbum = { navController.navigate(Routes.album(it)) },
+                onPresent = { filter -> navController.navigate(Routes.slideshow(filter = filter)) },
             )
         }
         composable(
@@ -88,8 +92,37 @@ fun HitsuNavHost(vaultState: VaultState, pendingLink: String?, onLinkHandled: ()
                     defaultValue = MediaFilter.All.name
                 },
             ),
+        ) { entry ->
+            val filter = runCatching {
+                MediaFilter.valueOf(
+                    entry.arguments?.getString(PhotoViewerViewModel.ARG_FILTER) ?: MediaFilter.All.name,
+                )
+            }.getOrDefault(MediaFilter.All)
+            PhotoViewerRoute(
+                onClose = { navController.popBackStack() },
+                onPresent = { id ->
+                    navController.navigate(Routes.slideshow(filter = filter, startId = id))
+                },
+            )
+        }
+        composable(
+            route = Routes.SLIDESHOW,
+            arguments = listOf(
+                navArgument(SlideshowViewModel.ARG_ALBUM) {
+                    type = NavType.StringType
+                    defaultValue = ""
+                },
+                navArgument(SlideshowViewModel.ARG_FILTER) {
+                    type = NavType.StringType
+                    defaultValue = MediaFilter.All.name
+                },
+                navArgument(SlideshowViewModel.ARG_START) {
+                    type = NavType.StringType
+                    defaultValue = ""
+                },
+            ),
         ) {
-            PhotoViewerRoute(onClose = { navController.popBackStack() })
+            SlideshowRoute(onClose = { navController.popBackStack() })
         }
         composable(
             route = Routes.DOWNLOAD,
@@ -101,6 +134,7 @@ fun HitsuNavHost(vaultState: VaultState, pendingLink: String?, onLinkHandled: ()
             SettingsRoute(
                 onBack = { navController.popBackStack() },
                 onOpenAutoLock = { navController.navigate(Routes.SETTINGS_AUTO_LOCK) },
+                onOpenSlideshow = { navController.navigate(Routes.SETTINGS_SLIDESHOW) },
                 onOpenYtDlp = { navController.navigate(Routes.SETTINGS_YTDLP) },
                 onOpenAlbums = { navController.navigate(Routes.SETTINGS_ALBUMS) },
                 onOpenChangePin = { navController.navigate(Routes.SETTINGS_CHANGE_PIN) },
@@ -115,6 +149,9 @@ fun HitsuNavHost(vaultState: VaultState, pendingLink: String?, onLinkHandled: ()
             YtDlpRoute(
                 onBack = { navController.popBackStack() },
             )
+        }
+        composable(Routes.SETTINGS_SLIDESHOW) {
+            SlideshowSettingsRoute(onBack = { navController.popBackStack() })
         }
         composable(Routes.SETTINGS_ALBUMS) {
             AlbumsSettingsRoute(onBack = { navController.popBackStack() })
@@ -133,6 +170,7 @@ fun HitsuNavHost(vaultState: VaultState, pendingLink: String?, onLinkHandled: ()
             arguments = listOf(navArgument(AlbumViewModel.ARG_ID) { type = NavType.StringType }),
         ) {
             AlbumRoute(
+                onPresent = { albumId -> navController.navigate(Routes.slideshow(albumId = albumId)) },
                 onOpen = { item ->
                     if (item.type == MediaType.Video) {
                         navController.navigate(Routes.video(item.id))

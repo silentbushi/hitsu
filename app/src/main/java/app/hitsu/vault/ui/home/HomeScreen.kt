@@ -61,6 +61,7 @@ import app.hitsu.vault.ui.components.HitsuDialog
 import app.hitsu.vault.ui.components.HitsuFab
 import app.hitsu.vault.ui.components.HitsuIcons
 import app.hitsu.vault.ui.components.PhonePreview
+import app.hitsu.vault.ui.components.PresentAction
 import app.hitsu.vault.ui.format.dayLabel
 import app.hitsu.vault.ui.media.ThumbnailKey
 import app.hitsu.vault.ui.theme.HitsuColors
@@ -90,6 +91,7 @@ fun HomeRoute(
     onOpenVideo: (String) -> Unit,
     onOpenSettings: () -> Unit,
     onOpenAlbum: (String) -> Unit,
+    onPresent: (MediaFilter) -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -121,6 +123,7 @@ fun HomeRoute(
             )
         },
         onOpenSettings = onOpenSettings,
+        onPresent = { onPresent(state.filter) },
         onOpen = { item ->
             if (item.type == MediaType.Video) onOpenVideo(item.id) else onOpenPhoto(item.id, state.filter)
         },
@@ -133,6 +136,7 @@ fun HomeScreen(
     onFilterSelected: (HomeTab) -> Unit,
     onImport: () -> Unit,
     onOpenSettings: () -> Unit = {},
+    onPresent: () -> Unit = {},
     onOpen: (MediaItem) -> Unit = {},
     onToggleSelected: (String) -> Unit = {},
     onSelectAll: (List<String>) -> Unit = {},
@@ -177,6 +181,9 @@ fun HomeScreen(
                         style = HitsuType.Title,
                         modifier = Modifier.weight(1f),
                     )
+                    if (state.canPresent) {
+                        PresentAction(onPresent, Modifier.padding(end = 18.dp))
+                    }
                     Icon(
                         imageVector = HitsuIcons.Settings,
                         contentDescription = stringResource(R.string.cd_settings),

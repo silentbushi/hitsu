@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.hitsu.vault.R
 import app.hitsu.vault.data.MediaRepository
+import app.hitsu.vault.data.SlideshowPreferences
 import app.hitsu.vault.data.download.YtDlpEngine
 import app.hitsu.vault.domain.BiometricAvailability
 import app.hitsu.vault.domain.LOCK_TIMEOUT_NEVER
@@ -47,6 +48,7 @@ data class SettingsUiState(
     val pendingConfirmation: AutoLockChoice? = null,
     val biometricEnabled: Boolean = false,
     val biometricAvailable: Boolean = false,
+    val slideshowInterval: SlideshowInterval = SlideshowInterval.FiveSeconds,
 )
 
 @HiltViewModel
@@ -55,6 +57,7 @@ class SettingsViewModel @Inject constructor(
     private val repository: MediaRepository,
     private val ytDlp: YtDlpEngine,
     private val biometrics: BiometricAvailability,
+    private val slideshow: SlideshowPreferences,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(
@@ -62,6 +65,7 @@ class SettingsViewModel @Inject constructor(
             autoLock = AutoLockChoice.of(vault.lockTimeoutMillis),
             biometricEnabled = vault.biometricEnabled,
             biometricAvailable = biometrics.canEnroll(),
+            slideshowInterval = SlideshowInterval.of(slideshow.secondsPerPhoto),
         ),
     )
     val state: StateFlow<SettingsUiState> = _state.asStateFlow()
@@ -97,6 +101,11 @@ class SettingsViewModel @Inject constructor(
         _state.update { it.copy(autoLock = choice, pendingConfirmation = null) }
         viewModelScope.launch { vault.setLockTimeout(choice.millis) }
     }
+    /** The slideshow screen owns that preference, so the row catches up on the way back. */
+    fun refreshSlideshow() {
+        _state.update { it.copy(slideshowInterval = SlideshowInterval.of(slideshow.secondsPerPhoto)) }
+    }
+
     /** Spec §5.5: the way out of «Nunca», and of handing the unlocked phone to someone. */
     fun onLockNow() = vault.lock()
 

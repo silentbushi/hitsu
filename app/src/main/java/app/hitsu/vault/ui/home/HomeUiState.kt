@@ -4,6 +4,7 @@ import app.hitsu.vault.data.ExportStatus
 import app.hitsu.vault.data.ImportStatus
 import app.hitsu.vault.data.db.AlbumWithCount
 import app.hitsu.vault.domain.MediaFilter
+import app.hitsu.vault.domain.MediaType
 
 /**
  * Spec §9: the three filters of the grid plus the albums, which are not a filter but a list. Keeping
@@ -50,6 +51,12 @@ data class HomeUiState(
             HomeTab.Videos -> MediaFilter.Videos
             HomeTab.All, HomeTab.Albums -> MediaFilter.All
         }
+
+    /** Spec §7.11: no photos in this tab, nothing to present, so the button stays away. */
+    val canPresent: Boolean
+        get() = tab != HomeTab.Videos &&
+            tab != HomeTab.Albums &&
+            pages[tab].any { day -> day.items.any { it.type == MediaType.Photo } }
 
     fun showEmptyState(tab: HomeTab): Boolean =
         loaded && pages[tab].isEmpty() && !importStatus.running && !receivingShare

@@ -53,6 +53,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.hitsu.vault.R
 import app.hitsu.vault.domain.MediaItem
 import app.hitsu.vault.ui.components.HitsuIcons
+import app.hitsu.vault.ui.components.PresentAction
 import app.hitsu.vault.ui.format.dayTimeLabel
 import app.hitsu.vault.ui.media.FullImageKey
 import app.hitsu.vault.ui.theme.HitsuColors
@@ -66,11 +67,16 @@ private const val DOUBLE_TAP_SCALE = 2.5f
 private const val DISMISS_DISTANCE_PX = 320f
 
 @Composable
-fun PhotoViewerRoute(onClose: () -> Unit, viewModel: PhotoViewerViewModel = hiltViewModel()) {
+fun PhotoViewerRoute(
+    onClose: () -> Unit,
+    onPresent: (String) -> Unit,
+    viewModel: PhotoViewerViewModel = hiltViewModel(),
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     PhotoViewerScreen(
         state = state,
         onClose = onClose,
+        onPresent = onPresent,
         onToggleChrome = viewModel::onToggleChrome,
         onToggleInfo = viewModel::onToggleInfo,
     )
@@ -80,6 +86,7 @@ fun PhotoViewerRoute(onClose: () -> Unit, viewModel: PhotoViewerViewModel = hilt
 fun PhotoViewerScreen(
     state: PhotoViewerUiState,
     onClose: () -> Unit,
+    onPresent: (String) -> Unit = {},
     onToggleChrome: () -> Unit,
     onToggleInfo: () -> Unit,
 ) {
@@ -119,6 +126,8 @@ fun PhotoViewerScreen(
                 index = pagerState.currentPage + 1,
                 total = state.items.size,
                 onClose = onClose,
+                // Spec §7.11: the pass starts from what is on screen, not from the top of the list.
+                onPresent = { current?.let { onPresent(it.id) } },
                 onToggleInfo = onToggleInfo,
             )
         }
@@ -227,7 +236,13 @@ private fun ZoomablePhoto(
 }
 
 @Composable
-private fun ViewerTopBar(index: Int, total: Int, onClose: () -> Unit, onToggleInfo: () -> Unit) {
+private fun ViewerTopBar(
+    index: Int,
+    total: Int,
+    onClose: () -> Unit,
+    onPresent: () -> Unit,
+    onToggleInfo: () -> Unit,
+) {
     Row(
         Modifier
             .fillMaxWidth()
@@ -244,6 +259,7 @@ private fun ViewerTopBar(index: Int, total: Int, onClose: () -> Unit, onToggleIn
             color = HitsuColors.TextPrimary,
             modifier = Modifier.weight(1f),
         )
+        PresentAction(onPresent)
         ChromeIcon(HitsuIcons.Info, stringResource(R.string.cd_info), onToggleInfo)
     }
 }

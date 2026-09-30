@@ -7,6 +7,7 @@ import app.hitsu.vault.data.AlbumCreation
 import app.hitsu.vault.data.AlbumPreferences
 import app.hitsu.vault.data.AlbumRepository
 import app.hitsu.vault.data.db.AlbumWithCount
+import app.hitsu.vault.domain.MediaType
 import app.hitsu.vault.ui.home.MediaDay
 import app.hitsu.vault.ui.home.groupByDay
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,6 +28,10 @@ data class AlbumUiState(
     val pickingAlbum: Boolean = false,
 ) {
     val allIds: List<String> get() = days.flatMap { day -> day.items.map { it.id } }
+
+    /** Spec §7.11: an album of only videos has nothing to present. */
+    val canPresent: Boolean
+        get() = days.any { day -> day.items.any { it.type == MediaType.Photo } }
 }
 
 @HiltViewModel

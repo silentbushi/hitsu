@@ -197,6 +197,18 @@
     <string name="auto_lock_5m">5 min</string>
     <string name="auto_lock_15m">15 min</string>
     <string name="auto_lock_never">Nunca</string>
+    <string name="settings_slideshow">Presentación</string>
+    <string name="settings_slideshow_note">Se aplica a los pases que arranques desde la galería, un álbum o el visor. Los vídeos se omiten.</string>
+    <string name="slideshow_per_photo">Tiempo por foto</string>
+    <string name="slideshow_order">Orden</string>
+    <string name="slideshow_shuffle">Aleatorio</string>
+    <string name="slideshow_loop">Bucle</string>
+    <string name="slideshow_3s">3 s</string>
+    <string name="slideshow_5s">5 s</string>
+    <string name="slideshow_10s">10 s</string>
+    <string name="slideshow_30s">30 s</string>
+    <string name="slideshow_1m">1 min</string>
+    <string name="cd_slideshow">Presentación</string>
 
     <string name="about_kanji" translatable="false">櫃</string>
     <string name="about_version">Versión %1$s (%2$d)</string>

@@ -21,6 +21,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.hitsu.vault.R
 import app.hitsu.vault.domain.MediaItem
 import app.hitsu.vault.ui.components.HitsuIcons
+import app.hitsu.vault.ui.components.PresentAction
 import app.hitsu.vault.ui.home.MediaGrid
 import app.hitsu.vault.ui.home.SelectionAction
 import app.hitsu.vault.ui.home.SelectionActionBar
@@ -33,6 +34,7 @@ import app.hitsu.vault.ui.theme.HitsuType
 fun AlbumRoute(
     onOpen: (MediaItem) -> Unit,
     onBack: () -> Unit,
+    onPresent: (String) -> Unit,
     viewModel: AlbumViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -41,6 +43,7 @@ fun AlbumRoute(
     AlbumScreen(
         state = state,
         onBack = onBack,
+        onPresent = { onPresent(state.albumId) },
         onOpen = onOpen,
         onToggleSelected = viewModel::onToggleSelected,
         onSelectAll = viewModel::onSelectAll,
@@ -57,6 +60,7 @@ fun AlbumRoute(
 fun AlbumScreen(
     state: AlbumUiState,
     onBack: () -> Unit,
+    onPresent: () -> Unit = {},
     onOpen: (MediaItem) -> Unit = {},
     onToggleSelected: (String) -> Unit = {},
     onSelectAll: (List<String>) -> Unit = {},
@@ -81,7 +85,15 @@ fun AlbumScreen(
                     onSelectAll = { onSelectAll(state.allIds) },
                 )
             } else {
-                SettingsTopBar(title = state.name, onBack = onBack)
+                SettingsTopBar(
+                    title = state.name,
+                    onBack = onBack,
+                    trailing = if (state.canPresent) {
+                        { PresentAction(onPresent) }
+                    } else {
+                        null
+                    },
+                )
             }
 
             Box(Modifier.fillMaxSize()) {

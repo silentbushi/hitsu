@@ -338,8 +338,12 @@ el mismo orden.
 **Transición.** Fundido cruzado de 600 ms con la curva de §10.4: la foto que sale se desvanece
 mientras entra la siguiente. Nunca un corte seco, y nunca dos fotos nítidas a la vez peleándose.
 
-**Mientras corre.** Fondo negro, foto `ContentScale.Fit`, sin recortar. Un toque muestra u oculta el
-control: pausa/reanudar, y el índice (`3 / 48`). Atrás sale. La pantalla no se apaga durante el pase
+**Mientras corre.** Fondo negro, foto `ContentScale.Fit`, sin recortar. El control —cerrar, el índice
+(`3 / 48`) y pausa/reanudar— aparece al arrancar y se esconde solo a los 3 s para dejar la foto
+limpia; un toque lo trae de vuelta o lo oculta, y en pausa se queda. Atrás sale.
+
+La siguiente foto se descifra y decodifica por adelantado, porque una foto a tamaño completo tarda
+más en abrirse que los 600 ms de la transición y el fundido enseñaría un hueco negro. La pantalla no se apaga durante el pase
 (`FLAG_KEEP_SCREEN_ON`), que además evita que el auto-bloqueo se dispare por el apagado; al salir, la
 bandera se quita. Si el usuario deja la app, se aplica el auto-bloqueo de §5.5 como en cualquier otra
 pantalla, y la presentación no sobrevive a un cofre cerrado.

@@ -14,6 +14,7 @@ import app.hitsu.vault.data.AlbumPreferences
 import app.hitsu.vault.data.AlbumRepository
 import app.hitsu.vault.data.MediaRepository
 import app.hitsu.vault.data.SharedImportWatcher
+import app.hitsu.vault.data.SlideshowPreferences
 import app.hitsu.vault.data.VaultSessionCleaner
 import app.hitsu.vault.data.db.HitsuDatabase
 import app.hitsu.vault.data.db.AlbumDao
@@ -52,6 +53,7 @@ import java.io.File
 import javax.inject.Singleton
 
 private const val ALBUM_PREFS = "hitsu.albums"
+private const val SLIDESHOW_PREFS = "hitsu.slideshow"
 private const val KEYSTORE_ALIAS = "hitsu.vault.dek.wrap"
 private const val BIOMETRIC_ALIAS = "hitsu.vault.dek.biometric"
 private const val META_FILE = "vault/meta.json"
@@ -191,6 +193,11 @@ object AppModule {
     @Singleton
     fun provideAlbumPreferences(@ApplicationContext context: Context): AlbumPreferences =
         AlbumPreferences(context.getSharedPreferences(ALBUM_PREFS, Context.MODE_PRIVATE))
+
+    @Provides
+    @Singleton
+    fun provideSlideshowPreferences(@ApplicationContext context: Context): SlideshowPreferences =
+        SlideshowPreferences(context.getSharedPreferences(SLIDESHOW_PREFS, Context.MODE_PRIVATE))
 
     @Provides
     @Singleton

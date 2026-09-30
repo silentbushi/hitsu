@@ -28,7 +28,12 @@ import app.hitsu.vault.ui.theme.HitsuColors
 import app.hitsu.vault.ui.theme.HitsuType
 
 @Composable
-fun SettingsTopBar(title: String, onBack: () -> Unit, modifier: Modifier = Modifier) {
+fun SettingsTopBar(
+    title: String,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+    trailing: (@Composable () -> Unit)? = null,
+) {
     Row(
         modifier
             .fillMaxWidth()
@@ -45,7 +50,8 @@ fun SettingsTopBar(title: String, onBack: () -> Unit, modifier: Modifier = Modif
                 .clickable(role = Role.Button, onClick = onBack)
                 .size(22.dp),
         )
-        Text(title, style = HitsuType.Title)
+        Text(title, style = HitsuType.Title, modifier = Modifier.weight(1f))
+        trailing?.invoke()
     }
 }
 
