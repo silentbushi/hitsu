@@ -51,6 +51,13 @@ class SlideshowOrderTest {
     }
 
     @Test
+    fun swipingBackWrapsOnlyWhenThePassLoops() {
+        assertEquals(2, previousIndex(index = 3, lastIndex = 4, loop = false))
+        assertEquals(4, previousIndex(index = 0, lastIndex = 4, loop = true))
+        assertEquals(0, previousIndex(index = 0, lastIndex = 4, loop = false))
+    }
+
+    @Test
     fun shuffledWithoutAStartKeepsEveryPhotoExactlyOnce() {
         val ordered = orderedForPass(photos, startId = null, shuffle = true)
 

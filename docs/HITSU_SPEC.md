@@ -342,6 +342,13 @@ mientras entra la siguiente. Nunca un corte seco, y nunca dos fotos nítidas a l
 (`3 / 48`) y pausa/reanudar— aparece al arrancar y se esconde solo a los 3 s para dejar la foto
 limpia; un toque lo trae de vuelta o lo oculta, y en pausa se queda. Atrás sale.
 
+**Deslizar pasa de foto** sin esperar al reloj: izquierda la siguiente, derecha la anterior, y el
+temporizador empieza de cero, así que la foto que llega por dedo tiene su turno completo y no el
+resto del turno de la anterior. El cambio sigue siendo el mismo fundido, para que una foto que llega
+por dedo se vea igual que una que llega por reloj; mientras arrastras, la foto acompaña al dedo a
+medias para acusar el gesto. Deslizar hacia atrás en la primera foto solo vuelve al principio si hay
+bucle; hacia delante en la última hace lo mismo que el reloj: otra vuelta con bucle, o salir sin él.
+
 La siguiente foto se descifra y decodifica por adelantado, porque una foto a tamaño completo tarda
 más en abrirse que los 600 ms de la transición y el fundido enseñaría un hueco negro. La pantalla no se apaga durante el pase
 (`FLAG_KEEP_SCREEN_ON`), que además evita que el auto-bloqueo se dispare por el apagado; al salir, la

@@ -84,6 +84,25 @@ class SlideshowViewModel @Inject constructor(
         _state.value = _state.value.copy(chromeVisible = false)
     }
 
+    /**
+     * Spec §7.11: a swipe means «this one now», so the wait starts over and the photo it lands on
+     * gets its whole turn instead of the remainder of the one before it.
+     */
+    fun onNext() {
+        if (!_state.value.loaded) return
+        advance()
+        if (_state.value.playing) resumeTicker()
+    }
+
+    fun onPrevious() {
+        val current = _state.value
+        if (!current.loaded) return
+        _state.value = current.copy(
+            index = previousIndex(current.index, current.items.lastIndex, loop),
+        )
+        if (current.playing) resumeTicker()
+    }
+
     fun onTogglePlay() {
         val playing = !_state.value.playing
         _state.value = _state.value.copy(playing = playing, chromeVisible = true)

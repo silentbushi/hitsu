@@ -17,6 +17,16 @@ internal fun orderedForPass(
     return listOf(start) + (photos - start).shuffled()
 }
 
+/**
+ * Spec §7.11: where a swipe back lands. Only a looping pass wraps to the end; without loop the first
+ * photo is the beginning and there is nothing before it.
+ */
+internal fun previousIndex(index: Int, lastIndex: Int, loop: Boolean): Int = when {
+    index > 0 -> index - 1
+    loop -> lastIndex
+    else -> 0
+}
+
 /** In order, a pass starts where the viewer was; shuffled, [orderedForPass] already put it first. */
 internal fun startIndexFor(photos: List<MediaItem>, startId: String?, shuffle: Boolean): Int =
     if (shuffle || startId == null) 0 else photos.indexOfFirst { it.id == startId }.coerceAtLeast(0)

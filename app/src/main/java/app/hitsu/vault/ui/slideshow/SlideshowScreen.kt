@@ -2,10 +2,12 @@ package app.hitsu.vault.ui.slideshow
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,14 +23,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -45,9 +53,16 @@ import coil3.SingletonImageLoader
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /** How long the control stays up before it gets out of the way of the photos. */
 private const val CHROME_TIMEOUT_MS = 3_000L
+
+/** Spec §7.11: how far a finger has to travel before it counts as «this one now». */
+private val SWIPE_DISTANCE = 56.dp
+
+/** The photo follows the finger only partway, so the drag reads as a nudge and not as a pager. */
+private const val DRAG_FOLLOW = 0.35f
 
 @Composable
 fun SlideshowRoute(onClose: () -> Unit, viewModel: SlideshowViewModel = hiltViewModel()) {
@@ -62,6 +77,8 @@ fun SlideshowRoute(onClose: () -> Unit, viewModel: SlideshowViewModel = hiltView
         onToggleChrome = viewModel::onToggleChrome,
         onChromeHidden = viewModel::onChromeHidden,
         onTogglePlay = viewModel::onTogglePlay,
+        onNext = viewModel::onNext,
+        onPrevious = viewModel::onPrevious,
     )
 }
 
@@ -72,9 +89,16 @@ fun SlideshowScreen(
     onToggleChrome: () -> Unit = {},
     onChromeHidden: () -> Unit = {},
     onTogglePlay: () -> Unit = {},
+    onNext: () -> Unit = {},
+    onPrevious: () -> Unit = {},
 ) {
     KeepScreenOn()
     PreloadNext(state)
+
+    val scope = rememberCoroutineScope()
+    val threshold = with(LocalDensity.current) { SWIPE_DISTANCE.toPx() }
+    val nudge = remember { Animatable(0f) }
+    var drag by remember { mutableFloatStateOf(0f) }
 
     Box(
         Modifier
@@ -84,7 +108,40 @@ fun SlideshowScreen(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
                 onClick = onToggleChrome,
-            ),
+            )
+            .pointerInput(Unit) {
+                /*
+                 * Spec §7.11: swiping skips ahead without waiting out the timer. The change itself
+                 * is still the crossfade, so a photo that arrives by finger looks like one that
+                 * arrived by clock; the drag only nudges the photo to say the gesture registered.
+                 */
+                detectHorizontalDragGestures(
+                    onDragEnd = {
+                        val travelled = drag
+                        drag = 0f
+                        when {
+                            travelled <= -threshold -> {
+                                onNext()
+                                scope.launch { nudge.snapTo(0f) }
+                            }
+                            travelled >= threshold -> {
+                                onPrevious()
+                                scope.launch { nudge.snapTo(0f) }
+                            }
+                            // Not far enough to count: the photo slides back instead of jumping.
+                            else -> scope.launch { nudge.animateTo(0f, HitsuMotion.standard()) }
+                        }
+                    },
+                    onDragCancel = {
+                        drag = 0f
+                        scope.launch { nudge.animateTo(0f, HitsuMotion.standard()) }
+                    },
+                ) { change, delta ->
+                    drag += delta
+                    scope.launch { nudge.snapTo(drag * DRAG_FOLLOW) }
+                    change.consume()
+                }
+            },
     ) {
         /*
          * Spec §7.11: the photo on its way out dissolves into the one coming in. Keyed by id so a
@@ -101,7 +158,9 @@ fun SlideshowScreen(
                     model = FullImageKey(id),
                     contentDescription = stringResource(R.string.cd_photo),
                     contentScale = ContentScale.Fit,
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .graphicsLayer { translationX = nudge.value },
                 )
             }
         }
