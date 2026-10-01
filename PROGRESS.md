@@ -97,9 +97,12 @@ apuntados también:
 
 ## Próximos pasos
 
-Nada planificado; lo que venga saldrá de usar la app. Dos cosas apuntadas de v0.2.0:
+Nada planificado; lo que venga saldrá de usar la app. Tres cosas apuntadas:
 
-- Queda probar a mano en el teléfono el arreglo de compartir con la app abierta y **Cerrar el cofre**;
+- La presentación y el deslizar dentro del pase están **probados en el teléfono** (30 sep 2026), y el
+  fundido no enseña hueco negro ni yendo hacia atrás, así que precargar también la foto anterior no
+  hace falta por ahora.
+- De la v0.2.0 queda probar a mano el arreglo de compartir con la app abierta y **Cerrar el cofre**;
   «Nunca» sí se probó.
 - El mockup `settings/01-main-settings.png` pone «Exportar copia de seguridad» en ALMACENAMIENTO,
   mientras el código tiene «Respaldo» en HERRAMIENTAS.
