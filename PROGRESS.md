@@ -6,13 +6,12 @@ está en qué punto de ese plan estamos.
 
 ## Estado actual
 
-_Actualizado: 29 sep 2026._
+_Actualizado: 30 sep 2026._
 
 Hay una app funcionando en el teléfono (Galaxy SM-S948B, Android 16), ya con el APK firmado de
-release y probada a mano. 98 pruebas unitarias y 31 instrumentadas en verde, y lint sin errores.
+release y probada a mano. 104 pruebas unitarias y 31 instrumentadas en verde, y lint sin errores.
 
-Publicada en GitHub: **v0.2.0** es la última, **v0.1.1** fue la anterior buena, y la v0.1.0 lleva un
-aviso de que no descarga.
+Publicada en GitHub: **v0.3.0** es la última, y la v0.1.0 lleva un aviso de que no descarga.
 
 **Los catorce pasos de §16 están hechos.** Lo que queda son remates y lo que vaya saliendo al usarla.
 
@@ -42,6 +41,27 @@ aviso de que no descarga.
 - **Release.** APK firmado con una llave que vive fuera del repo (`keystore.properties`), publicado
   con su SHA-256 y el del certificado. Toda versión futura tiene que ir con ese mismo certificado o
   no se instalará encima.
+
+## v0.3.0 (30 sep 2026)
+
+**Presentación de fotos (§7.11).** Un pase a pantalla completa del conjunto que se esté viendo: la
+pestaña actual desde la cabecera de la pantalla principal, un álbum desde la suya, o el conjunto del
+visor empezando por la foto que está delante. Ajustes → Presentación recuerda tiempo por foto (3 s,
+5 s, 10 s, 30 s, 1 min; 5 s por defecto), aleatorio y bucle. Los vídeos se omiten, y si no queda
+ninguna foto el botón no aparece.
+
+Dos decisiones que vale la pena recordar:
+
+- **El conjunto es una instantánea**, no la consulta viva: un import a mitad del pase no debe
+  rebarajar el orden ni mover la foto que está en pantalla. Con aleatorio y bucle, cada vuelta se
+  vuelve a barajar.
+- **La siguiente foto se precarga**, porque abrir una foto a tamaño completo del cofre tarda más que
+  los 600 ms del fundido y se vería un hueco negro. Ir hacia atrás rápido es el caso que no cubre la
+  precarga; si llega a molestar, precargar también la anterior.
+
+Deslizar pasa de foto sin esperar al reloj (izquierda siguiente, derecha anterior) y reinicia el
+temporizador. No se usó un `HorizontalPager` a propósito: el cambio por dedo sería un desplazamiento
+y el del reloj un fundido, dos animaciones para lo mismo. La pantalla no se apaga durante el pase.
 
 ## v0.2.0 (29 sep 2026)
 

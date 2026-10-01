@@ -53,6 +53,12 @@ Visor de fotos con zoom y swipe. Reproductor propio sobre Media3 con gestos de *
 **volumen**, ±10 s con doble toque, y **picture-in-picture** que se cierra en cuanto el cofre se
 bloquea.
 
+**Presentación**: un pase a pantalla completa de las fotos que estés viendo —una pestaña, un álbum o
+el conjunto del visor, empezando por la foto que tienes delante—, con fundido cruzado entre fotos.
+Ajustes → Presentación recuerda el tiempo por foto (de 3 s a 1 min), el aleatorio y el bucle, y
+deslizando pasas de foto sin esperar al reloj. Los vídeos se omiten y la pantalla no se apaga
+mientras corre.
+
 ### Organizar
 
 **Álbumes**: un item puede estar en varios y sigue estando en Todos. Se crean vacíos o desde una
@@ -89,7 +95,7 @@ Necesita JDK 17+ y el SDK de Android (plataforma 35). `minSdk` 29.
 ./gradlew :app:connectedDebugAndroidTest          # pruebas en el dispositivo
 ```
 
-Hoy: 98 pruebas unitarias y 31 instrumentadas.
+Hoy: 104 pruebas unitarias y 31 instrumentadas.
 
 > Las pruebas instrumentadas **desinstalan la app**, y con ella el cofre del dispositivo. Haz un
 > respaldo antes y restáuralo después.
